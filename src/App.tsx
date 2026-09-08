@@ -1,0 +1,440 @@
+import { useState, useEffect, useRef } from "react";
+
+const projects = [
+  {
+    num: "01",
+    title: "ATTENTION FIELD",
+    subtitle: "Interactive Attention System",
+    description:
+      "Interactive system for exploring relationships between information through attention, movement, and proximity.",
+    category: "INTERACTION STUDY",
+    tools: ["JS", "D3", "HTML", "CSS"],
+    year: "2026",
+    status: "ACTIVE",
+    image:
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2400&h=1400&fit=crop&auto=format",
+    accent: false,
+  },
+  {
+    num: "02",
+    title: "SCROLL INTERFACE",
+    subtitle: "Kinetic Feedback Experiment",
+    description:
+      "A minimal interface built around continuous scroll-wheel interaction and kinetic feedback loops.",
+    category: "INTERFACE STUDY",
+    tools: ["REACT", "FRAMER MOTION", "WEBGL"],
+    year: "2025",
+    status: "ARCHIVED",
+    image:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=2400&h=1400&fit=crop&auto=format",
+    accent: false,
+  },
+  {
+    num: "03",
+    title: "DATA TOPOGRAPHY",
+    subtitle: "3D Multivariate Landscape",
+    description:
+      "Translating complex multivariate datasets into navigable 3D landscapes for exploratory analysis.",
+    category: "DATA VISUALIZATION",
+    tools: ["THREE.JS", "PYTHON", "GLSL"],
+    year: "2026",
+    status: "ITERATING",
+    image:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=2400&h=1400&fit=crop&auto=format",
+    accent: true,
+  },
+  {
+    num: "04",
+    title: "SIGNAL ARCHIVE",
+    subtitle: "Radio Frequency Visualization",
+    description:
+      "A real-time visualization tool for RF signal data, rendered as dense typographic fields.",
+    category: "VISUALIZATION",
+    tools: ["PYTHON", "D3", "SVG"],
+    year: "2025",
+    status: "ARCHIVED",
+    image:
+      "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=2400&h=1400&fit=crop&auto=format",
+    accent: false,
+  },
+];
+
+const thumbProjects = [
+  { num: "01", label: "ATTENTION FIELD", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop&auto=format" },
+  { num: "02", label: "SCROLL INTERFACE", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop&auto=format" },
+  { num: "03", label: "DATA TOPOGRAPHY", image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=400&fit=crop&auto=format" },
+  { num: "04", label: "SIGNAL ARCHIVE", image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=400&fit=crop&auto=format" },
+  { num: "05", label: "NEURAL SURFACE", image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=400&fit=crop&auto=format" },
+  { num: "06", label: "FORM STUDY", image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop&auto=format" },
+];
+
+function useScrollReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      { threshold: 0.08 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, visible };
+}
+
+function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number }) {
+  const { ref, visible } = useScrollReveal();
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      ref={ref}
+      className="w-full border-t border-[#1e1e1e] relative"
+      style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(32px)", transition: "opacity 0.7s ease, transform 0.7s ease" }}
+    >
+      {/* Project label bar */}
+      <div className="flex items-center gap-0 border-b border-[#1e1e1e]">
+        <div className="w-14 md:w-16 py-3 flex items-center justify-center border-r border-[#1e1e1e] shrink-0">
+          <span className="font-mono text-[0.6rem] tracking-[0.15em] text-[#444]">{project.num}</span>
+        </div>
+        <div className="flex-1 px-5 py-3 flex items-center gap-6">
+          <span className="font-mono text-[0.6rem] tracking-[0.18em] text-[#555] uppercase">{project.category}</span>
+          <span className="font-mono text-[0.6rem] tracking-[0.1em] text-[#333]">—</span>
+          <span className="font-mono text-[0.6rem] tracking-[0.1em] text-[#444]">{project.year}</span>
+        </div>
+        <div className="px-5 py-3 border-l border-[#1e1e1e]">
+          <span
+            className="font-mono text-[0.55rem] tracking-[0.2em] uppercase px-2 py-1"
+            style={{ color: project.accent ? "#ff4500" : "#555", border: `1px solid ${project.accent ? "#ff4500" : "#2a2a2a"}` }}
+          >
+            {project.status}
+          </span>
+        </div>
+      </div>
+
+      {/* Hero image — full bleed, very tall */}
+      <div
+        className="relative w-full overflow-hidden cursor-pointer"
+        style={{ height: "clamp(340px, 65vh, 820px)" }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <img
+          src={project.image}
+          alt={project.title}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{
+            transform: hovered ? "scale(1.04)" : "scale(1.0)",
+            transition: "transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease",
+            filter: hovered ? "brightness(0.55)" : "brightness(0.35) saturate(0.2)",
+          }}
+        />
+
+        {/* Title overlaid on image */}
+        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-14">
+          <h2
+            className="font-display uppercase leading-[0.82] tracking-[-0.01em] text-[#f0efeb]"
+            style={{
+              fontSize: "clamp(3.5rem, 9vw, 10rem)",
+              textShadow: "0 2px 40px rgba(0,0,0,0.8)",
+              transform: hovered ? "translateY(-6px)" : "none",
+              transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          >
+            {project.title}
+          </h2>
+
+          <div
+            className="flex flex-wrap items-end gap-6 mt-5"
+            style={{ opacity: hovered ? 1 : 0, transform: hovered ? "none" : "translateY(8px)", transition: "opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s" }}
+          >
+            <p className="font-body text-sm text-[#aaa] max-w-sm font-light leading-relaxed">
+              {project.description}
+            </p>
+            <div className="flex gap-2 flex-wrap">
+              {project.tools.map((t) => (
+                <span key={t} className="font-mono text-[0.6rem] tracking-[0.15em] border border-[#ff4500] text-[#ff4500] px-2 py-1">
+                  {t}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Corner tag */}
+        <div className="absolute top-5 right-5 font-mono text-[0.55rem] tracking-[0.15em] text-[#444]">
+          IMG_{project.num}
+        </div>
+
+        {/* Arrow on hover */}
+        <div
+          className="absolute top-5 left-5 font-mono text-[0.7rem] tracking-[0.1em] text-[#ff4500]"
+          style={{ opacity: hovered ? 1 : 0, transition: "opacity 0.3s ease" }}
+        >
+          VIEW ↗
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ThumbGrid() {
+  const { ref, visible } = useScrollReveal();
+  return (
+    <div
+      ref={ref}
+      className="w-full border-t border-[#1e1e1e]"
+      style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(24px)", transition: "opacity 0.8s ease, transform 0.8s ease" }}
+    >
+      {/* Header bar */}
+      <div className="flex items-center border-b border-[#1e1e1e]">
+        <div className="w-14 md:w-16 py-3 border-r border-[#1e1e1e] shrink-0" />
+        <div className="px-5 py-3 flex-1">
+          <span className="font-mono text-[0.6rem] tracking-[0.2em] text-[#444] uppercase">Explore all projects</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 md:grid-cols-6">
+        {thumbProjects.map((p, i) => (
+          <div key={p.num} className={`relative overflow-hidden aspect-square group cursor-pointer ${i < 5 ? "border-r border-[#1e1e1e]" : ""}`}>
+            <img
+              src={p.image}
+              alt={p.label}
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ filter: "brightness(0.3) saturate(0.1)", transition: "filter 0.5s ease, transform 0.5s ease" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLImageElement).style.filter = "brightness(0.7) saturate(0.8)"; (e.currentTarget as HTMLImageElement).style.transform = "scale(1.06)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLImageElement).style.filter = "brightness(0.3) saturate(0.1)"; (e.currentTarget as HTMLImageElement).style.transform = "scale(1)"; }}
+            />
+            <div className="absolute inset-0 flex flex-col justify-end p-3 pointer-events-none">
+              <div className="font-mono text-[0.45rem] tracking-[0.2em] text-[#666] mb-0.5">{p.num}</div>
+              <div className="font-mono text-[0.55rem] tracking-[0.1em] text-[#aaa] leading-tight">{p.label}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-[#f0efeb] font-body overflow-x-hidden">
+
+      {/* HUD overlays */}
+      <div className="fixed bottom-4 left-4 font-mono text-[0.55rem] tracking-widest text-[#333] z-50 pointer-events-none tabular-nums">
+        {mousePos.x.toString().padStart(4, "0")} / {mousePos.y.toString().padStart(4, "0")}
+      </div>
+      <div className="fixed bottom-4 right-4 font-mono text-[0.55rem] tracking-widest text-[#333] z-50 pointer-events-none tabular-nums">
+        SCR {scrollY.toString().padStart(5, "0")}px
+      </div>
+
+      {/* ── Nav ───────────────────────────────────────────────────────────── */}
+      <nav className="fixed top-0 left-0 w-full z-40 border-b border-[#1e1e1e] bg-[#0a0a0a]/90 backdrop-blur-md flex items-stretch">
+        {/* Identity */}
+        <div className="flex items-center gap-4 px-5 py-3 border-r border-[#1e1e1e]">
+          <span className="font-mono text-[0.6rem] tracking-[0.25em] text-[#f0efeb] uppercase">Emit Rice</span>
+        </div>
+        <div className="flex items-center gap-1 px-5 py-3 border-r border-[#1e1e1e]">
+          <span className="font-mono text-[0.55rem] tracking-[0.1em] text-[#444]">Design Engineer</span>
+        </div>
+        <div className="flex-1" />
+        {[
+          { label: "WORK", href: "#work" },
+          { label: "ABOUT", href: "#about" },
+        ].map((item) => (
+          <a
+            key={item.label}
+            href={item.href}
+            className="flex items-center px-5 py-3 border-l border-[#1e1e1e] font-mono text-[0.6rem] tracking-[0.2em] text-[#555] hover:text-[#f0efeb] transition-colors duration-150"
+          >
+            {item.label}
+          </a>
+        ))}
+        <a
+          href="#"
+          className="flex items-center px-5 py-3 border-l border-[#1e1e1e] font-mono text-[0.6rem] tracking-[0.2em] text-[#ff4500] hover:bg-[#ff4500] hover:text-[#0a0a0a] transition-colors duration-150"
+        >
+          CONTACT ↗
+        </a>
+      </nav>
+
+      <div className="pt-[41px] w-full">
+
+        {/* ── Hero / Identity Plate ─────────────────────────────────────────── */}
+        <header className="w-full border-b border-[#1e1e1e] relative overflow-hidden" style={{ minHeight: "62vh" }}>
+
+          {/* Subtle grid */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              backgroundImage: "linear-gradient(#1e1e1e 1px, transparent 1px), linear-gradient(90deg, #1e1e1e 1px, transparent 1px)",
+              backgroundSize: "80px 80px",
+              opacity: 0.4,
+            }}
+          />
+
+          <div className="relative z-10 flex flex-col justify-between h-full" style={{ minHeight: "inherit" }}>
+            {/* Top row */}
+            <div className="flex items-start border-b border-[#1e1e1e]">
+              <div className="flex-1 p-6 md:p-10 lg:p-16 pb-0">
+                <div className="font-mono text-[0.55rem] tracking-[0.25em] text-[#444] uppercase mb-6">
+                  Portfolio — 2026
+                </div>
+                <h1 className="font-display uppercase leading-[0.82] tracking-tight text-[#f0efeb]"
+                  style={{ fontSize: "clamp(5rem, 14vw, 14rem)" }}>
+                  Emit<br />Rice
+                </h1>
+              </div>
+
+              {/* Side column */}
+              <div className="hidden lg:flex flex-col w-64 xl:w-80 border-l border-[#1e1e1e] self-stretch divide-y divide-[#1e1e1e]">
+                <div className="p-6">
+                  <div className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444] uppercase mb-3">Field</div>
+                  <div className="font-mono text-[0.7rem] tracking-wide text-[#888] leading-relaxed">
+                    Design<br />Data Visualization<br />Interaction
+                  </div>
+                </div>
+                <div className="p-6">
+                  <div className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444] uppercase mb-3">Location</div>
+                  <div className="font-mono text-[0.7rem] text-[#888]">Tallahassee, FL<br />FSU</div>
+                </div>
+                <div className="p-6">
+                  <div className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444] uppercase mb-3">Status</div>
+                  <div className="font-mono text-[0.7rem] text-[#ff4500] tracking-wide">ITERATING</div>
+                </div>
+                <div className="p-6 mt-auto">
+                  <div className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444] uppercase mb-4">Directory</div>
+                  {["GITHUB", "LINKEDIN", "EMAIL", "RESUME"].map((link) => (
+                    <a key={link} href="#"
+                      className="flex items-center justify-between py-2 border-b border-[#1e1e1e] font-mono text-[0.6rem] tracking-widest text-[#666] hover:text-[#ff4500] hover:border-[#ff4500] transition-colors group last:border-none">
+                      <span>{link}</span>
+                      <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#ff4500]">↗</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom metadata strip */}
+            <div className="flex items-stretch divide-x divide-[#1e1e1e] border-t border-[#1e1e1e]">
+              <div className="px-5 py-3">
+                <span className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444]">DESIGN ENGINEER</span>
+              </div>
+              <div className="px-5 py-3">
+                <span className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444]">CREATIVE TECHNOLOGY</span>
+              </div>
+              <div className="px-5 py-3">
+                <span className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444]">DATA VISUALIZATION</span>
+              </div>
+              <div className="px-5 py-3 flex-1" />
+              <div className="px-5 py-3">
+                <span className="font-mono text-[0.55rem] tracking-[0.2em] text-[#333]">REV.04</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* ── Work section label ──────────────────────────────────────────── */}
+        <div id="work" className="flex items-center border-b border-[#1e1e1e]">
+          <div className="w-14 md:w-16 py-3 border-r border-[#1e1e1e] shrink-0" />
+          <div className="px-5 py-3 flex-1">
+            <span className="font-mono text-[0.55rem] tracking-[0.25em] text-[#333] uppercase">MODULE_01 // SELECTED WORK</span>
+          </div>
+          <div className="px-5 py-3 border-l border-[#1e1e1e]">
+            <span className="font-mono text-[0.55rem] tracking-[0.2em] text-[#333]">{projects.length.toString().padStart(2, "0")} PROJECTS</span>
+          </div>
+        </div>
+
+        {/* ── Projects ──────────────────────────────────────────────────── */}
+        <main>
+          {projects.map((project, idx) => (
+            <ProjectRow key={project.num} project={project} idx={idx} />
+          ))}
+        </main>
+
+        {/* ── Thumbnail grid ──────────────────────────────────────────────── */}
+        <ThumbGrid />
+
+        {/* ── About / Info ────────────────────────────────────────────────── */}
+        <section id="about" className="w-full border-t border-[#1e1e1e]">
+          {/* Section label */}
+          <div className="flex items-center border-b border-[#1e1e1e]">
+            <div className="w-14 md:w-16 py-3 border-r border-[#1e1e1e] shrink-0" />
+            <div className="px-5 py-3 flex-1">
+              <span className="font-mono text-[0.55rem] tracking-[0.25em] text-[#333] uppercase">MODULE_02 // SPECIFICATION</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-[#1e1e1e]">
+            {/* Left — meta */}
+            <div className="col-span-1 lg:col-span-3 divide-y divide-[#1e1e1e]">
+              {[
+                { k: "Entity", v: "Emit Rice" },
+                { k: "Role", v: "Design Engineer" },
+                { k: "Base", v: "Tallahassee, FL" },
+                { k: "Focus", v: "Human-AI · Experimental UI" },
+              ].map(({ k, v }) => (
+                <div key={k} className="px-6 py-5">
+                  <div className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444] uppercase mb-2">{k}</div>
+                  <div className="font-mono text-[0.7rem] text-[#888]">{v}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Right — statement */}
+            <div className="col-span-1 lg:col-span-9 p-8 md:p-12 lg:p-16 flex flex-col justify-between gap-12">
+              <div>
+                <div className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444] uppercase mb-6">Statement</div>
+                <p className="font-display text-2xl md:text-3xl lg:text-4xl text-[#f0efeb] leading-[1.2] font-light"
+                  style={{ maxWidth: "38ch" }}>
+                  I build interfaces that treat information as a physical material.
+                </p>
+                <p className="font-body text-sm text-[#666] leading-relaxed mt-6 max-w-prose">
+                  By combining data engineering with spatial interaction design, I aim to create digital tools that feel less like software and more like well-calibrated instruments.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-[#1e1e1e] pt-8 -mx-8 md:-mx-12 lg:-mx-16 px-8 md:px-12 lg:px-16">
+                {["EMAIL ↗", "GITHUB ↗", "LINKEDIN ↗", "RESUME ↗"].map((link) => (
+                  <a key={link} href="#"
+                    className="font-mono text-[0.6rem] tracking-[0.15em] text-[#444] hover:text-[#ff4500] transition-colors py-3 border-r border-[#1e1e1e] last:border-none">
+                    {link}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Footer ──────────────────────────────────────────────────────── */}
+        <footer className="border-t border-[#1e1e1e] flex items-center divide-x divide-[#1e1e1e]">
+          <div className="px-5 py-4 flex-1">
+            <span className="font-mono text-[0.5rem] tracking-[0.2em] text-[#2a2a2a]">© 2026 EMIT RICE — ALL RIGHTS RESERVED</span>
+          </div>
+          <div className="px-5 py-4">
+            <span className="font-mono text-[0.5rem] tracking-[0.2em] text-[#2a2a2a]">BUILT WITH REACT + VITE</span>
+          </div>
+        </footer>
+
+      </div>
+    </div>
+  );
+}
