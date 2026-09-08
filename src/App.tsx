@@ -269,7 +269,7 @@ export default function App() {
           </a>
         ))}
         <a
-          href="#"
+          href="mailto:rice.emit3k@gmail.com"
           className="flex items-center px-5 py-3 border-l border-[#1e1e1e] font-mono text-[0.6rem] tracking-[0.2em] text-[#ff4500] hover:bg-[#ff4500] hover:text-[#0a0a0a] transition-colors duration-150"
         >
           CONTACT ↗
@@ -322,10 +322,15 @@ export default function App() {
                 </div>
                 <div className="p-6 mt-auto">
                   <div className="font-mono text-[0.55rem] tracking-[0.2em] text-[#444] uppercase mb-4">Directory</div>
-                  {["GITHUB", "LINKEDIN", "EMAIL", "RESUME"].map((link) => (
-                    <a key={link} href="#"
+                  {[
+                    { label: "GITHUB", href: "https://github.com/Epple3k" },
+                    { label: "LINKEDIN", href: "https://www.linkedin.com/in/emit-rice/" },
+                    { label: "EMAIL", href: "mailto:rice.emit3k@gmail.com" },
+                    { label: "RESUME", href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing" },
+                  ].map(({ label, href }) => (
+                    <a key={label} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                       className="flex items-center justify-between py-2 border-b border-[#1e1e1e] font-mono text-[0.6rem] tracking-widest text-[#666] hover:text-[#ff4500] hover:border-[#ff4500] transition-colors group last:border-none">
-                      <span>{link}</span>
+                      <span>{label}</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#ff4500]">↗</span>
                     </a>
                   ))}
@@ -413,10 +418,15 @@ export default function App() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-[#1e1e1e] pt-8 -mx-8 md:-mx-12 lg:-mx-16 px-8 md:px-12 lg:px-16">
-                {["EMAIL ↗", "GITHUB ↗", "LINKEDIN ↗", "RESUME ↗"].map((link) => (
-                  <a key={link} href="#"
+                {[
+                  { label: "EMAIL ↗", href: "mailto:rice.emit3k@gmail.com" },
+                  { label: "GITHUB ↗", href: "https://github.com/Epple3k" },
+                  { label: "LINKEDIN ↗", href: "https://www.linkedin.com/in/emit-rice/" },
+                  { label: "RESUME ↗", href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing" },
+                ].map(({ label, href }) => (
+                  <a key={label} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                     className="font-mono text-[0.6rem] tracking-[0.15em] text-[#444] hover:text-[#ff4500] transition-colors py-3 border-r border-[#1e1e1e] last:border-none">
-                    {link}
+                    {label}
                   </a>
                 ))}
               </div>
