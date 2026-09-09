@@ -18,13 +18,21 @@ export interface CursorHandProps {
  * Mount this once, near the root of the app. It renders a hand that
  * follows the mouse everywhere, presses slightly on hovering any
  * interactive element, and plays a stronger one-shot animation on
- * click. Does nothing on touch devices (no real cursor to follow).
+ * click.
+ *
+ * There's deliberately no `matchMedia("(pointer: fine)")` gate here —
+ * some hybrid/touchscreen laptops report a coarse *primary* pointer
+ * even while a mouse or trackpad is actively driving the page, which
+ * would silently disable this outright. Instead it relies on natural
+ * behavior: if the device never fires `mousemove`, the hand simply
+ * never becomes visible (it starts at opacity 0 and only turns on
+ * inside the move handler below).
  *
  * Following the mouse is a direct, user-driven response rather than
  * ambient/autoplaying motion, so prefers-reduced-motion doesn't turn
- * it off outright — instead it only removes the decorative flourishes
- * (the eased hover press and the click bounce), see the media query
- * in CursorHand.module.css.
+ * it off outright either — instead it only removes the decorative
+ * flourishes (the eased hover press and the click bounce), see the
+ * media query in CursorHand.module.css.
  *
  * Position updates bypass React state on purpose — mousemove fires far
  * too often for that — and instead write directly to the DOM node via
@@ -37,9 +45,6 @@ export default function CursorHand({ asset = defaultHandAsset }: CursorHandProps
   const posRef = useRef({ x: -100, y: -100 });
 
   useEffect(() => {
-    const finePointer = window.matchMedia("(pointer: fine)").matches;
-    if (!finePointer) return;
-
     const wrap = wrapRef.current;
     const hand = handRef.current;
     if (!wrap || !hand) return;
