@@ -163,11 +163,11 @@ export default function App() {
       {/* ── Nav ───────────────────────────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 w-full z-40 border-b border-[#1e1e1e] bg-[#0a0a0a]/90 backdrop-blur-md flex items-stretch">
         {/* Identity */}
-        <div className="flex items-center gap-4 px-5 py-2 border-r border-[#1e1e1e]">
-          <span className="font-mono text-[0.74rem] tracking-[0.25em] text-[#f0efeb] uppercase">Emit Rice</span>
+        <div className="flex items-center gap-4 px-5 py-4 border-r border-[#1e1e1e]">
+          <span className="font-mono text-[0.9rem] tracking-[0.25em] text-[#f0efeb] uppercase">Emit Rice</span>
         </div>
-        <div className="flex items-center gap-1 px-5 py-2 border-r border-[#1e1e1e]">
-          <span className="font-mono text-[0.68rem] tracking-[0.1em] text-[#949494]">Design Engineer</span>
+        <div className="flex items-center gap-1 px-5 py-4 border-r border-[#1e1e1e]">
+          <span className="font-mono text-[0.82rem] tracking-[0.1em] text-[#949494]">Design Engineer</span>
         </div>
         <div className="flex-1" />
         {[
@@ -177,20 +177,20 @@ export default function App() {
           <a
             key={item.label}
             href={item.href}
-            className="flex items-center px-5 py-2 border-l border-[#1e1e1e] font-mono text-[0.74rem] tracking-[0.2em] text-[#a8a8a8] hover:text-[#f0efeb] transition-colors duration-150"
+            className="flex items-center px-5 py-4 border-l border-[#1e1e1e] font-mono text-[0.9rem] tracking-[0.2em] text-[#a8a8a8] hover:text-[#f0efeb] transition-colors duration-150"
           >
             {item.label}
           </a>
         ))}
         <a
           href="mailto:rice.emit3k@gmail.com"
-          className="flex items-center px-5 py-2 border-l border-[#1e1e1e] font-mono text-[0.74rem] tracking-[0.2em] text-[#ff4500] hover:bg-[#ff4500] hover:text-[#0a0a0a] transition-colors duration-150"
+          className="flex items-center px-5 py-4 border-l border-[#1e1e1e] font-mono text-[0.9rem] tracking-[0.2em] text-[#ff4500] hover:bg-[#ff4500] hover:text-[#0a0a0a] transition-colors duration-150"
         >
           CONTACT ↗
         </a>
       </nav>
 
-      <div className="pt-[35px] w-full">
+      <div className="pt-[57px] w-full">
 
         {/* ── Hero / Identity Plate ─────────────────────────────────────────── */}
         <header className="w-full border-b border-[#1e1e1e] relative overflow-hidden" style={{ minHeight: "62vh" }}>
@@ -221,21 +221,17 @@ export default function App() {
               {/* Side column */}
               <div className="hidden lg:flex flex-col w-64 xl:w-80 border-l border-[#1e1e1e] self-stretch divide-y divide-[#1e1e1e]">
                 <div className="p-6">
-                  <div className="font-mono text-[0.75rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Field</div>
-                  <div className="font-mono text-[1rem] tracking-wide text-[#e0e0e0] leading-relaxed">
+                  <div className="font-mono text-[0.85rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Field</div>
+                  <div className="font-mono text-[1.15rem] tracking-wide text-[#e0e0e0] leading-relaxed">
                     Design<br />Data Visualization<br />Interaction
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className="font-mono text-[0.75rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Location</div>
-                  <div className="font-mono text-[1rem] text-[#e0e0e0]">Tallahassee, FL<br />FSU</div>
-                </div>
-                <div className="p-6">
-                  <div className="font-mono text-[0.75rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Status</div>
-                  <div className="font-mono text-[1rem] text-[#ff4500] tracking-wide">ITERATING</div>
+                  <div className="font-mono text-[0.85rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Location</div>
+                  <div className="font-mono text-[1.15rem] text-[#e0e0e0]">Orlando, FL</div>
                 </div>
                 <div className="p-6 mt-auto">
-                  <div className="font-mono text-[0.75rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-4">Directory</div>
+                  <div className="font-mono text-[0.85rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-4">Directory</div>
                   {[
                     { label: "GITHUB", href: "https://github.com/Epple3k" },
                     { label: "LINKEDIN", href: "https://www.linkedin.com/in/emit-rice/" },
@@ -243,7 +239,7 @@ export default function App() {
                     { label: "RESUME", href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing" },
                   ].map(({ label, href }) => (
                     <a key={label} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                      className="flex items-center justify-between py-2 border-b border-[#1e1e1e] font-mono text-[0.9rem] tracking-widest text-[#c4c4c4] hover:text-[#ff4500] hover:border-[#ff4500] transition-colors group last:border-none">
+                      className="flex items-center justify-between py-2 border-b border-[#1e1e1e] font-mono text-[1rem] tracking-widest text-[#c4c4c4] hover:text-[#ff4500] hover:border-[#ff4500] transition-colors group last:border-none">
                       <span>{label}</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#ff4500]">↗</span>
                     </a>
@@ -305,7 +301,7 @@ export default function App() {
               {[
                 { k: "Entity", v: "Emit Rice" },
                 { k: "Role", v: "Design Engineer" },
-                { k: "Base", v: "Tallahassee, FL" },
+                { k: "Base", v: "Orlando, FL" },
                 { k: "Focus", v: "Human-AI · Experimental UI" },
               ].map(({ k, v }) => (
                 <div key={k} className="px-6 py-5">
