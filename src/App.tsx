@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import attentionFieldImg from "./assets/project-attention-field.png";
 import scrollInterfaceImg from "./assets/project-scroll-interface.png";
 import dataTopographyImg from "./assets/project-data-topography.png";
+import { CursorHand } from "./components/CursorHand";
 
 const projects = [
   {
@@ -134,6 +135,8 @@ function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number
 export default function App() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#f0efeb] font-body overflow-x-hidden">
+      {/* Site-wide cursor-following hand — see src/components/CursorHand */}
+      <CursorHand />
 
       {/* ── Nav ───────────────────────────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 w-full z-40 border-b border-[#1e1e1e] bg-[#0a0a0a]/90 backdrop-blur-md flex items-stretch">
