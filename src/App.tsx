@@ -43,29 +43,6 @@ const projects = [
     image: dataTopographyImg,
     accent: true,
   },
-  {
-    num: "04",
-    title: "SIGNAL ARCHIVE",
-    subtitle: "Radio Frequency Visualization",
-    description:
-      "A real-time visualization tool for RF signal data, rendered as dense typographic fields.",
-    category: "VISUALIZATION",
-    tools: ["PYTHON", "D3", "SVG"],
-    year: "2025",
-    status: "ARCHIVED",
-    image:
-      "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=2400&h=1400&fit=crop&auto=format",
-    accent: false,
-  },
-];
-
-const thumbProjects = [
-  { num: "01", label: "ATTENTION FIELD", image: attentionFieldImg },
-  { num: "02", label: "SCROLL INTERFACE", image: scrollInterfaceImg },
-  { num: "03", label: "DATA TOPOGRAPHY", image: dataTopographyImg },
-  { num: "04", label: "SIGNAL ARCHIVE", image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=400&fit=crop&auto=format" },
-  { num: "05", label: "NEURAL SURFACE", image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=400&fit=crop&auto=format" },
-  { num: "06", label: "FORM STUDY", image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop&auto=format" },
 ];
 
 function useScrollReveal() {
@@ -177,44 +154,6 @@ function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number
         >
           VIEW ↗
         </div>
-      </div>
-    </div>
-  );
-}
-
-function ThumbGrid() {
-  const { ref, visible } = useScrollReveal();
-  return (
-    <div
-      ref={ref}
-      className="w-full border-t border-[#1e1e1e]"
-      style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(24px)", transition: "opacity 0.8s ease, transform 0.8s ease" }}
-    >
-      {/* Header bar */}
-      <div className="flex items-center border-b border-[#1e1e1e]">
-        <div className="w-14 md:w-16 py-3 border-r border-[#1e1e1e] shrink-0" />
-        <div className="px-5 py-3 flex-1">
-          <span className="font-mono text-[0.74rem] tracking-[0.2em] text-[#949494] uppercase">Explore all projects</span>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 md:grid-cols-6">
-        {thumbProjects.map((p, i) => (
-          <div key={p.num} className={`relative overflow-hidden aspect-square group cursor-pointer ${i < 5 ? "border-r border-[#1e1e1e]" : ""}`}>
-            <img
-              src={p.image}
-              alt={p.label}
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ filter: "brightness(0.3) saturate(0.1)", transition: "filter 0.5s ease, transform 0.5s ease" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLImageElement).style.filter = "brightness(0.7) saturate(0.8)"; (e.currentTarget as HTMLImageElement).style.transform = "scale(1.06)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLImageElement).style.filter = "brightness(0.3) saturate(0.1)"; (e.currentTarget as HTMLImageElement).style.transform = "scale(1)"; }}
-            />
-            <div className="absolute inset-0 flex flex-col justify-end p-3 pointer-events-none">
-              <div className="font-mono text-[0.56rem] tracking-[0.2em] text-[#b3b3b3] mb-0.5">{p.num}</div>
-              <div className="font-mono text-[0.68rem] tracking-[0.1em] text-[#aaa] leading-tight">{p.label}</div>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
@@ -374,9 +313,6 @@ export default function App() {
             <ProjectRow key={project.num} project={project} idx={idx} />
           ))}
         </main>
-
-        {/* ── Thumbnail grid ──────────────────────────────────────────────── */}
-        <ThumbGrid />
 
         {/* ── About / Info ────────────────────────────────────────────────── */}
         <section id="about" className="w-full border-t border-[#1e1e1e]">
