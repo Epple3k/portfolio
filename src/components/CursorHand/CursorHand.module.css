@@ -63,9 +63,19 @@
   }
 }
 
-/* ── Respect prefers-reduced-motion: no follow, no gestures ───────── */
+/* ── Respect prefers-reduced-motion ────────────────────────────────
+   Following the cursor is a direct 1:1 response to the user's own
+   mouse movement, not ambient motion, so it stays on. This only
+   strips the decorative extras: hover/position eases become instant
+   snaps, and the click bounce keyframe is skipped entirely. */
 @media (prefers-reduced-motion: reduce) {
   .wrap {
-    display: none;
+    transition: none;
+  }
+  .hand {
+    transition: none;
+  }
+  .hand.clicking {
+    animation: none;
   }
 }
