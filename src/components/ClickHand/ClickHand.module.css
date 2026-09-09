@@ -1,0 +1,107 @@
+/*
+ * ClickHand — scoped via CSS Modules (Vite hashes these class names
+ * automatically), so nothing here can leak onto or be overridden by
+ * unrelated site styles.
+ *
+ * ── Where to tweak ──────────────────────────────────────────────────
+ * - Size/position of the hand relative to its trigger: `.hand` + the
+ *   `.hand--left` / `.hand--right` placement variants below.
+ * - Hover strength/speed: the `transform` + `transition` on
+ *   `.trigger:hover .hand`.
+ * - Click strength/speed: the `chClickSvg` keyframes and the
+ *   `animation` duration on `.hand.isClicking`.
+ * - Sprite-sheet mode (if you swap the SVG asset for a PNG sprite
+ *   sheet): see the `.hand--sprite` block near the bottom — it's
+ *   inert until that class is applied, so it won't affect the default
+ *   SVG/transform path above it.
+ */
+
+.trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.hand {
+  display: inline-block;
+  /* REPLACE ASSET: point this at your own SVG/PNG file. */
+  width: 1em;
+  height: 1em;
+  transform-origin: 70% 85%; /* roughly the base of the "palm" */
+  transform: rotate(-6deg) scale(1);
+  transition: transform 150ms ease-out;
+  pointer-events: none; /* the trigger handles hover/click, not the icon */
+  user-select: none;
+}
+
+.hand--left {
+  order: -1;
+}
+
+.hand--right {
+  order: 1;
+}
+
+/* ── Hover: short, subtle press ─────────────────────────────────── */
+.trigger:hover .hand {
+  transform: rotate(-2deg) scale(0.92) translateY(1px);
+}
+
+/* ── Click: stronger, distinct "tap" — plays once via JS toggling
+   this class, so it isn't limited to :active's press-and-hold. ──── */
+.hand.isClicking {
+  animation: chClickSvg 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes chClickSvg {
+  0% {
+    transform: rotate(-2deg) scale(0.92) translateY(1px);
+  }
+  35% {
+    transform: rotate(4deg) scale(0.8) translateY(3px);
+  }
+  100% {
+    transform: rotate(-6deg) scale(1) translateY(0);
+  }
+}
+
+/* ── Sprite-sheet variant ────────────────────────────────────────
+   If you swap the SVG asset for a PNG sprite sheet, apply the
+   `.hand--sprite` class (via the `spriteFrames` prop on <ClickHand />)
+   instead of relying on the transform keyframes above. Set:
+     --sprite-url: the background-image
+     --sprite-frames: how many frames wide the sheet is
+     --sprite-frame-size: the width/height of a single frame in px
+   then adjust `steps()` and the animation duration to taste. */
+.hand--sprite {
+  background-image: var(--sprite-url);
+  background-repeat: no-repeat;
+  background-size: calc(var(--sprite-frames, 1) * 100%) 100%;
+  width: var(--sprite-frame-size, 24px);
+  height: var(--sprite-frame-size, 24px);
+  transform: none;
+}
+
+.hand--sprite.isClicking {
+  animation: chClickSprite 300ms steps(var(--sprite-frames, 4)) 1;
+}
+
+@keyframes chClickSprite {
+  from { background-position-x: 0; }
+  to { background-position-x: 100%; }
+}
+
+/* ── Respect prefers-reduced-motion ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hand {
+    transition: none;
+  }
+  .trigger:hover .hand,
+  .hand.isClicking,
+  .hand--sprite.isClicking {
+    animation: none;
+    transform: none;
+    background-position-x: 0;
+  }
+}

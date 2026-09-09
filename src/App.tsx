@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import attentionFieldImg from "./assets/project-attention-field.png";
 import scrollInterfaceImg from "./assets/project-scroll-interface.png";
 import dataTopographyImg from "./assets/project-data-topography.png";
+import { ClickHandTrigger } from "./components/ClickHand";
 
 const projects = [
   {
@@ -161,7 +162,8 @@ export default function App() {
           href="mailto:rice.emit3k@gmail.com"
           className="flex items-center px-5 py-4 border-l border-[#1e1e1e] font-mono text-[0.9rem] tracking-[0.2em] text-[#ff4500] hover:bg-[#ff4500] hover:text-[#0a0a0a] transition-colors duration-150"
         >
-          CONTACT ↗
+          {/* Click-hand demo #1 — nav CTA */}
+          <ClickHandTrigger>CONTACT ↗</ClickHandTrigger>
         </a>
       </nav>
 
@@ -304,7 +306,8 @@ export default function App() {
                 ].map(({ label, href }) => (
                   <a key={label} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                     className="font-mono text-[0.74rem] tracking-[0.15em] text-[#949494] hover:text-[#ff4500] transition-colors py-3 pl-5 border-r border-[#1e1e1e] last:border-none">
-                    {label}
+                    {/* Click-hand demo #2 — one link in this grid, to show it works outside the nav too */}
+                    {label === "GITHUB ↗" ? <ClickHandTrigger>{label}</ClickHandTrigger> : label}
                   </a>
                 ))}
               </div>
