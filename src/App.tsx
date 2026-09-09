@@ -5,7 +5,7 @@ import dataTopographyImg from "./assets/project-data-topography.png";
 
 const projects = [
   {
-    num: "01",
+    num: "03",
     title: "ATTENTION FIELD",
     subtitle: "Interactive Attention System",
     description:
@@ -15,6 +15,7 @@ const projects = [
     year: "2026",
     status: "ACTIVE",
     image: attentionFieldImg,
+    link: "https://epple3k.github.io/attention-field/",
     accent: false,
   },
   {
@@ -28,10 +29,11 @@ const projects = [
     year: "2025",
     status: "ARCHIVED",
     image: scrollInterfaceImg,
+    link: "https://epple3k.github.io/contiunuum/",
     accent: false,
   },
   {
-    num: "03",
+    num: "01",
     title: "DATA TOPOGRAPHY",
     subtitle: "3D Multivariate Landscape",
     description:
@@ -41,6 +43,7 @@ const projects = [
     year: "2026",
     status: "ITERATING",
     image: dataTopographyImg,
+    link: "https://epple3k.github.io/fsu-research-atlas-2/",
     accent: true,
   },
 ];
@@ -97,8 +100,11 @@ function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number
       </div>
 
       {/* Hero image — full bleed, very tall */}
-      <div
-        className="relative w-full overflow-hidden cursor-pointer"
+      <a
+        href={project.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block relative w-full overflow-hidden cursor-pointer"
         style={{ height: "clamp(340px, 65vh, 820px)" }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -145,44 +151,22 @@ function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number
         >
           VIEW ↗
         </div>
-      </div>
+      </a>
     </div>
   );
 }
 
 export default function App() {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => setMousePos({ x: e.clientX, y: e.clientY });
-    const onScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#f0efeb] font-body overflow-x-hidden">
-
-      {/* HUD overlays */}
-      <div className="fixed bottom-4 left-4 font-mono text-[0.68rem] tracking-widest text-[#6b6b6b] z-50 pointer-events-none tabular-nums">
-        {mousePos.x.toString().padStart(4, "0")} / {mousePos.y.toString().padStart(4, "0")}
-      </div>
-      <div className="fixed bottom-4 right-4 font-mono text-[0.68rem] tracking-widest text-[#6b6b6b] z-50 pointer-events-none tabular-nums">
-        SCR {scrollY.toString().padStart(5, "0")}px
-      </div>
 
       {/* ── Nav ───────────────────────────────────────────────────────────── */}
       <nav className="fixed top-0 left-0 w-full z-40 border-b border-[#1e1e1e] bg-[#0a0a0a]/90 backdrop-blur-md flex items-stretch">
         {/* Identity */}
-        <div className="flex items-center gap-4 px-5 py-3 border-r border-[#1e1e1e]">
+        <div className="flex items-center gap-4 px-5 py-2 border-r border-[#1e1e1e]">
           <span className="font-mono text-[0.74rem] tracking-[0.25em] text-[#f0efeb] uppercase">Emit Rice</span>
         </div>
-        <div className="flex items-center gap-1 px-5 py-3 border-r border-[#1e1e1e]">
+        <div className="flex items-center gap-1 px-5 py-2 border-r border-[#1e1e1e]">
           <span className="font-mono text-[0.68rem] tracking-[0.1em] text-[#949494]">Design Engineer</span>
         </div>
         <div className="flex-1" />
@@ -193,20 +177,20 @@ export default function App() {
           <a
             key={item.label}
             href={item.href}
-            className="flex items-center px-5 py-3 border-l border-[#1e1e1e] font-mono text-[0.74rem] tracking-[0.2em] text-[#a8a8a8] hover:text-[#f0efeb] transition-colors duration-150"
+            className="flex items-center px-5 py-2 border-l border-[#1e1e1e] font-mono text-[0.74rem] tracking-[0.2em] text-[#a8a8a8] hover:text-[#f0efeb] transition-colors duration-150"
           >
             {item.label}
           </a>
         ))}
         <a
           href="mailto:rice.emit3k@gmail.com"
-          className="flex items-center px-5 py-3 border-l border-[#1e1e1e] font-mono text-[0.74rem] tracking-[0.2em] text-[#ff4500] hover:bg-[#ff4500] hover:text-[#0a0a0a] transition-colors duration-150"
+          className="flex items-center px-5 py-2 border-l border-[#1e1e1e] font-mono text-[0.74rem] tracking-[0.2em] text-[#ff4500] hover:bg-[#ff4500] hover:text-[#0a0a0a] transition-colors duration-150"
         >
           CONTACT ↗
         </a>
       </nav>
 
-      <div className="pt-[41px] w-full">
+      <div className="pt-[35px] w-full">
 
         {/* ── Hero / Identity Plate ─────────────────────────────────────────── */}
         <header className="w-full border-b border-[#1e1e1e] relative overflow-hidden" style={{ minHeight: "62vh" }}>
@@ -237,21 +221,21 @@ export default function App() {
               {/* Side column */}
               <div className="hidden lg:flex flex-col w-64 xl:w-80 border-l border-[#1e1e1e] self-stretch divide-y divide-[#1e1e1e]">
                 <div className="p-6">
-                  <div className="font-mono text-[0.68rem] tracking-[0.2em] text-[#949494] uppercase mb-3">Field</div>
-                  <div className="font-mono text-[0.85rem] tracking-wide text-[#c4c4c4] leading-relaxed">
+                  <div className="font-mono text-[0.75rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Field</div>
+                  <div className="font-mono text-[1rem] tracking-wide text-[#e0e0e0] leading-relaxed">
                     Design<br />Data Visualization<br />Interaction
                   </div>
                 </div>
                 <div className="p-6">
-                  <div className="font-mono text-[0.68rem] tracking-[0.2em] text-[#949494] uppercase mb-3">Location</div>
-                  <div className="font-mono text-[0.85rem] text-[#c4c4c4]">Tallahassee, FL<br />FSU</div>
+                  <div className="font-mono text-[0.75rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Location</div>
+                  <div className="font-mono text-[1rem] text-[#e0e0e0]">Tallahassee, FL<br />FSU</div>
                 </div>
                 <div className="p-6">
-                  <div className="font-mono text-[0.68rem] tracking-[0.2em] text-[#949494] uppercase mb-3">Status</div>
-                  <div className="font-mono text-[0.85rem] text-[#ff4500] tracking-wide">ITERATING</div>
+                  <div className="font-mono text-[0.75rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Status</div>
+                  <div className="font-mono text-[1rem] text-[#ff4500] tracking-wide">ITERATING</div>
                 </div>
                 <div className="p-6 mt-auto">
-                  <div className="font-mono text-[0.68rem] tracking-[0.2em] text-[#949494] uppercase mb-4">Directory</div>
+                  <div className="font-mono text-[0.75rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-4">Directory</div>
                   {[
                     { label: "GITHUB", href: "https://github.com/Epple3k" },
                     { label: "LINKEDIN", href: "https://www.linkedin.com/in/emit-rice/" },
@@ -259,7 +243,7 @@ export default function App() {
                     { label: "RESUME", href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing" },
                   ].map(({ label, href }) => (
                     <a key={label} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                      className="flex items-center justify-between py-2 border-b border-[#1e1e1e] font-mono text-[0.74rem] tracking-widest text-[#b3b3b3] hover:text-[#ff4500] hover:border-[#ff4500] transition-colors group last:border-none">
+                      className="flex items-center justify-between py-2 border-b border-[#1e1e1e] font-mono text-[0.9rem] tracking-widest text-[#c4c4c4] hover:text-[#ff4500] hover:border-[#ff4500] transition-colors group last:border-none">
                       <span>{label}</span>
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#ff4500]">↗</span>
                     </a>
