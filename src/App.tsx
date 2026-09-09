@@ -79,6 +79,9 @@ function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number
           <span className="font-mono text-[0.74rem] tracking-[0.15em] text-[#949494]">{project.num}</span>
         </div>
         <div className="flex-1 px-5 py-3 flex items-center gap-6">
+          <h2 className="font-display font-black text-lg md:text-xl tracking-[-0.01em] text-[#f0efeb] uppercase">
+            {project.title}
+          </h2>
           <span className="font-mono text-[0.74rem] tracking-[0.18em] text-[#a8a8a8] uppercase">{project.category}</span>
           <span className="font-mono text-[0.74rem] tracking-[0.1em] text-[#6b6b6b]">—</span>
           <span className="font-mono text-[0.74rem] tracking-[0.1em] text-[#949494]">{project.year}</span>
@@ -111,22 +114,10 @@ function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number
           }}
         />
 
-        {/* Title overlaid on image */}
+        {/* Description + tools revealed on hover */}
         <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-14">
-          <h2
-            className="font-display font-black uppercase leading-[0.82] tracking-[-0.02em] text-[#f0efeb]"
-            style={{
-              fontSize: "clamp(4rem, 10vw, 11rem)",
-              textShadow: "0 2px 40px rgba(0,0,0,0.8)",
-              transform: hovered ? "translateY(-6px)" : "none",
-              transition: "transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
-            }}
-          >
-            {project.title}
-          </h2>
-
           <div
-            className="flex flex-wrap items-end gap-6 mt-5"
+            className="flex flex-wrap items-end gap-6"
             style={{ opacity: hovered ? 1 : 0, transform: hovered ? "none" : "translateY(8px)", transition: "opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s" }}
           >
             <p className="font-body text-base text-[#c4c4c4] max-w-sm font-light leading-relaxed">
