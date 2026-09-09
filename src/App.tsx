@@ -34,7 +34,7 @@ const projects = [
   },
   {
     num: "01",
-    title: "DATA TOPOGRAPHY",
+    title: "RESEARCH ATLAS",
     subtitle: "3D Multivariate Landscape",
     description:
       "Translating complex multivariate datasets into navigable 3D landscapes for exploratory analysis.",
