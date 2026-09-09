@@ -11,12 +11,9 @@ const projects = [
     description:
       "Interactive system for exploring relationships between information through attention, movement, and proximity.",
     category: "INTERACTION STUDY",
-    tools: ["JS", "D3", "HTML", "CSS"],
     year: "2026",
-    status: "ACTIVE",
     image: dataTopographyImg,
     link: "https://epple3k.github.io/attention-field/",
-    accent: false,
   },
   {
     num: "02",
@@ -25,12 +22,9 @@ const projects = [
     description:
       "A minimal interface built around continuous scroll-wheel interaction and kinetic feedback loops.",
     category: "INTERFACE STUDY",
-    tools: ["REACT", "FRAMER MOTION", "WEBGL"],
     year: "2025",
-    status: "ARCHIVED",
     image: scrollInterfaceImg,
     link: "https://epple3k.github.io/contiunuum/",
-    accent: false,
   },
   {
     num: "01",
@@ -39,12 +33,9 @@ const projects = [
     description:
       "Translating complex multivariate datasets into navigable 3D landscapes for exploratory analysis.",
     category: "DATA VISUALIZATION",
-    tools: ["THREE.JS", "PYTHON", "GLSL"],
     year: "2026",
-    status: "ITERATING",
     image: attentionFieldImg,
     link: "https://epple3k.github.io/fsu-research-atlas-2/",
-    accent: true,
   },
 ];
 
@@ -78,24 +69,16 @@ function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number
     >
       {/* Project label bar */}
       <div className="flex items-center gap-0 border-b border-[#1e1e1e]">
-        <div className="w-14 md:w-16 py-3 flex items-center justify-center border-r border-[#1e1e1e] shrink-0">
+        <div className="w-14 md:w-16 py-6 flex items-center justify-center border-r border-[#1e1e1e] shrink-0">
           <span className="font-mono text-[0.74rem] tracking-[0.15em] text-[#949494]">{project.num}</span>
         </div>
-        <div className="flex-1 px-5 py-3 flex items-center gap-6">
-          <h2 className="font-display font-black text-lg md:text-xl tracking-[-0.01em] text-[#f0efeb] uppercase">
+        <div className="flex-1 px-5 py-6 flex items-center gap-6">
+          <h2 className="font-display font-black text-2xl md:text-3xl tracking-[-0.01em] text-[#f0efeb] uppercase">
             {project.title}
           </h2>
           <span className="font-mono text-[0.74rem] tracking-[0.18em] text-[#a8a8a8] uppercase">{project.category}</span>
           <span className="font-mono text-[0.74rem] tracking-[0.1em] text-[#6b6b6b]">—</span>
           <span className="font-mono text-[0.74rem] tracking-[0.1em] text-[#949494]">{project.year}</span>
-        </div>
-        <div className="px-5 py-3 border-l border-[#1e1e1e]">
-          <span
-            className="font-mono text-[0.68rem] tracking-[0.2em] uppercase px-2 py-1"
-            style={{ color: project.accent ? "#ff4500" : "#a8a8a8", border: `1px solid ${project.accent ? "#ff4500" : "#3a3a3a"}` }}
-          >
-            {project.status}
-          </span>
         </div>
       </div>
 
@@ -120,22 +103,14 @@ function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number
           }}
         />
 
-        {/* Description + tools revealed on hover */}
+        {/* Description revealed on hover */}
         <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-14">
           <div
-            className="flex flex-wrap items-end gap-6"
             style={{ opacity: hovered ? 1 : 0, transform: hovered ? "none" : "translateY(8px)", transition: "opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s" }}
           >
             <p className="font-body text-base text-[#c4c4c4] max-w-sm font-light leading-relaxed">
               {project.description}
             </p>
-            <div className="flex gap-2 flex-wrap">
-              {project.tools.map((t) => (
-                <span key={t} className="font-mono text-[0.74rem] tracking-[0.15em] border border-[#ff4500] text-[#ff4500] px-2 py-1">
-                  {t}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 
@@ -270,9 +245,7 @@ export default function App() {
         {/* ── Work section label ──────────────────────────────────────────── */}
         <div id="work" className="flex items-center border-b border-[#1e1e1e]">
           <div className="w-14 md:w-16 py-3 border-r border-[#1e1e1e] shrink-0" />
-          <div className="px-5 py-3 flex-1">
-            <span className="font-mono text-[0.68rem] tracking-[0.25em] text-[#6b6b6b] uppercase">MODULE_01 // SELECTED WORK</span>
-          </div>
+          <div className="px-5 py-3 flex-1" />
           <div className="px-5 py-3 border-l border-[#1e1e1e]">
             <span className="font-mono text-[0.68rem] tracking-[0.2em] text-[#6b6b6b]">{projects.length.toString().padStart(2, "0")} PROJECTS</span>
           </div>
@@ -290,9 +263,7 @@ export default function App() {
           {/* Section label */}
           <div className="flex items-center border-b border-[#1e1e1e]">
             <div className="w-14 md:w-16 py-3 border-r border-[#1e1e1e] shrink-0" />
-            <div className="px-5 py-3 flex-1">
-              <span className="font-mono text-[0.68rem] tracking-[0.25em] text-[#6b6b6b] uppercase">MODULE_02 // SPECIFICATION</span>
-            </div>
+            <div className="px-5 py-3 flex-1" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-[#1e1e1e]">
@@ -332,7 +303,7 @@ export default function App() {
                   { label: "RESUME ↗", href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing" },
                 ].map(({ label, href }) => (
                   <a key={label} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                    className="font-mono text-[0.74rem] tracking-[0.15em] text-[#949494] hover:text-[#ff4500] transition-colors py-3 border-r border-[#1e1e1e] last:border-none">
+                    className="font-mono text-[0.74rem] tracking-[0.15em] text-[#949494] hover:text-[#ff4500] transition-colors py-3 pl-5 border-r border-[#1e1e1e] last:border-none">
                     {label}
                   </a>
                 ))}
