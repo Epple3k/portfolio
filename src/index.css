@@ -1,11 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap');
 @import 'tailwindcss';
 
 @theme inline {
-  --font-display: 'Instrument Serif', Georgia, serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-display: 'Archivo', Helvetica, Arial, sans-serif;
+  --font-body: 'Archivo', Helvetica, Arial, sans-serif;
   --font-mono: 'DM Mono', monospace;
 
   --color-background: #0a0a0a;
