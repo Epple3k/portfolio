@@ -1,4 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import attentionFieldImg from "./assets/project-attention-field.png";
+import scrollInterfaceImg from "./assets/project-scroll-interface.png";
+import dataTopographyImg from "./assets/project-data-topography.png";
 
 const projects = [
   {
@@ -11,8 +14,7 @@ const projects = [
     tools: ["JS", "D3", "HTML", "CSS"],
     year: "2026",
     status: "ACTIVE",
-    image:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=2400&h=1400&fit=crop&auto=format",
+    image: attentionFieldImg,
     accent: false,
   },
   {
@@ -25,8 +27,7 @@ const projects = [
     tools: ["REACT", "FRAMER MOTION", "WEBGL"],
     year: "2025",
     status: "ARCHIVED",
-    image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=2400&h=1400&fit=crop&auto=format",
+    image: scrollInterfaceImg,
     accent: false,
   },
   {
@@ -39,8 +40,7 @@ const projects = [
     tools: ["THREE.JS", "PYTHON", "GLSL"],
     year: "2026",
     status: "ITERATING",
-    image:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=2400&h=1400&fit=crop&auto=format",
+    image: dataTopographyImg,
     accent: true,
   },
   {
@@ -60,9 +60,9 @@ const projects = [
 ];
 
 const thumbProjects = [
-  { num: "01", label: "ATTENTION FIELD", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop&auto=format" },
-  { num: "02", label: "SCROLL INTERFACE", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=400&fit=crop&auto=format" },
-  { num: "03", label: "DATA TOPOGRAPHY", image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&h=400&fit=crop&auto=format" },
+  { num: "01", label: "ATTENTION FIELD", image: attentionFieldImg },
+  { num: "02", label: "SCROLL INTERFACE", image: scrollInterfaceImg },
+  { num: "03", label: "DATA TOPOGRAPHY", image: dataTopographyImg },
   { num: "04", label: "SIGNAL ARCHIVE", image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=400&h=400&fit=crop&auto=format" },
   { num: "05", label: "NEURAL SURFACE", image: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&h=400&fit=crop&auto=format" },
   { num: "06", label: "FORM STUDY", image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop&auto=format" },
