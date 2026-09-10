@@ -1,62 +1,43 @@
-import { useEffect, useRef } from "react";
-import defaultHandAsset from "../../assets/interactions/click-hand.svg";
+import { useEffect, useRef, useState } from "react";
+import HandGlyph, { HAND_VB_WIDTH, HAND_VB_HEIGHT, HAND_HOTSPOT_VB } from "./HandGlyph";
 import styles from "./CursorHand.module.css";
 
-// REPLACE/TWEAK: how far right/below the real cursor the hand sits.
-const OFFSET_X = 10;
-const OFFSET_Y = 14;
+// REPLACE/TWEAK: overall rendered size of the hand, in px. Height
+// follows automatically from the glyph's own aspect ratio.
+const RENDER_WIDTH = 130;
+const RENDER_HEIGHT = RENDER_WIDTH * (HAND_VB_HEIGHT / HAND_VB_WIDTH);
 
-// Selector for anything that should trigger the "hovering" press.
-const INTERACTIVE_SELECTOR = "a, button, [role='button'], input, textarea, select, summary";
-
-export interface CursorHandProps {
-  /** Swap the icon by passing a different import here. */
-  asset?: string;
-}
+// The exact rendered-pixel position of the fingertip hotspot, derived
+// from the glyph's own viewBox + hotspot — not eyeballed. This precise
+// pixel is what gets aligned to the real clientX/clientY, and it's
+// also what every gesture transform is anchored to, so animating the
+// hand never shifts the point that's actually "clicking."
+const HOTSPOT_X = (HAND_HOTSPOT_VB.x / HAND_VB_WIDTH) * RENDER_WIDTH;
+const HOTSPOT_Y = (HAND_HOTSPOT_VB.y / HAND_VB_HEIGHT) * RENDER_HEIGHT;
 
 /**
- * Mount this once, near the root of the app. It renders a hand that
- * follows the mouse everywhere, presses slightly on hovering any
- * interactive element, and plays a stronger one-shot animation on
- * click.
+ * Site-wide custom cursor. Replaces the system pointer entirely (see
+ * the global `cursor: none !important` rule in index.css) with a hand
+ * whose index-fingertip is pixel-aligned to the real cursor position.
  *
- * There's deliberately no `matchMedia("(pointer: fine)")` gate here —
- * some hybrid/touchscreen laptops report a coarse *primary* pointer
- * even while a mouse or trackpad is actively driving the page, which
- * would silently disable this outright. Instead it relies on natural
- * behavior: if the device never fires `mousemove`, the hand simply
- * never becomes visible (it starts at opacity 0 and only turns on
- * inside the move handler below).
- *
- * Following the mouse is a direct, user-driven response rather than
- * ambient/autoplaying motion, so prefers-reduced-motion doesn't turn
- * it off outright either — instead it only removes the decorative
- * flourishes (the eased hover press and the click bounce), see the
- * media query in CursorHand.module.css.
- *
- * Position updates bypass React state on purpose — mousemove fires far
- * too often for that — and instead write directly to the DOM node via
- * a ref, batched to one write per animation frame.
+ * Position tracking is direct and unsmoothed: every frame renders the
+ * latest raw clientX/clientY, batched through requestAnimationFrame
+ * only to avoid redundant style writes within the same frame — never
+ * interpolated/eased, so there's no lag between the physical mouse and
+ * the hand.
  */
-export default function CursorHand({ asset = defaultHandAsset }: CursorHandProps) {
+export default function CursorHand() {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const handRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | null>(null);
-  const posRef = useRef({ x: -100, y: -100 });
+  const posRef = useRef({ x: -9999, y: -9999 });
+  const [pressed, setPressed] = useState(false);
 
   useEffect(() => {
     const wrap = wrapRef.current;
-    const hand = handRef.current;
-    if (!wrap || !hand) return;
-
-    // REPLACE ASSET: set via background-image (not <img src>) — an
-    // <img src="data:..."> inside a zero-size wrapper was confirmed to
-    // silently fail to render on the live site, while a background
-    // image on a normally-sized div rendered reliably.
-    hand.style.backgroundImage = `url("${asset}")`;
+    if (!wrap) return;
 
     const applyPosition = () => {
-      wrap.style.transform = `translate3d(${posRef.current.x + OFFSET_X}px, ${posRef.current.y + OFFSET_Y}px, 0)`;
+      wrap.style.transform = `translate3d(${posRef.current.x - HOTSPOT_X}px, ${posRef.current.y - HOTSPOT_Y}px, 0)`;
       frameRef.current = null;
     };
 
@@ -68,51 +49,50 @@ export default function CursorHand({ asset = defaultHandAsset }: CursorHandProps
       }
     };
 
-    const onLeaveWindow = () => {
+    // Leaving the page/window (or losing focus, e.g. alt-tab) hides
+    // the hand immediately rather than letting it get stuck at the
+    // last known position. It reappears the instant a fresh mousemove
+    // arrives, already at the correct spot.
+    const hide = () => {
       wrap.style.opacity = "0";
     };
 
-    const onOver = (e: MouseEvent) => {
-      if ((e.target as HTMLElement)?.closest(INTERACTIVE_SELECTOR)) {
-        hand.classList.add(styles.hovering);
-      }
-    };
-
-    const onOut = (e: MouseEvent) => {
-      if ((e.target as HTMLElement)?.closest(INTERACTIVE_SELECTOR)) {
-        hand.classList.remove(styles.hovering);
-      }
-    };
-
-    const onDown = () => {
-      hand.classList.add(styles.clicking);
-    };
-
-    const onAnimationEnd = () => {
-      hand.classList.remove(styles.clicking);
-    };
+    const onDown = () => setPressed(true);
+    const onUp = () => setPressed(false);
 
     window.addEventListener("mousemove", onMove, { passive: true });
-    document.documentElement.addEventListener("mouseleave", onLeaveWindow);
-    window.addEventListener("mouseover", onOver, { passive: true });
-    window.addEventListener("mouseout", onOut, { passive: true });
+    document.documentElement.addEventListener("mouseleave", hide);
+    window.addEventListener("blur", hide);
     window.addEventListener("mousedown", onDown, { passive: true });
-    hand.addEventListener("animationend", onAnimationEnd);
+    window.addEventListener("mouseup", onUp, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", onMove);
-      document.documentElement.removeEventListener("mouseleave", onLeaveWindow);
-      window.removeEventListener("mouseover", onOver);
-      window.removeEventListener("mouseout", onOut);
+      document.documentElement.removeEventListener("mouseleave", hide);
+      window.removeEventListener("blur", hide);
       window.removeEventListener("mousedown", onDown);
-      hand.removeEventListener("animationend", onAnimationEnd);
+      window.removeEventListener("mouseup", onUp);
       if (frameRef.current != null) cancelAnimationFrame(frameRef.current);
     };
-  }, [asset]);
+  }, []);
 
   return (
-    <div ref={wrapRef} className={styles.wrap} aria-hidden="true">
-      <div ref={handRef} className={styles.hand} />
+    <div
+      ref={wrapRef}
+      className={styles.wrap}
+      style={{ width: RENDER_WIDTH, height: RENDER_HEIGHT }}
+      aria-hidden="true"
+    >
+      <div
+        className={`${styles.hand} ${pressed ? styles.pressed : ""}`}
+        style={{
+          width: RENDER_WIDTH,
+          height: RENDER_HEIGHT,
+          transformOrigin: `${HOTSPOT_X}px ${HOTSPOT_Y}px`,
+        }}
+      >
+        <HandGlyph pressed={pressed} className={styles.glyph} />
+      </div>
     </div>
   );
 }
