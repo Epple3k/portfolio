@@ -10,15 +10,15 @@
  * CursorHand.tsx converts those into a rendered-pixel offset itself;
  * you never need to hand-tune an offset in px.
  *
- * Geometry note: the index finger's base (x:56-78) must sit fully
- * inside the fist body's x-range (x:14-80) where they overlap in y, or
- * you get a visible gap between the finger and the hand.
+ * Geometry note: the index finger's base and the wrist must each sit
+ * fully inside the fist body's x-range where they overlap it in y, or
+ * you get a visible gap between that piece and the hand.
  *
- * Deliberately simplified silhouette: the wrist, palm, and three
- * curled fingers are merged into a single smooth rounded shape (no
- * separate knuckle bumps or a wrist seam) — just fist + thumb +
- * pointer finger. Still reads clearly as a pointing hand, with less
- * visual noise.
+ * Deliberately simplified silhouette: the palm and three curled
+ * fingers are merged into one smooth rounded "fist" shape (no
+ * separate knuckle bumps) — just fist + wrist + thumb + pointer
+ * finger. The wrist is its own, narrower shape so it visibly tapers
+ * in from the fist rather than being one uniform block.
  *
  * Only the index finger animates on click (see .indexFinger /
  * .indexPressed in CursorHand.module.css) — the fist and thumb are
@@ -46,21 +46,21 @@ export const HAND_VB_HEIGHT = 140;
 const MIRROR_TRANSFORM = `translate(${HAND_VB_WIDTH}, 0) scale(-1, 1)`;
 
 // Tip of the extended index finger in LOCAL (pre-mirror) coordinates —
-// see the index-finger <rect> below: x=56 width=22 means its
-// horizontal center is 56+22/2=67, and its top edge is y=2. A rounded
+// see the index-finger <rect> below: x=58 width=22 means its
+// horizontal center is 58+22/2=69, and its top edge is y=2. A rounded
 // rect with rx = half its width has a true point-shaped apex at
 // (center-x, top-y), so this is exact.
-const HOTSPOT_LOCAL = { x: 67, y: 2 };
+const HOTSPOT_LOCAL = { x: 69, y: 2 };
 
 // The same point after the group mirror — this is what's actually
 // aligned to the cursor, so it's what CursorHand.tsx imports.
 export const HAND_HOTSPOT_VB = { x: HAND_VB_WIDTH - HOTSPOT_LOCAL.x, y: HOTSPOT_LOCAL.y };
 
-// Base of the same finger, where it meets the palm (same x-center,
+// Base of the same finger, where it meets the fist (same x-center,
 // bottom edge at y = 2 + height 70 = 72) — in LOCAL coordinates, used
 // as that rect's own transform-origin (see below), which is unaffected
 // by the ancestor mirror.
-export const HAND_INDEX_BASE_VB = { x: 67, y: 72 };
+export const HAND_INDEX_BASE_VB = { x: 69, y: 72 };
 
 const FILL = "#ff4500";
 
@@ -80,19 +80,24 @@ export default function HandGlyph({
       focusable="false"
     >
       <g transform={MIRROR_TRANSFORM}>
-        {/* Fist — wrist, palm, and curled fingers merged into one
-            smooth rounded shape instead of six separate pieces. Spans
-            wide/tall enough that the index finger's base (56-78) and
-            the thumb both land solidly inside it. */}
-        <rect x="14" y="40" width="66" height="96" rx="28" fill={FILL} />
+        {/* Fist (palm + curled fingers) — spans wide enough that the
+            index finger's base (58-80) and the thumb both land solidly
+            inside it. */}
+        <rect x="14" y="40" width="66" height="70" rx="28" fill={FILL} />
+        {/* Wrist — its own, narrower shape (36 wide vs. the fist's 66),
+            centered under the fist and overlapping its bottom by 10
+            units for a seamless taper. */}
+        <rect x="29" y="100" width="36" height="36" rx="14" fill={FILL} />
         {/* Thumb, tucked against the fist's right side (pre-mirror —
             ends up on the left in the final rendered hand), near the
-            base of the index finger. */}
-        <rect x="64" y="68" width="22" height="36" rx="11" fill={FILL} transform="rotate(20 75 86)" />
-        {/* Extended index finger — the only part that animates on
-            click. Its tip is the hotspot (after the group mirror). */}
+            base of the index finger. Bigger and extending further out
+            than before. */}
+        <rect x="66" y="62" width="26" height="42" rx="13" fill={FILL} transform="rotate(22 79 83)" />
+        {/* Extended index finger — flush against the fist's left edge
+            (post-mirror) — and the only part that animates on click.
+            Its tip is the hotspot (after the group mirror). */}
         <rect
-          x="56"
+          x="58"
           y="2"
           width="22"
           height="70"
