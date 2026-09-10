@@ -11,19 +11,24 @@
  * you never need to hand-tune an offset in px.
  *
  * Geometry note: the index finger's base (x:56-78) must sit fully
- * inside the palm's x-range (x:12-80) where they overlap in y, or you
- * get a visible gap between the finger and the hand.
+ * inside the fist body's x-range (x:14-80) where they overlap in y, or
+ * you get a visible gap between the finger and the hand.
+ *
+ * Deliberately simplified silhouette: the wrist, palm, and three
+ * curled fingers are merged into a single smooth rounded shape (no
+ * separate knuckle bumps or a wrist seam) — just fist + thumb +
+ * pointer finger. Still reads clearly as a pointing hand, with less
+ * visual noise.
  *
  * Only the index finger animates on click (see .indexFinger /
- * .indexPressed in CursorHand.module.css) — the palm, thumb, and
- * curled fingers are static. It scales along Y anchored at its BASE
- * (HAND_INDEX_BASE_VB, where it meets the palm), so the base stays put
- * and the tip — pointing toward the top of the screen — is the part
- * that visibly retracts. Note this means the tip (== the cursor
- * hotspot) does move a few px during the ~130ms click animation; the
- * real clickable point is always the system's actual cursor position
- * regardless, so this is purely decorative and doesn't affect what
- * you actually click.
+ * .indexPressed in CursorHand.module.css) — the fist and thumb are
+ * static. It scales along Y anchored at its BASE (HAND_INDEX_BASE_VB,
+ * where it meets the fist), so the base stays put and the tip —
+ * pointing toward the top of the screen — is the part that visibly
+ * retracts. Note this means the tip (== the cursor hotspot) does move
+ * a few px during the ~130ms click animation; the real clickable point
+ * is always the system's actual cursor position regardless, so this is
+ * purely decorative and doesn't affect what you actually click.
  */
 
 export const HAND_VB_WIDTH = 100;
@@ -75,21 +80,15 @@ export default function HandGlyph({
       focusable="false"
     >
       <g transform={MIRROR_TRANSFORM}>
-        {/* Wrist */}
-        <rect x="28" y="108" width="36" height="28" rx="10" fill={FILL} />
-        {/* Palm — wide enough that the index finger's base (56-78) and
-            the curled fingers' base (16-59) both land fully inside it. */}
-        <rect x="12" y="60" width="68" height="56" rx="24" fill={FILL} />
-        {/* Thumb, tucked against the palm's right side (pre-mirror —
+        {/* Fist — wrist, palm, and curled fingers merged into one
+            smooth rounded shape instead of six separate pieces. Spans
+            wide/tall enough that the index finger's base (56-78) and
+            the thumb both land solidly inside it. */}
+        <rect x="14" y="40" width="66" height="96" rx="28" fill={FILL} />
+        {/* Thumb, tucked against the fist's right side (pre-mirror —
             ends up on the left in the final rendered hand), near the
             base of the index finger. */}
-        <rect x="66" y="70" width="20" height="34" rx="10" fill={FILL} transform="rotate(20 76 87)" />
-        {/* Curled fingers (pinky, ring, middle) — contiguous, shortest
-            to tallest, all based at y=70 (sunk into the palm, which
-            starts at y=60, for a solid seam). Always static. */}
-        <rect x="16" y="44" width="13" height="26" rx="6.5" fill={FILL} />
-        <rect x="29" y="38" width="15" height="32" rx="7.5" fill={FILL} />
-        <rect x="44" y="36" width="15" height="34" rx="7.5" fill={FILL} />
+        <rect x="64" y="68" width="22" height="36" rx="11" fill={FILL} transform="rotate(20 75 86)" />
         {/* Extended index finger — the only part that animates on
             click. Its tip is the hotspot (after the group mirror). */}
         <rect
