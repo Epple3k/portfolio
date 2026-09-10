@@ -16,9 +16,14 @@
  *
  * Only the index finger animates on click (see .indexFinger /
  * .indexPressed in CursorHand.module.css) — the palm, thumb, and
- * curled fingers are static. It scales along Y anchored at the tip
- * (HAND_HOTSPOT_VB), so the base retracts toward the palm while the
- * tip — which is also the cursor hotspot — never moves.
+ * curled fingers are static. It scales along Y anchored at its BASE
+ * (HAND_INDEX_BASE_VB, where it meets the palm), so the base stays put
+ * and the tip — pointing toward the top of the screen — is the part
+ * that visibly retracts. Note this means the tip (== the cursor
+ * hotspot) does move a few px during the ~130ms click animation; the
+ * real clickable point is always the system's actual cursor position
+ * regardless, so this is purely decorative and doesn't affect what
+ * you actually click.
  */
 
 export const HAND_VB_WIDTH = 100;
@@ -29,6 +34,11 @@ export const HAND_VB_HEIGHT = 140;
 // its top edge is y=2. A rounded rect with rx = half its width has a
 // true point-shaped apex at (center-x, top-y), so this is exact.
 export const HAND_HOTSPOT_VB = { x: 67, y: 2 };
+
+// Base of the same finger, where it meets the palm (same x-center,
+// bottom edge at y = 2 + height 70 = 72). This is the click-animation
+// anchor — the opposite end from the hotspot.
+export const HAND_INDEX_BASE_VB = { x: 67, y: 72 };
 
 const FILL = "#ff4500";
 
@@ -72,7 +82,7 @@ export default function HandGlyph({
         rx="11"
         fill={FILL}
         className={indexFingerClassName}
-        style={{ transformOrigin: `${HAND_HOTSPOT_VB.x}px ${HAND_HOTSPOT_VB.y}px` }}
+        style={{ transformOrigin: `${HAND_INDEX_BASE_VB.x}px ${HAND_INDEX_BASE_VB.y}px` }}
       />
     </svg>
   );
