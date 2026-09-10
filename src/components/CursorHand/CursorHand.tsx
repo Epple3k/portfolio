@@ -40,7 +40,7 @@ export interface CursorHandProps {
  */
 export default function CursorHand({ asset = defaultHandAsset }: CursorHandProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const handRef = useRef<HTMLImageElement>(null);
+  const handRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | null>(null);
   const posRef = useRef({ x: -100, y: -100 });
 
@@ -48,6 +48,12 @@ export default function CursorHand({ asset = defaultHandAsset }: CursorHandProps
     const wrap = wrapRef.current;
     const hand = handRef.current;
     if (!wrap || !hand) return;
+
+    // REPLACE ASSET: set via background-image (not <img src>) — an
+    // <img src="data:..."> inside a zero-size wrapper was confirmed to
+    // silently fail to render on the live site, while a background
+    // image on a normally-sized div rendered reliably.
+    hand.style.backgroundImage = `url("${asset}")`;
 
     const applyPosition = () => {
       wrap.style.transform = `translate3d(${posRef.current.x + OFFSET_X}px, ${posRef.current.y + OFFSET_Y}px, 0)`;
@@ -102,11 +108,11 @@ export default function CursorHand({ asset = defaultHandAsset }: CursorHandProps
       hand.removeEventListener("animationend", onAnimationEnd);
       if (frameRef.current != null) cancelAnimationFrame(frameRef.current);
     };
-  }, []);
+  }, [asset]);
 
   return (
-    <div ref={wrapRef} className={styles.wrap}>
-      <img ref={handRef} src={asset} alt="" draggable={false} className={styles.hand} />
+    <div ref={wrapRef} className={styles.wrap} aria-hidden="true">
+      <div ref={handRef} className={styles.hand} />
     </div>
   );
 }

@@ -8,8 +8,13 @@
  *            keyframe) lives here in plain CSS, so JS never has to know
  *            about or fight over the `transform` property with CSS.
  *
+ * Both layers have real explicit dimensions and render the icon via
+ * `background-image` on a plain div rather than an <img> — verified
+ * live against the deployed site that this renders reliably, where an
+ * <img src="data:..."> inside a zero-size wrapper did not.
+ *
  * ── Where to tweak ──────────────────────────────────────────────────
- * - Icon size: `.hand` width/height.
+ * - Icon size: `.wrap` AND `.hand` width/height (keep them matching).
  * - Rest tilt/position: `.hand` transform + OFFSET_X/OFFSET_Y in
  *   CursorHand.tsx.
  * - Hover strength/speed: `.hand.hovering`.
@@ -21,19 +26,20 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 0;
-  height: 0;
+  width: 28px;
+  height: 28px;
   pointer-events: none;
-  z-index: 2147483000;
+  z-index: 999999999;
   opacity: 0;
   transition: opacity 150ms ease;
-  will-change: transform;
 }
 
 .hand {
-  display: block;
-  width: 28px;
-  height: 28px;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   transform: rotate(-8deg) scale(1);
   transform-origin: 25% 15%; /* roughly the fingertip */
   transition: transform 120ms ease-out;
