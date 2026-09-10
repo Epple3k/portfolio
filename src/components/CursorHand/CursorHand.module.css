@@ -10,8 +10,10 @@
  *
  * ── Where to tweak ──────────────────────────────────────────────────
  * - Overall size: RENDER_WIDTH in CursorHand.tsx (not here).
- * - Press strength/speed: `.hand.pressed` + the transition below.
- * - The finger-curl part of the press gesture lives in HandGlyph.tsx.
+ * - Click strength/speed: `.indexFinger.indexPressed` + its transition
+ *   below. Only the index finger moves — the palm/thumb/curled
+ *   fingers are static (see HandGlyph.tsx) so the click reads as the
+ *   pointing finger itself acting, not the whole hand.
  */
 
 .wrap {
@@ -26,7 +28,6 @@
 }
 
 .hand {
-  transition: transform 110ms cubic-bezier(0.2, 0, 0.2, 1);
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
 }
 
@@ -36,19 +37,25 @@
   height: 100%;
 }
 
-/* ── Click: the hand squashes toward the fingertip (its transform
-   origin is pinned to the hotspot), while HandGlyph independently
-   curls the fingers tighter — not a generic whole-icon shrink. ──── */
-.hand.pressed {
-  transform: scale(0.9, 0.82);
+/* ── Click: the index finger's base retracts toward the palm.
+   transform-origin is pinned (inline, from HandGlyph.tsx) to the exact
+   fingertip/hotspot point, so scaling it down along Y keeps that tip
+   pixel-locked to the cursor while the base visibly moves — it reads
+   as the finger curling in, not the icon shrinking. ──────────────── */
+.indexFinger {
+  transition: transform 130ms cubic-bezier(0.3, 0, 0.2, 1);
+}
+.indexFinger.indexPressed {
+  transform: scaleY(0.85);
 }
 
 /* ── Respect prefers-reduced-motion ────────────────────────────────
    Following the cursor is a direct 1:1 response to the user's own
-   mouse movement, not ambient motion, so it stays on; only the press
-   transition is removed (press state still changes, just instantly). */
+   mouse movement, not ambient motion, so it stays on; only the click
+   transition is removed (the press state still changes, just
+   instantly rather than animating). */
 @media (prefers-reduced-motion: reduce) {
-  .hand {
+  .indexFinger {
     transition: none;
   }
 }

@@ -83,15 +83,11 @@ export default function CursorHand() {
       style={{ width: RENDER_WIDTH, height: RENDER_HEIGHT }}
       aria-hidden="true"
     >
-      <div
-        className={`${styles.hand} ${pressed ? styles.pressed : ""}`}
-        style={{
-          width: RENDER_WIDTH,
-          height: RENDER_HEIGHT,
-          transformOrigin: `${HOTSPOT_X}px ${HOTSPOT_Y}px`,
-        }}
-      >
-        <HandGlyph pressed={pressed} className={styles.glyph} />
+      <div className={styles.hand} style={{ width: RENDER_WIDTH, height: RENDER_HEIGHT }}>
+        <HandGlyph
+          className={styles.glyph}
+          indexFingerClassName={`${styles.indexFinger} ${pressed ? styles.indexPressed : ""}`}
+        />
       </div>
     </div>
   );
