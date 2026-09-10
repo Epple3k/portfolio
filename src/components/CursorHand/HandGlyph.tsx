@@ -29,15 +29,32 @@
 export const HAND_VB_WIDTH = 100;
 export const HAND_VB_HEIGHT = 140;
 
-// Tip of the extended index finger — see the index-finger <rect>
-// below: x=56 width=22 means its horizontal center is 56+22/2=67, and
-// its top edge is y=2. A rounded rect with rx = half its width has a
-// true point-shaped apex at (center-x, top-y), so this is exact.
-export const HAND_HOTSPOT_VB = { x: 67, y: 2 };
+// All the shapes below are drawn in their own local coordinates, then
+// mirrored horizontally as one group (see MIRROR_TRANSFORM) so the
+// whole hand — palm, thumb, curled fingers, pointer finger — flips
+// left/right together without hand-recomputing every shape's x. Any
+// coordinate meant to describe where something ends up ON SCREEN
+// (i.e. HAND_HOTSPOT_VB, used outside this file) has to account for
+// that mirror; anything used only for a shape's OWN transform-origin
+// (i.e. HAND_INDEX_BASE_VB) does not, since transform-origin resolves
+// in the element's local space before the ancestor mirror applies.
+const MIRROR_TRANSFORM = `translate(${HAND_VB_WIDTH}, 0) scale(-1, 1)`;
+
+// Tip of the extended index finger in LOCAL (pre-mirror) coordinates —
+// see the index-finger <rect> below: x=56 width=22 means its
+// horizontal center is 56+22/2=67, and its top edge is y=2. A rounded
+// rect with rx = half its width has a true point-shaped apex at
+// (center-x, top-y), so this is exact.
+const HOTSPOT_LOCAL = { x: 67, y: 2 };
+
+// The same point after the group mirror — this is what's actually
+// aligned to the cursor, so it's what CursorHand.tsx imports.
+export const HAND_HOTSPOT_VB = { x: HAND_VB_WIDTH - HOTSPOT_LOCAL.x, y: HOTSPOT_LOCAL.y };
 
 // Base of the same finger, where it meets the palm (same x-center,
-// bottom edge at y = 2 + height 70 = 72). This is the click-animation
-// anchor — the opposite end from the hotspot.
+// bottom edge at y = 2 + height 70 = 72) — in LOCAL coordinates, used
+// as that rect's own transform-origin (see below), which is unaffected
+// by the ancestor mirror.
 export const HAND_INDEX_BASE_VB = { x: 67, y: 72 };
 
 const FILL = "#ff4500";
@@ -57,33 +74,35 @@ export default function HandGlyph({
       aria-hidden="true"
       focusable="false"
     >
-      {/* Wrist */}
-      <rect x="28" y="108" width="36" height="28" rx="10" fill={FILL} />
-      {/* Palm — wide enough that the index finger's base (56-78) and the
-          curled fingers' base (16-59) both land fully inside it. */}
-      <rect x="12" y="60" width="68" height="56" rx="24" fill={FILL} />
-      {/* Thumb, tucked against the palm's right side, near the base of
-          the index finger — mirrors a natural pointing-hand silhouette
-          better than tucking it under the curled fingers on the left. */}
-      <rect x="66" y="70" width="20" height="34" rx="10" fill={FILL} transform="rotate(20 76 87)" />
-      {/* Curled fingers (pinky, ring, middle) — contiguous, shortest to
-          tallest, all based at y=70 (sunk into the palm, which starts
-          at y=60, for a solid seam). Always static. */}
-      <rect x="16" y="44" width="13" height="26" rx="6.5" fill={FILL} />
-      <rect x="29" y="38" width="15" height="32" rx="7.5" fill={FILL} />
-      <rect x="44" y="36" width="15" height="34" rx="7.5" fill={FILL} />
-      {/* Extended index finger — the only part that animates on click.
-          Its tip is the hotspot. */}
-      <rect
-        x="56"
-        y="2"
-        width="22"
-        height="70"
-        rx="11"
-        fill={FILL}
-        className={indexFingerClassName}
-        style={{ transformOrigin: `${HAND_INDEX_BASE_VB.x}px ${HAND_INDEX_BASE_VB.y}px` }}
-      />
+      <g transform={MIRROR_TRANSFORM}>
+        {/* Wrist */}
+        <rect x="28" y="108" width="36" height="28" rx="10" fill={FILL} />
+        {/* Palm — wide enough that the index finger's base (56-78) and
+            the curled fingers' base (16-59) both land fully inside it. */}
+        <rect x="12" y="60" width="68" height="56" rx="24" fill={FILL} />
+        {/* Thumb, tucked against the palm's right side (pre-mirror —
+            ends up on the left in the final rendered hand), near the
+            base of the index finger. */}
+        <rect x="66" y="70" width="20" height="34" rx="10" fill={FILL} transform="rotate(20 76 87)" />
+        {/* Curled fingers (pinky, ring, middle) — contiguous, shortest
+            to tallest, all based at y=70 (sunk into the palm, which
+            starts at y=60, for a solid seam). Always static. */}
+        <rect x="16" y="44" width="13" height="26" rx="6.5" fill={FILL} />
+        <rect x="29" y="38" width="15" height="32" rx="7.5" fill={FILL} />
+        <rect x="44" y="36" width="15" height="34" rx="7.5" fill={FILL} />
+        {/* Extended index finger — the only part that animates on
+            click. Its tip is the hotspot (after the group mirror). */}
+        <rect
+          x="56"
+          y="2"
+          width="22"
+          height="70"
+          rx="11"
+          fill={FILL}
+          className={indexFingerClassName}
+          style={{ transformOrigin: `${HAND_INDEX_BASE_VB.x}px ${HAND_INDEX_BASE_VB.y}px` }}
+        />
+      </g>
     </svg>
   );
 }
