@@ -35,6 +35,7 @@ export default function App() {
       setActiveId(id)
       return
     }
+
     // @ts-ignore
     document.startViewTransition(() => {
       flushSync(() => {
@@ -49,6 +50,7 @@ export default function App() {
       setActiveId(null)
       return
     }
+
     // @ts-ignore
     document.startViewTransition(() => {
       flushSync(() => {
@@ -66,15 +68,18 @@ export default function App() {
       <div
         className="absolute inset-0 z-0 transition-all duration-700 ease-out"
         style={{
-          background: `linear-gradient(90deg, #f0fff0 0%, #c2ffc2 45%, #00ff00 100%)`,
+          background:
+            "linear-gradient(90deg, #f0fff0 0%, #c2ffc2 45%, #00ff00 100%)",
           opacity: hoveredId ? 0.9 : 1,
         }}
       />
+
       {/* Dynamic Glow Shift based on Hover */}
       <div
         className="absolute inset-0 z-0 transition-opacity duration-700 ease-out mix-blend-overlay"
         style={{
-          background: `radial-gradient(circle at 75% 50%, #00ff00 0%, transparent 60%)`,
+          background:
+            "radial-gradient(circle at 75% 50%, #00ff00 0%, transparent 60%)",
           opacity: hoveredId ? 0.8 : 0,
         }}
       />
@@ -87,6 +92,7 @@ export default function App() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl tracking-tight font-medium">
               emit rice
             </h1>
+
             <div className="relative h-32 md:h-48">
               <p
                 className={`absolute inset-0 text-xl md:text-2xl lg:text-3xl leading-snug md:leading-snug transition-all duration-400 ease-out ${
@@ -97,6 +103,7 @@ export default function App() {
               >
                 i make interfaces that connect people to information
               </p>
+
               <p
                 className={`absolute inset-0 text-xl md:text-2xl lg:text-3xl leading-snug md:leading-snug transition-all duration-400 ease-out ${
                   hoveredProject
@@ -110,13 +117,36 @@ export default function App() {
           </div>
 
           <div className="flex flex-col items-start gap-1 text-xl md:text-2xl tracking-tight mt-auto md:ml-12 lg:ml-24">
-            {["linkedin", "github", "email", "resume"].map((link) => (
+            {[
+              {
+                label: "linkedin",
+                href: "https://www.linkedin.com/in/emit-rice/",
+              },
+              {
+                label: "github",
+                href: "https://github.com/Epple3k",
+              },
+              {
+                label: "email",
+                href: "mailto:rice.emit3k@gmail.com",
+              },
+              {
+                label: "resume",
+                href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing",
+              },
+            ].map(({ label, href }) => (
               <a
-                key={link}
-                href={`#${link}`}
+                key={label}
+                href={href}
+                target={href.startsWith("mailto:") ? undefined : "_blank"}
+                rel={
+                  href.startsWith("mailto:")
+                    ? undefined
+                    : "noopener noreferrer"
+                }
                 className="hover:italic hover:translate-x-2 transition-all duration-300"
               >
-                {link}
+                {label}
               </a>
             ))}
           </div>
@@ -139,11 +169,14 @@ export default function App() {
                 className="relative overflow-hidden cursor-pointer group will-change-transform"
                 style={
                   {
-                    // Accordion transition
-                    flex: isHovered ? "2.5" : isAnyHovered ? "0.75" : "1",
-                    transition: "flex 400ms cubic-bezier(0.25, 1, 0.5, 1)",
-                    backgroundColor: "#e5e5e5", // Grey placeholder color matching screenshot
-                    // Using view transition name for shared element effect
+                    flex: isHovered
+                      ? "2.5"
+                      : isAnyHovered
+                        ? "0.75"
+                        : "1",
+                    transition:
+                      "flex 400ms cubic-bezier(0.25, 1, 0.5, 1)",
+                    backgroundColor: "#e5e5e5",
                     viewTransitionName: `project-${p.id}`,
                   } as React.CSSProperties
                 }
@@ -159,14 +192,14 @@ export default function App() {
                   }`}
                 />
 
-                {/* Overlay for unhovered state to match the grey rectangles better */}
+                {/* Overlay */}
                 <div
                   className={`absolute inset-0 bg-[#d1d1d1] mix-blend-multiply transition-opacity duration-500 ${
                     isHovered ? "opacity-0" : "opacity-60"
                   }`}
                 />
 
-                {/* Scrim for text legibility */}
+                {/* Scrim */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-400 ${
                     isHovered ? "opacity-100" : "opacity-0"
@@ -185,11 +218,16 @@ export default function App() {
                     <div className="text-xs md:text-sm font-mono opacity-80 mb-1">
                       {p.id}
                     </div>
+
                     <h2 className="text-2xl md:text-3xl font-medium tracking-tight mb-1">
                       {p.title}
                     </h2>
-                    <div className="text-sm opacity-80">{p.category}</div>
+
+                    <div className="text-sm opacity-80">
+                      {p.category}
+                    </div>
                   </div>
+
                   <div className="text-white mix-blend-exclusion font-mono text-sm opacity-80">
                     {p.year}
                   </div>
@@ -223,23 +261,33 @@ export default function App() {
             >
               [ Close ]
             </button>
-            <div className="font-mono text-xl">{activeProject.id}</div>
+
+            <div className="font-mono text-xl">
+              {activeProject.id}
+            </div>
           </div>
 
           <div className="relative z-10 mt-auto p-8 md:p-16 max-w-4xl">
             <h1 className="text-6xl md:text-8xl tracking-tighter mb-4">
               {activeProject.title}
             </h1>
+
             <p className="text-2xl md:text-3xl leading-tight opacity-80 mb-8 max-w-2xl">
               {activeProject.description}
             </p>
+
             <div className="flex gap-8 font-mono uppercase tracking-wider text-sm border-t border-black/20 pt-8">
               <div>
-                <span className="opacity-50 block mb-1">Category</span>
+                <span className="opacity-50 block mb-1">
+                  Category
+                </span>
                 {activeProject.category}
               </div>
+
               <div>
-                <span className="opacity-50 block mb-1">Year</span>
+                <span className="opacity-50 block mb-1">
+                  Year
+                </span>
                 {activeProject.year}
               </div>
             </div>
