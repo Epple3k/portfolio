@@ -1,50 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&display=swap');
 @import 'tailwindcss';
 
-@theme inline {
-  --font-display: 'Archivo', Helvetica, Arial, sans-serif;
-  --font-body: 'Archivo', Helvetica, Arial, sans-serif;
-  --font-mono: 'DM Mono', monospace;
-
-  --color-background: #0a0a0a;
-  --color-foreground: #f0efeb;
-  --color-muted: #555;
-  --color-rule: #222;
-  --color-orange: #ff4500;
+@theme {
+  --font-sans: "Helvetica Neue", "Arial", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-html, body, #root {
-  height: 100%;
-  background-color: #0a0a0a;
+body, html {
+  margin: 0;
+  padding: 0;
+  overscroll-behavior: none;
 }
 
-* {
-  box-sizing: border-box;
-}
-
-/* The custom hand cursor (src/components/CursorHand) fully replaces
-   the system pointer — there must never be two visible cursors on the
-   page. !important is required here to beat cursor-* utility classes
-   (e.g. Tailwind's `cursor-pointer`) applied anywhere in the app. */
-*, *::before, *::after {
-  cursor: none !important;
-}
-
-::selection {
-  background: #ff4500;
-  color: #0a0a0a;
-}
-
-::-webkit-scrollbar {
-  width: 0;
-  background: transparent;
-}
-
-body {
-  font-family: var(--font-body);
-  background-color: #0a0a0a;
-  color: #f0efeb;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+::view-transition-group(*) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
 }

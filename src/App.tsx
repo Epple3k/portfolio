@@ -1,331 +1,251 @@
-import { useState, useEffect, useRef } from "react";
-import attentionFieldImg from "./assets/project-attention-field.png";
-import scrollInterfaceImg from "./assets/project-scroll-interface.png";
-import dataTopographyImg from "./assets/project-data-topography.png";
-import { CursorHand } from "./components/CursorHand";
+import React, { useState } from "react"
+import { flushSync } from "react-dom"
 
-const projects = [
+import image2 from "./imports/image-2.png"
+import image3 from "./imports/image-1.png"
+
+const PROJECTS = [
   {
-    num: "03",
-    title: "ATTENTION FIELD",
-    subtitle: "Interactive Attention System",
-    description:
-      "Interactive system for exploring relationships between information through attention, movement, and proximity.",
-    category: "INTERACTION STUDY",
+    id: "01",
+    title: "attention field",
+    category: "Web Application",
     year: "2026",
-    image: dataTopographyImg,
-    link: "https://epple3k.github.io/attention-field/",
+    image: image2,
+    description:
+      "An interactive visualization that explores how attention shifts, clusters, and responds across a dynamic field.",
   },
   {
-    num: "02",
-    title: "SCROLL INTERFACE",
-    subtitle: "Kinetic Feedback Experiment",
-    description:
-      "A minimal interface built around continuous scroll-wheel interaction and kinetic feedback loops.",
-    category: "INTERFACE STUDY",
-    year: "2025",
-    image: scrollInterfaceImg,
-    link: "https://epple3k.github.io/contiunuum/",
-  },
-  {
-    num: "01",
-    title: "RESEARCH ATLAS",
-    subtitle: "3D Multivariate Landscape",
-    description:
-      "Translating complex multivariate datasets into navigable 3D landscapes for exploratory analysis.",
-    category: "DATA VISUALIZATION",
+    id: "02",
+    title: "research atlas",
+    category: "Prototyping",
     year: "2026",
-    image: attentionFieldImg,
-    link: "https://epple3k.github.io/fsu-research-atlas-2/",
+    image: image3,
+    description:
+      "An interactive tool for mapping ideas, sources, and connections to make complex research easier to explore.",
   },
-];
-
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.08 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return { ref, visible };
-}
-
-function ProjectRow({ project, idx }: { project: typeof projects[0]; idx: number }) {
-  const { ref, visible } = useScrollReveal();
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <div
-      ref={ref}
-      className="w-full border-t border-[#1e1e1e] relative"
-      style={{ opacity: visible ? 1 : 0, transform: visible ? "none" : "translateY(32px)", transition: "opacity 0.7s ease, transform 0.7s ease" }}
-    >
-      {/* Project label bar */}
-      <div className="flex items-center gap-0 border-b border-[#1e1e1e]">
-        <div className="w-14 md:w-16 py-6 flex items-center justify-center border-r border-[#1e1e1e] shrink-0">
-          <span className="font-mono text-[0.74rem] tracking-[0.15em] text-[#949494]">{project.num}</span>
-        </div>
-        <div className="flex-1 px-5 py-6 flex items-center gap-6">
-          <h2 className="font-display font-black text-2xl md:text-3xl tracking-[-0.01em] text-[#f0efeb] uppercase">
-            {project.title}
-          </h2>
-          <span className="font-mono text-[0.74rem] tracking-[0.18em] text-[#a8a8a8] uppercase">{project.category}</span>
-          <span className="font-mono text-[0.74rem] tracking-[0.1em] text-[#6b6b6b]">—</span>
-          <span className="font-mono text-[0.74rem] tracking-[0.1em] text-[#949494]">{project.year}</span>
-        </div>
-      </div>
-
-      {/* Hero image — full bleed, very tall */}
-      <a
-        href={project.link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block relative w-full overflow-hidden cursor-pointer"
-        style={{ height: "clamp(340px, 65vh, 820px)" }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        <img
-          src={project.image}
-          alt={project.title}
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{
-            transform: hovered ? "scale(1.04)" : "scale(1.0)",
-            transition: "transform 1.1s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease",
-            filter: hovered ? "brightness(0.55)" : "brightness(0.35) saturate(0.2)",
-          }}
-        />
-
-        {/* Description revealed on hover */}
-        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10 lg:p-14">
-          <div
-            style={{ opacity: hovered ? 1 : 0, transform: hovered ? "none" : "translateY(8px)", transition: "opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s" }}
-          >
-            <p className="font-body text-base text-[#c4c4c4] max-w-sm font-light leading-relaxed">
-              {project.description}
-            </p>
-          </div>
-        </div>
-
-        {/* Corner tag */}
-        <div className="absolute top-5 right-5 font-mono text-[0.68rem] tracking-[0.15em] text-[#949494]">
-          IMG_{project.num}
-        </div>
-
-        {/* Arrow on hover */}
-        <div
-          className="absolute top-5 left-5 font-mono text-[0.85rem] tracking-[0.1em] text-[#ff4500]"
-          style={{ opacity: hovered ? 1 : 0, transition: "opacity 0.3s ease" }}
-        >
-          VIEW ↗
-        </div>
-      </a>
-    </div>
-  );
-}
+]
 
 export default function App() {
+  const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const [activeId, setActiveId] = useState<string | null>(null)
+
+  const handleProjectClick = (id: string) => {
+    // @ts-ignore - startViewTransition is relatively new
+    if (!document.startViewTransition) {
+      setActiveId(id)
+      return
+    }
+    // @ts-ignore
+    document.startViewTransition(() => {
+      flushSync(() => {
+        setActiveId(id)
+      })
+    })
+  }
+
+  const handleBack = () => {
+    // @ts-ignore
+    if (!document.startViewTransition) {
+      setActiveId(null)
+      return
+    }
+    // @ts-ignore
+    document.startViewTransition(() => {
+      flushSync(() => {
+        setActiveId(null)
+      })
+    })
+  }
+
+  const activeProject = PROJECTS.find((p) => p.id === activeId)
+  const hoveredProject = PROJECTS.find((p) => p.id === hoveredId)
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-[#f0efeb] font-body overflow-x-hidden">
-      {/* Site-wide cursor-following hand — see src/components/CursorHand */}
-      <CursorHand />
+    <div className="relative min-h-screen w-full font-sans text-black overflow-hidden flex selection:bg-black selection:text-[#1aff1a]">
+      {/* Background Gradient Layer */}
+      <div
+        className="absolute inset-0 z-0 transition-all duration-700 ease-out"
+        style={{
+          background: `linear-gradient(90deg, #f0fff0 0%, #c2ffc2 45%, #00ff00 100%)`,
+          opacity: hoveredId ? 0.9 : 1,
+        }}
+      />
+      {/* Dynamic Glow Shift based on Hover */}
+      <div
+        className="absolute inset-0 z-0 transition-opacity duration-700 ease-out mix-blend-overlay"
+        style={{
+          background: `radial-gradient(circle at 75% 50%, #00ff00 0%, transparent 60%)`,
+          opacity: hoveredId ? 0.8 : 0,
+        }}
+      />
 
-      {/* ── Nav ───────────────────────────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 w-full z-40 border-b border-[#1e1e1e] bg-[#0a0a0a]/90 backdrop-blur-md flex items-stretch">
-        {/* Identity */}
-        <div className="flex items-center gap-4 px-5 py-4 border-r border-[#1e1e1e]">
-          <span className="font-mono text-[0.9rem] tracking-[0.25em] text-[#f0efeb] uppercase">Emit Rice</span>
+      {/* Main Content Layout */}
+      <main className="relative z-10 w-full h-screen flex flex-col md:flex-row p-4 md:p-8 md:gap-8">
+        {/* Left Column */}
+        <div className="w-full md:w-1/2 h-full flex flex-col justify-between max-w-xl pb-8 md:pb-0">
+          <div className="flex flex-col gap-6 lg:gap-12 mt-4 md:mt-8">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl tracking-tight font-medium">
+              emit rice
+            </h1>
+            <div className="relative h-32 md:h-48">
+              <p
+                className={`absolute inset-0 text-xl md:text-2xl lg:text-3xl leading-snug md:leading-snug transition-all duration-400 ease-out ${
+                  hoveredProject
+                    ? "opacity-0 translate-y-4 pointer-events-none"
+                    : "opacity-100 translate-y-0"
+                }`}
+              >
+                i make interfaces that connect people to information
+              </p>
+              <p
+                className={`absolute inset-0 text-xl md:text-2xl lg:text-3xl leading-snug md:leading-snug transition-all duration-400 ease-out ${
+                  hoveredProject
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 -translate-y-4 pointer-events-none"
+                }`}
+              >
+                {hoveredProject?.description}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-start gap-1 text-xl md:text-2xl tracking-tight mt-auto md:ml-12 lg:ml-24">
+            {["linkedin", "github", "email", "resume"].map((link) => (
+              <a
+                key={link}
+                href={`#${link}`}
+                className="hover:italic hover:translate-x-2 transition-all duration-300"
+              >
+                {link}
+              </a>
+            ))}
+          </div>
         </div>
-        <div className="flex items-center gap-1 px-5 py-4 border-r border-[#1e1e1e]">
-          <span className="font-mono text-[0.82rem] tracking-[0.1em] text-[#949494]">Design Engineer</span>
-        </div>
-        <div className="flex-1" />
-        {[
-          { label: "WORK", href: "#work" },
-          { label: "ABOUT", href: "#about" },
-        ].map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            className="flex items-center px-5 py-4 border-l border-[#1e1e1e] font-mono text-[0.9rem] tracking-[0.2em] text-[#a8a8a8] hover:text-[#f0efeb] transition-colors duration-150"
-          >
-            {item.label}
-          </a>
-        ))}
-        <a
-          href="mailto:rice.emit3k@gmail.com"
-          className="flex items-center px-5 py-4 border-l border-[#1e1e1e] font-mono text-[0.9rem] tracking-[0.2em] text-[#ff4500] hover:bg-[#ff4500] hover:text-[#0a0a0a] transition-colors duration-150"
+
+        {/* Right Column (Ribbon) */}
+        <div
+          className="w-full md:w-1/2 h-full flex flex-col gap-2 md:gap-3"
+          onMouseLeave={() => setHoveredId(null)}
         >
-          CONTACT ↗
-        </a>
-      </nav>
+          {PROJECTS.map((p) => {
+            const isHovered = hoveredId === p.id
+            const isAnyHovered = hoveredId !== null
 
-      <div className="pt-[57px] w-full">
+            return (
+              <div
+                key={p.id}
+                onMouseEnter={() => setHoveredId(p.id)}
+                onClick={() => handleProjectClick(p.id)}
+                className="relative overflow-hidden cursor-pointer group will-change-transform"
+                style={
+                  {
+                    // Accordion transition
+                    flex: isHovered ? "2.5" : isAnyHovered ? "0.75" : "1",
+                    transition: "flex 400ms cubic-bezier(0.25, 1, 0.5, 1)",
+                    backgroundColor: "#e5e5e5", // Grey placeholder color matching screenshot
+                    // Using view transition name for shared element effect
+                    viewTransitionName: `project-${p.id}`,
+                  } as React.CSSProperties
+                }
+              >
+                {/* Project Image */}
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-out origin-center ${
+                    isHovered
+                      ? "grayscale-0 opacity-100 scale-100"
+                      : "grayscale opacity-30 scale-105"
+                  }`}
+                />
 
-        {/* ── Hero / Identity Plate ─────────────────────────────────────────── */}
-        <header className="w-full border-b border-[#1e1e1e] relative overflow-hidden" style={{ minHeight: "62vh" }}>
+                {/* Overlay for unhovered state to match the grey rectangles better */}
+                <div
+                  className={`absolute inset-0 bg-[#d1d1d1] mix-blend-multiply transition-opacity duration-500 ${
+                    isHovered ? "opacity-0" : "opacity-60"
+                  }`}
+                />
 
-          {/* Subtle grid */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage: "linear-gradient(#1e1e1e 1px, transparent 1px), linear-gradient(90deg, #1e1e1e 1px, transparent 1px)",
-              backgroundSize: "80px 80px",
-              opacity: 0.4,
-            }}
-          />
+                {/* Scrim for text legibility */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-400 ${
+                    isHovered ? "opacity-100" : "opacity-0"
+                  }`}
+                />
 
-          <div className="relative z-10 flex flex-col justify-between h-full" style={{ minHeight: "inherit" }}>
-            {/* Top row */}
-            <div className="flex items-start border-b border-[#1e1e1e]">
-              <div className="flex-1 p-6 md:p-10 lg:p-16 pb-0">
-                <div className="font-mono text-[0.68rem] tracking-[0.25em] text-[#949494] uppercase mb-6">
-                  Portfolio — 2026
-                </div>
-                <h1 className="font-display font-black uppercase leading-[0.82] tracking-[-0.02em] text-[#f0efeb]"
-                  style={{ fontSize: "clamp(5.5rem, 15vw, 15rem)" }}>
-                  Emit<br />Rice
-                </h1>
-              </div>
-
-              {/* Side column */}
-              <div className="hidden lg:flex flex-col w-64 xl:w-80 border-l border-[#1e1e1e] self-stretch divide-y divide-[#1e1e1e]">
-                <div className="p-6">
-                  <div className="font-mono text-[0.85rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Field</div>
-                  <div className="font-mono text-[1.15rem] tracking-wide text-[#e0e0e0] leading-relaxed">
-                    Design<br />Data Visualization<br />Interaction
+                {/* Metadata */}
+                <div
+                  className={`absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 flex justify-between items-end transition-all duration-400 transform ${
+                    isHovered
+                      ? "opacity-100 translate-y-0"
+                      : "opacity-0 translate-y-4"
+                  }`}
+                >
+                  <div className="text-white mix-blend-exclusion">
+                    <div className="text-xs md:text-sm font-mono opacity-80 mb-1">
+                      {p.id}
+                    </div>
+                    <h2 className="text-2xl md:text-3xl font-medium tracking-tight mb-1">
+                      {p.title}
+                    </h2>
+                    <div className="text-sm opacity-80">{p.category}</div>
+                  </div>
+                  <div className="text-white mix-blend-exclusion font-mono text-sm opacity-80">
+                    {p.year}
                   </div>
                 </div>
-                <div className="p-6">
-                  <div className="font-mono text-[0.85rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-3">Location</div>
-                  <div className="font-mono text-[1.15rem] text-[#e0e0e0]">Orlando, FL</div>
-                </div>
-                <div className="p-6 mt-auto">
-                  <div className="font-mono text-[0.85rem] tracking-[0.2em] text-[#a8a8a8] uppercase mb-4">Directory</div>
-                  {[
-                    { label: "GITHUB", href: "https://github.com/Epple3k" },
-                    { label: "LINKEDIN", href: "https://www.linkedin.com/in/emit-rice/" },
-                    { label: "EMAIL", href: "mailto:rice.emit3k@gmail.com" },
-                    { label: "RESUME", href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing" },
-                  ].map(({ label, href }) => (
-                    <a key={label} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                      className="flex items-center justify-between py-2 border-b border-[#1e1e1e] font-mono text-[1rem] tracking-widest text-[#c4c4c4] hover:text-[#ff4500] hover:border-[#ff4500] transition-colors group last:border-none">
-                      <span>{label}</span>
-                      <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[#ff4500]">↗</span>
-                    </a>
-                  ))}
-                </div>
               </div>
-            </div>
+            )
+          })}
+        </div>
+      </main>
 
-            {/* Bottom metadata strip */}
-            <div className="flex items-stretch divide-x divide-[#1e1e1e] border-t border-[#1e1e1e]">
-              <div className="px-5 py-3">
-                <span className="font-mono text-[0.68rem] tracking-[0.2em] text-[#949494]">DESIGN ENGINEER</span>
-              </div>
-              <div className="px-5 py-3">
-                <span className="font-mono text-[0.68rem] tracking-[0.2em] text-[#949494]">CREATIVE TECHNOLOGY</span>
-              </div>
-              <div className="px-5 py-3">
-                <span className="font-mono text-[0.68rem] tracking-[0.2em] text-[#949494]">DATA VISUALIZATION</span>
-              </div>
-              <div className="px-5 py-3 flex-1" />
-              <div className="px-5 py-3">
-                <span className="font-mono text-[0.68rem] tracking-[0.2em] text-[#6b6b6b]">REV.04</span>
-              </div>
-            </div>
+      {/* Fullscreen Case Study Overlay */}
+      {activeProject && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col bg-[#00ff00] overflow-hidden"
+          style={
+            {
+              viewTransitionName: `project-${activeProject.id}`,
+            } as React.CSSProperties
+          }
+        >
+          <img
+            src={activeProject.image}
+            alt={activeProject.title}
+            className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-multiply"
+          />
+
+          <div className="relative z-10 p-8 flex justify-between items-center w-full">
+            <button
+              onClick={handleBack}
+              className="text-black text-xl hover:italic transition-all uppercase tracking-widest font-mono"
+            >
+              [ Close ]
+            </button>
+            <div className="font-mono text-xl">{activeProject.id}</div>
           </div>
-        </header>
 
-        {/* ── Work section label ──────────────────────────────────────────── */}
-        <div id="work" className="flex items-center border-b border-[#1e1e1e]">
-          <div className="w-14 md:w-16 py-3 border-r border-[#1e1e1e] shrink-0" />
-          <div className="px-5 py-3 flex-1" />
-          <div className="px-5 py-3 border-l border-[#1e1e1e]">
-            <span className="font-mono text-[0.68rem] tracking-[0.2em] text-[#6b6b6b]">{projects.length.toString().padStart(2, "0")} PROJECTS</span>
+          <div className="relative z-10 mt-auto p-8 md:p-16 max-w-4xl">
+            <h1 className="text-6xl md:text-8xl tracking-tighter mb-4">
+              {activeProject.title}
+            </h1>
+            <p className="text-2xl md:text-3xl leading-tight opacity-80 mb-8 max-w-2xl">
+              {activeProject.description}
+            </p>
+            <div className="flex gap-8 font-mono uppercase tracking-wider text-sm border-t border-black/20 pt-8">
+              <div>
+                <span className="opacity-50 block mb-1">Category</span>
+                {activeProject.category}
+              </div>
+              <div>
+                <span className="opacity-50 block mb-1">Year</span>
+                {activeProject.year}
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* ── Projects ──────────────────────────────────────────────────── */}
-        <main>
-          {projects.map((project, idx) => (
-            <ProjectRow key={project.num} project={project} idx={idx} />
-          ))}
-        </main>
-
-        {/* ── About / Info ────────────────────────────────────────────────── */}
-        <section id="about" className="w-full border-t border-[#1e1e1e]">
-          {/* Section label */}
-          <div className="flex items-center border-b border-[#1e1e1e]">
-            <div className="w-14 md:w-16 py-3 border-r border-[#1e1e1e] shrink-0" />
-            <div className="px-5 py-3 flex-1" />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-[#1e1e1e]">
-            {/* Left — meta */}
-            <div className="col-span-1 lg:col-span-3 divide-y divide-[#1e1e1e]">
-              {[
-                { k: "Entity", v: "Emit Rice" },
-                { k: "Role", v: "Design Engineer" },
-                { k: "Base", v: "Orlando, FL" },
-                { k: "Focus", v: "Human-AI · Experimental UI" },
-              ].map(({ k, v }) => (
-                <div key={k} className="px-6 py-5">
-                  <div className="font-mono text-[0.68rem] tracking-[0.2em] text-[#949494] uppercase mb-2">{k}</div>
-                  <div className="font-mono text-[0.85rem] text-[#c4c4c4]">{v}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Right — statement */}
-            <div className="col-span-1 lg:col-span-9 p-8 md:p-12 lg:p-16 flex flex-col justify-between gap-12">
-              <div>
-                <div className="font-mono text-[0.68rem] tracking-[0.2em] text-[#949494] uppercase mb-6">Statement</div>
-                <p className="font-display text-3xl md:text-4xl lg:text-5xl text-[#f0efeb] leading-[1.15] font-semibold tracking-[-0.01em]"
-                  style={{ maxWidth: "38ch" }}>
-                  I build interfaces that treat information as a physical material.
-                </p>
-                <p className="font-body text-base text-[#c4c4c4] leading-relaxed mt-6 max-w-prose">
-                  By combining data engineering with spatial interaction design, I aim to create digital tools that feel less like software and more like well-calibrated instruments.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border-t border-[#1e1e1e] pt-8 -mx-8 md:-mx-12 lg:-mx-16 px-8 md:px-12 lg:px-16">
-                {[
-                  { label: "EMAIL ↗", href: "mailto:rice.emit3k@gmail.com" },
-                  { label: "GITHUB ↗", href: "https://github.com/Epple3k" },
-                  { label: "LINKEDIN ↗", href: "https://www.linkedin.com/in/emit-rice/" },
-                  { label: "RESUME ↗", href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing" },
-                ].map(({ label, href }) => (
-                  <a key={label} href={href} target={href.startsWith("mailto:") ? undefined : "_blank"} rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                    className="font-mono text-[0.74rem] tracking-[0.15em] text-[#949494] hover:text-[#ff4500] transition-colors py-3 pl-5 border-r border-[#1e1e1e] last:border-none">
-                    {label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Footer ──────────────────────────────────────────────────────── */}
-        <footer className="border-t border-[#1e1e1e] flex items-center divide-x divide-[#1e1e1e]">
-          <div className="px-5 py-4 flex-1">
-            <span className="font-mono text-[0.62rem] tracking-[0.2em] text-[#666666]">© 2026 EMIT RICE — ALL RIGHTS RESERVED</span>
-          </div>
-          <div className="px-5 py-4">
-            <span className="font-mono text-[0.62rem] tracking-[0.2em] text-[#666666]">BUILT WITH REACT + VITE</span>
-          </div>
-        </footer>
-
-      </div>
+      )}
     </div>
-  );
+  )
 }
