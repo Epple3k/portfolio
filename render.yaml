@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: ledgerline-finance
+    runtime: node
+    rootDir: ledgerline-plugin
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: LEDGERLINE_USER_AGENT
+        sync: false
