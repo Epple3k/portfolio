@@ -17,6 +17,21 @@ const trackEvent = (
   window.gtag?.("event", eventName, params)
 }
 
+type Note = {
+  title: string
+  date: string
+  summary: string
+  body?: string
+  tags?: string[]
+}
+
+type SocialPost = {
+  platform: "linkedin" | "instagram"
+  text: string
+  url: string
+  date?: string
+}
+
 const PROJECTS = [
   {
     id: "01",
@@ -63,6 +78,9 @@ const PROJECTS = [
 export default function App() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [showNotes, setShowNotes] = useState(false)
+  const [notes, setNotes] = useState<Note[]>([])
+  const [socialPosts, setSocialPosts] = useState<SocialPost[]>([])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -73,6 +91,20 @@ export default function App() {
       application_campaign: params.get("utm_campaign") ?? undefined,
       page_path: window.location.pathname,
     })
+
+    const base = import.meta.env.BASE_URL
+    Promise.all([
+      fetch(`${base}notes.json`).then((r) => (r.ok ? r.json() : [])),
+      fetch(`${base}social-feed.json`).then((r) => (r.ok ? r.json() : [])),
+    ])
+      .then(([noteData, socialData]) => {
+        setNotes(Array.isArray(noteData) ? noteData : [])
+        setSocialPosts(Array.isArray(socialData) ? socialData : [])
+      })
+      .catch(() => {
+        setNotes([])
+        setSocialPosts([])
+      })
   }, [])
 
   const handleProjectClick = (id: string) => {
@@ -172,6 +204,15 @@ export default function App() {
           </div>
 
           <div className="flex flex-col items-start gap-1 text-xl md:text-2xl tracking-tight mt-auto md:ml-12 lg:ml-24">
+            <button
+              onClick={() => {
+                setShowNotes(true)
+                trackEvent("notes_open")
+              }}
+              className="hover:italic hover:translate-x-2 transition-all duration-300 text-left"
+            >
+              notes
+            </button>
             {[
               {
                 label: "linkedin",
@@ -317,6 +358,92 @@ export default function App() {
           })}
         </div>
       </main>
+
+      {showNotes && (
+        <div className="fixed inset-0 z-50 bg-[#efffef] text-black overflow-y-auto">
+          <div className="min-h-screen p-4 md:p-8">
+            <div className="flex items-start justify-between gap-6 border-b border-black pb-4">
+              <div>
+                <div className="font-mono text-xs uppercase tracking-[0.14em] mb-3">notes / elsewhere</div>
+                <h1 className="text-5xl md:text-7xl tracking-[-0.055em] font-medium leading-none">things i’m into.</h1>
+              </div>
+              <button
+                onClick={() => setShowNotes(false)}
+                className="font-mono text-sm uppercase tracking-wider hover:italic"
+              >
+                [ close ]
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-12 lg:gap-20 py-10 md:py-16">
+              <section>
+                <div className="font-mono text-xs uppercase tracking-[0.12em] mb-8">notes</div>
+                {notes.length > 0 ? (
+                  <div className="divide-y divide-black/20 border-t border-black">
+                    {notes.map((note) => (
+                      <article key={`${note.date}-${note.title}`} className="py-7 grid md:grid-cols-[120px_1fr] gap-4 md:gap-8">
+                        <div className="font-mono text-xs opacity-55">{note.date}</div>
+                        <div>
+                          <h2 className="text-2xl md:text-3xl tracking-tight font-medium mb-2">{note.title}</h2>
+                          <p className="text-base md:text-lg leading-relaxed max-w-2xl">{note.summary}</p>
+                          {note.tags?.length ? (
+                            <div className="mt-4 font-mono text-[10px] uppercase tracking-wider opacity-55">
+                              {note.tags.join(" · ")}
+                            </div>
+                          ) : null}
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="border-t border-black py-7 text-lg max-w-xl">
+                    Short notes on interfaces, finance, research, music, games, and whatever else has my attention.
+                  </div>
+                )}
+              </section>
+
+              <aside>
+                <div className="font-mono text-xs uppercase tracking-[0.12em] mb-8">elsewhere</div>
+                <div className="border-t border-black">
+                  {socialPosts.length > 0 ? (
+                    socialPosts.slice(0, 8).map((post) => (
+                      <a
+                        key={post.url}
+                        href={post.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block py-5 border-b border-black/20 hover:translate-x-1 transition-transform"
+                      >
+                        <div className="flex justify-between gap-4 font-mono text-[10px] uppercase tracking-wider opacity-55 mb-2">
+                          <span>{post.platform}</span>
+                          <span>{post.date ?? ""}</span>
+                        </div>
+                        <p className="text-sm leading-relaxed line-clamp-4">{post.text}</p>
+                      </a>
+                    ))
+                  ) : (
+                    <div className="py-5 border-b border-black/20">
+                      <div className="font-mono text-[10px] uppercase tracking-wider opacity-55 mb-2">social feed</div>
+                      <p className="text-sm leading-relaxed">
+                        LinkedIn and Instagram posts will appear here automatically once the feed connection is authorized.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-10">
+                  <div className="font-mono text-xs uppercase tracking-[0.12em] mb-5">currently interested in</div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-lg md:text-xl tracking-tight">
+                    {["human-ai interaction", "financial interfaces", "data visualization", "generative audio", "systems that explain themselves"].map((item) => (
+                      <span key={item} className="border-b border-black/25 pb-1">{item}</span>
+                    ))}
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Fullscreen Case Study Overlay */}
       {activeProject && (
