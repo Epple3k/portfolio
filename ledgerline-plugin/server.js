@@ -385,7 +385,7 @@ function createLedgerlineServer() {
       title: "Look up public company",
       description: "Resolve a ticker or public-company name to SEC identity.",
       inputSchema: { query: z.string().min(1) },
-      annotations: { readOnlyHint: true, openWorldHint: true },
+      annotations: { readOnlyHint: true, openWorldHint: true, destructiveHint: false },
     },
     async ({ query }) => ({
       content: [{ type: "text", text: JSON.stringify(await lookupCompany(query), null, 2) }],
@@ -406,7 +406,7 @@ function createLedgerlineServer() {
         chartType: z.enum(["line", "bar"]).default("line"),
       },
       _meta: { ui: { resourceUri: WIDGET_URI } },
-      annotations: { readOnlyHint: true, openWorldHint: true },
+      annotations: { readOnlyHint: true, openWorldHint: true, destructiveHint: false },
     },
     async ({ company: q, metrics, periods, chartType }) => {
       const histories = await Promise.all(metrics.map((m) => metricHistory(q, m, periods)));
@@ -455,7 +455,7 @@ function createLedgerlineServer() {
         observations: z.number().int().min(6).max(240).default(60),
       },
       _meta: { ui: { resourceUri: WIDGET_URI } },
-      annotations: { readOnlyHint: true, openWorldHint: true },
+      annotations: { readOnlyHint: true, openWorldHint: true, destructiveHint: false },
     },
     async ({ series: requested, observations }) => {
       const data = await Promise.all(requested.map((s) => fredSeries(s, observations)));
@@ -484,7 +484,7 @@ function createLedgerlineServer() {
         "Show diluted share-count history and stock-based compensation from SEC filings, plus recent filing-language signals for other dilution mechanisms.",
       inputSchema: { company: z.string().min(1), periods: z.number().int().min(4).max(16).default(8) },
       _meta: { ui: { resourceUri: WIDGET_URI } },
-      annotations: { readOnlyHint: true, openWorldHint: true },
+      annotations: { readOnlyHint: true, openWorldHint: true, destructiveHint: false },
     },
     async ({ company: q, periods }) => {
       const [shares, sbc, scan] = await Promise.all([
@@ -533,7 +533,7 @@ function createLedgerlineServer() {
         query: z.string().min(2),
         forms: z.array(z.string()).max(6).default(["10-K", "10-Q", "8-K"]),
       },
-      annotations: { readOnlyHint: true, openWorldHint: true },
+      annotations: { readOnlyHint: true, openWorldHint: true, destructiveHint: false },
     },
     async ({ company: q, query, forms }) => ({
       content: [
@@ -552,7 +552,7 @@ function createLedgerlineServer() {
       description:
         "Trace the latest SEC/XBRL value of a supported metric to its reporting period, concept, form, accession number, and source URL.",
       inputSchema: { company: z.string().min(1), metric: metricEnum },
-      annotations: { readOnlyHint: true, openWorldHint: true },
+      annotations: { readOnlyHint: true, openWorldHint: true, destructiveHint: false },
     },
     async ({ company: q, metric }) => {
       const h = await metricHistory(q, metric, 1);
@@ -606,7 +606,7 @@ function createLedgerlineServer() {
           .optional(),
       },
       _meta: { ui: { resourceUri: WIDGET_URI } },
-      annotations: { readOnlyHint: true, openWorldHint: false },
+      annotations: { readOnlyHint: true, openWorldHint: false, destructiveHint: false },
     },
     async ({ title, subtitle, chartType, series, sources, notes }) => {
       const view = {
@@ -637,7 +637,7 @@ function createLedgerlineServer() {
         comparison: z.array(z.number()).max(200).optional(),
         years: z.number().positive().optional(),
       },
-      annotations: { readOnlyHint: true, openWorldHint: false },
+      annotations: { readOnlyHint: true, openWorldHint: false, destructiveHint: false },
     },
     async ({ operation, values, comparison, years }) => {
       let result;
