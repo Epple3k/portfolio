@@ -23,7 +23,7 @@
     .tabs button.active,.submit{background:var(--k);color:var(--g)}
     .panel{display:none}.panel.active{display:block}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .field{margin-bottom:12px}.field.wide{grid-column:1/-1}
+    .field{margin-bottom:12px}.field.wide{grid-column:1/-1}.checks{display:flex;gap:8px;flex-wrap:wrap}.check{display:flex;align-items:center;gap:8px;background:var(--p);padding:12px 14px;font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em}.check input{width:auto;padding:0}
     .note{font-size:13px;line-height:1.5;max-width:700px;margin:14px 0 28px}
     .actions{display:flex;align-items:center;gap:14px;margin-top:16px}
     .status{font:700 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em}
@@ -57,6 +57,11 @@
           <div class="field wide"><label>title</label><input name="title" required /></div>
           <div class="field"><label>date</label><input name="date" type="date" /></div>
           <div class="field"><label>tags</label><input name="tags" placeholder="hci, finance, music" /></div>
+          <div class="field wide"><label>publish to</label><div class="checks">
+            <label class="check"><input type="checkbox" name="tabs" value="reviews">reviews & media</label>
+            <label class="check"><input type="checkbox" name="tabs" value="socials">social posts</label>
+            <label class="check"><input type="checkbox" name="tabs" value="professional" checked>professional work & updates</label>
+          </div></div>
           <div class="field wide"><label>summary</label><textarea name="summary" style="min-height:90px" placeholder="Optional. If blank, the first part of the post is used."></textarea></div>
           <div class="field wide"><label>post</label><textarea name="body" required></textarea></div>
         </div>
@@ -76,6 +81,11 @@
             </select>
           </div>
           <div class="field"><label>date</label><input name="date" type="date" /></div>
+          <div class="field wide"><label>publish to</label><div class="checks">
+            <label class="check"><input type="checkbox" name="tabs" value="reviews">reviews & media</label>
+            <label class="check"><input type="checkbox" name="tabs" value="socials" checked>social posts</label>
+            <label class="check"><input type="checkbox" name="tabs" value="professional">professional work & updates</label>
+          </div></div>
           <div class="field wide"><label>title</label><input name="title" /></div>
           <div class="field wide"><label>source URL</label><input name="url" type="url" required /></div>
           <div class="field wide"><label>original post text</label><textarea name="body" required></textarea></div>
@@ -127,7 +137,8 @@ document.querySelector("#writeForm").addEventListener("submit",async e=>{
     date:f.get("date"),
     tags:String(f.get("tags")||"").split(",").map(x=>x.trim()).filter(Boolean),
     summary:f.get("summary"),
-    body:f.get("body")
+    body:f.get("body"),
+    tabs:f.getAll("tabs")
   },document.querySelector("#writeStatus"));
 });
 
@@ -139,7 +150,8 @@ document.querySelector("#importForm").addEventListener("submit",async e=>{
     date:f.get("date"),
     title:f.get("title"),
     url:f.get("url"),
-    body:f.get("body")
+    body:f.get("body"),
+    tabs:f.getAll("tabs")
   },document.querySelector("#importStatus"));
 });
 </script>
