@@ -1,14 +1,482 @@
 [
   {
-    "platform": "letterboxd",
-    "text": "film diary, ratings, and reviews",
-    "url": "https://letterboxd.com/epple_3k/",
+    "platform": "linkedin",
+    "title": "I Turned Internship Rejections Into a Funnel",
+    "text": "I’ve been getting a few internship rejections lately, so naturally I responded by adding analytics to my portfolio. \n\nI set up GA4 tracking for portfolio visits, project opens, outbound clicks, and application-specific UTM links. Now I can get a better sense of whether employers are actually reaching the site, which projects they interact with, and where I might be losing people in the application process. Probably a very “stats and data person” response to job searching, but I’d rather measure the funnel than guess at it. 😭\n\nCheck out my site here: https://lnkd.in/eZv_5g34 (I'll know if you skipped it 😉)\n\n#Analytics #ProductDesign #Data #UX #Internships",
+    "body": "I’ve been getting a few internship rejections lately, so naturally I responded by adding analytics to my portfolio. \n\nI set up GA4 tracking for portfolio visits, project opens, outbound clicks, and application-specific UTM links. Now I can get a better sense of whether employers are actually reaching the site, which projects they interact with, and where I might be losing people in the application process. Probably a very “stats and data person” response to job searching, but I’d rather measure the funnel than guess at it. 😭\n\nCheck out my site here: https://lnkd.in/eZv_5g34 (I'll know if you skipped it 😉)\n\n#Analytics #ProductDesign #Data #UX #Internships",
+    "url": "https://www.linkedin.com/feed/update/urn:li:activity:7511669762284822529/",
     "date": "2026-10-02"
   },
   {
     "platform": "goodreads",
-    "text": "reading log, shelves, and book activity",
-    "url": "https://www.goodreads.com/user/show/204755541-emit-rice",
+    "title": "Catch-22 — Joseph Heller ★★★",
+    "text": "read: Catch-22 — Joseph Heller ★★★",
+    "body": "read: Catch-22 — Joseph Heller ★★★",
+    "url": "https://www.goodreads.com/review/show/8993978284?utm_medium=api&utm_source=rss",
     "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Galápagos — Kurt Vonnegut Jr. ★★★★★",
+    "text": "read: Galápagos — Kurt Vonnegut Jr. ★★★★★",
+    "body": "read: Galápagos — Kurt Vonnegut Jr. ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993977350?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Welcome to the Monkey House — Kurt Vonnegut Jr. ★★★★★",
+    "text": "read: Welcome to the Monkey House — Kurt Vonnegut Jr. ★★★★★",
+    "body": "read: Welcome to the Monkey House — Kurt Vonnegut Jr. ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993976849?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Breakfast of Champions — Kurt Vonnegut Jr. ★★★★★",
+    "text": "read: Breakfast of Champions — Kurt Vonnegut Jr. ★★★★★",
+    "body": "read: Breakfast of Champions — Kurt Vonnegut Jr. ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993976419?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Cat’s Cradle — Kurt Vonnegut Jr. ★★★★★",
+    "text": "read: Cat’s Cradle — Kurt Vonnegut Jr. ★★★★★",
+    "body": "read: Cat’s Cradle — Kurt Vonnegut Jr. ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993976079?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Slaughterhouse-Five — Kurt Vonnegut Jr. ★★★★★",
+    "text": "read: Slaughterhouse-Five — Kurt Vonnegut Jr. ★★★★★",
+    "body": "read: Slaughterhouse-Five — Kurt Vonnegut Jr. ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993975721?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Deadeye Dick — Kurt Vonnegut Jr. ★★★★★",
+    "text": "read: Deadeye Dick — Kurt Vonnegut Jr. ★★★★★",
+    "body": "read: Deadeye Dick — Kurt Vonnegut Jr. ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993975403?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Stoner — John Williams ★★★★",
+    "text": "read: Stoner — John Williams ★★★★",
+    "body": "read: Stoner — John Williams ★★★★",
+    "url": "https://www.goodreads.com/review/show/8993974705?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Steve Jobs — Walter Isaacson ★★★★★",
+    "text": "read: Steve Jobs — Walter Isaacson ★★★★★",
+    "body": "read: Steve Jobs — Walter Isaacson ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993972708?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Fear and Loathing in Las Vegas: A Savage Journey to the Heart of the American Dream — Hunter S. Thompson ★★★★",
+    "text": "read: Fear and Loathing in Las Vegas: A Savage Journey to the Heart of the American Dream — Hunter S. Thompson ★★★★",
+    "body": "read: Fear and Loathing in Las Vegas: A Savage Journey to the Heart of the American Dream — Hunter S. Thompson ★★★★",
+    "url": "https://www.goodreads.com/review/show/8993971870?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Dracula — Bram Stoker ★★★★",
+    "text": "read: Dracula — Bram Stoker ★★★★",
+    "body": "read: Dracula — Bram Stoker ★★★★",
+    "url": "https://www.goodreads.com/review/show/8993969877?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "St. Lucy's Home for Girls Raised by Wolves — Karen Russell ★★★★★",
+    "text": "read: St. Lucy's Home for Girls Raised by Wolves — Karen Russell ★★★★★",
+    "body": "read: St. Lucy's Home for Girls Raised by Wolves — Karen Russell ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993969289?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "The Antidote — Karen Russell ★★★",
+    "text": "read: The Antidote — Karen Russell ★★★",
+    "body": "read: The Antidote — Karen Russell ★★★",
+    "url": "https://www.goodreads.com/review/show/8993968686?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Orange World and Other Stories — Karen Russell ★★★★",
+    "text": "read: Orange World and Other Stories — Karen Russell ★★★★",
+    "body": "read: Orange World and Other Stories — Karen Russell ★★★★",
+    "url": "https://www.goodreads.com/review/show/8993968359?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "A Confederacy of Dunces — John Kennedy Toole ★★★★",
+    "text": "read: A Confederacy of Dunces — John Kennedy Toole ★★★★",
+    "body": "read: A Confederacy of Dunces — John Kennedy Toole ★★★★",
+    "url": "https://www.goodreads.com/review/show/8993967436?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Authority (Southern Reach, #2) — Jeff Vandermeer ★★★★",
+    "text": "read: Authority (Southern Reach, #2) — Jeff Vandermeer ★★★★",
+    "body": "read: Authority (Southern Reach, #2) — Jeff Vandermeer ★★★★",
+    "url": "https://www.goodreads.com/review/show/8993966209?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Annihilation (Southern Reach, #1) — Jeff Vandermeer ★★★★★",
+    "text": "read: Annihilation (Southern Reach, #1) — Jeff Vandermeer ★★★★★",
+    "body": "read: Annihilation (Southern Reach, #1) — Jeff Vandermeer ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993965692?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "A Clockwork Orange — Anthony Burgess ★★★★",
+    "text": "read: A Clockwork Orange — Anthony Burgess ★★★★",
+    "body": "read: A Clockwork Orange — Anthony Burgess ★★★★",
+    "url": "https://www.goodreads.com/review/show/8993965086?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Station Eleven — Emily St. John Mandel ★★★★",
+    "text": "read: Station Eleven — Emily St. John Mandel ★★★★",
+    "body": "read: Station Eleven — Emily St. John Mandel ★★★★",
+    "url": "https://www.goodreads.com/review/show/8993964300?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "The Road — Cormac McCarthy ★★★",
+    "text": "read: The Road — Cormac McCarthy ★★★",
+    "body": "read: The Road — Cormac McCarthy ★★★",
+    "url": "https://www.goodreads.com/review/show/8993963747?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "The Picture of Dorian Gray — Oscar Wilde ★★★★",
+    "text": "read: The Picture of Dorian Gray — Oscar Wilde ★★★★",
+    "body": "read: The Picture of Dorian Gray — Oscar Wilde ★★★★",
+    "url": "https://www.goodreads.com/review/show/8993962895?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Oblivion — David Foster Wallace ★★★",
+    "text": "read: Oblivion — David Foster Wallace ★★★",
+    "body": "read: Oblivion — David Foster Wallace ★★★",
+    "url": "https://www.goodreads.com/review/show/8993961936?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "The Wind-Up Bird Chronicle — Haruki Murakami ★★★★★",
+    "text": "read: The Wind-Up Bird Chronicle — Haruki Murakami ★★★★★",
+    "body": "read: The Wind-Up Bird Chronicle — Haruki Murakami ★★★★★",
+    "url": "https://www.goodreads.com/review/show/8993958372?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "The Master and Margarita — Mikhail Bulgakov",
+    "text": "currently reading: The Master and Margarita — Mikhail Bulgakov",
+    "body": "currently reading: The Master and Margarita — Mikhail Bulgakov",
+    "url": "https://www.goodreads.com/review/show/8993971099?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "title": "Infinite Jest — David Foster Wallace",
+    "text": "currently reading: Infinite Jest — David Foster Wallace",
+    "body": "currently reading: Infinite Jest — David Foster Wallace",
+    "url": "https://www.goodreads.com/review/show/8993960353?utm_medium=api&utm_source=rss",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Paprika (2006) ★★★★½",
+    "text": "So clever\nKon’s Koniest",
+    "body": "So clever\nKon’s Koniest",
+    "url": "https://letterboxd.com/epple_3k/film/paprika-2006/",
+    "date": "2026-09-27"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "The Old Way (2023) ★½",
+    "text": "Watched on Sunday September 27, 2026.",
+    "body": "Watched on Sunday September 27, 2026.",
+    "url": "https://letterboxd.com/epple_3k/film/the-old-way/",
+    "date": "2026-09-27"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Tetsuo: The Iron Man (1989) ★★★★★",
+    "text": "Watched on Friday September 25, 2026.",
+    "body": "Watched on Friday September 25, 2026.",
+    "url": "https://letterboxd.com/epple_3k/film/tetsuo-the-iron-man/",
+    "date": "2026-09-25"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Ichi the Killer (2001) ★★★★★",
+    "text": "I don’t know why more things haven’t borrowed the style\n\nIt’s so distinct and intentional you’d think it’d catch on more",
+    "body": "I don’t know why more things haven’t borrowed the style\n\nIt’s so distinct and intentional you’d think it’d catch on more",
+    "url": "https://letterboxd.com/epple_3k/film/ichi-the-killer/1/",
+    "date": "2026-09-24"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Zombie Ass: Toilet of the Dead (2011) ★",
+    "text": "Couldn’t finish this one\nPut in a good 30 minutes though",
+    "body": "Couldn’t finish this one\nPut in a good 30 minutes though",
+    "url": "https://letterboxd.com/epple_3k/film/zombie-ass-toilet-of-the-dead/",
+    "date": "2026-09-24"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Onechanbara: Bikini Samurai Squad (2008) ★★★½",
+    "text": "Super fun. Art direction was weak but fights were fun to watch. Even if they didn’t commit as hard with the practical effects.",
+    "body": "Super fun. Art direction was weak but fights were fun to watch. Even if they didn’t commit as hard with the practical effects.",
+    "url": "https://letterboxd.com/epple_3k/film/onechanbara-bikini-samurai-squad/",
+    "date": "2026-09-24"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Mean Girls 2 (2011) ½",
+    "text": "They made this movie with $5.",
+    "body": "They made this movie with $5.",
+    "url": "https://letterboxd.com/epple_3k/film/mean-girls-2/",
+    "date": "2026-09-24"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Mean Girls (2004) ★★★★★",
+    "text": "Watched on Thursday September 24, 2026.",
+    "body": "Watched on Thursday September 24, 2026.",
+    "url": "https://letterboxd.com/epple_3k/film/mean-girls/1/",
+    "date": "2026-09-24"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "The Invite (2026) ★★½",
+    "text": "Clever, but not clever enough to carry the weak story. Funny, but not funny enough to carry the weak story. \n\nThey never really poked the bob girl the way they did everybody else and it came off really cliche. \n\nCool idea though, I’d like to see more of this kind of thing in the future. With a little less debauchery.",
+    "body": "Clever, but not clever enough to carry the weak story. Funny, but not funny enough to carry the weak story. \n\nThey never really poked the bob girl the way they did everybody else and it came off really cliche. \n\nCool idea though, I’d like to see more of this kind of thing in the future. With a little less debauchery.",
+    "url": "https://letterboxd.com/epple_3k/film/the-invite-2026/",
+    "date": "2026-09-07"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Adaptation. (2002) ★★★★★",
+    "text": "It’s like technology versus horse",
+    "body": "It’s like technology versus horse",
+    "url": "https://letterboxd.com/epple_3k/film/adaptation/",
+    "date": "2026-09-05"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Twin Peaks: Fire Walk with Me (1992) ★★★★★",
+    "text": "This review may contain spoilers.\n\nThe central tragedy that starts Coop’s journey is the POINT of this show. You expected the Avengers and it gave you tears.",
+    "body": "This review may contain spoilers.\n\nThe central tragedy that starts Coop’s journey is the POINT of this show. You expected the Avengers and it gave you tears.",
+    "url": "https://letterboxd.com/epple_3k/film/twin-peaks-fire-walk-with-me/",
+    "date": "2026-08-18"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "The Odyssey (2026) ★★★★★",
+    "text": "This review may contain spoilers.\n\nThird installment of Nolan’s Art of War:\n\nThere’s something unprecedented about every age. War is an ever evolving thing, and we’ll always have secret agents, physicists, and Bronze Age generals at the bleeding edge, bringing the world the next big thing. But with every next big thing is a decision to break a rule. A human principle to defy, a divine truth to deny. And there are a select few responsible with pulling that trigger.\n\nReally similar to Isaacson’s Jobs biography in that it’s about the birth of a market, tech empire, and random guy at once. Every moment has to be significant to all layers of the story - in parallel. Really really hard to do, and he did it.",
+    "body": "This review may contain spoilers.\n\nThird installment of Nolan’s Art of War:\n\nThere’s something unprecedented about every age. War is an ever evolving thing, and we’ll always have secret agents, physicists, and Bronze Age generals at the bleeding edge, bringing the world the next big thing. But with every next big thing is a decision to break a rule. A human principle to defy, a divine truth to deny. And there are a select few responsible with pulling that trigger.\n\nReally similar to Isaacson’s Jobs biography in that it’s about the birth of a market, tech empire, and random guy at once. Every moment has to be significant to all layers of the story - in parallel. Really really hard to do, and he did it.",
+    "url": "https://letterboxd.com/epple_3k/film/the-odyssey-2026/",
+    "date": "2026-07-28"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "From Dusk Till Dawn (1996) ★★★★★",
+    "text": "This review may contain spoilers.\n\nBIKERS VS MOB VS VAMPIRES VS PREACHERS\n\nI’m so glad tarintino made movies instead of doing anything else because:\n\n1. I like his movies\n2. He’s not making anything more dangerous",
+    "body": "This review may contain spoilers.\n\nBIKERS VS MOB VS VAMPIRES VS PREACHERS\n\nI’m so glad tarintino made movies instead of doing anything else because:\n\n1. I like his movies\n2. He’s not making anything more dangerous",
+    "url": "https://letterboxd.com/epple_3k/film/from-dusk-till-dawn/1/",
+    "date": "2026-07-23"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "The Dirty Dozen (1967) ★★½",
+    "text": "Action sequence is pretty cool! When they finally get to it.",
+    "body": "Action sequence is pretty cool! When they finally get to it.",
+    "url": "https://letterboxd.com/epple_3k/film/the-dirty-dozen/",
+    "date": "2026-07-22"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Ultraviolet (2006) ★★",
+    "text": "Watched on Wednesday July 22, 2026.",
+    "body": "Watched on Wednesday July 22, 2026.",
+    "url": "https://letterboxd.com/epple_3k/film/ultraviolet/",
+    "date": "2026-07-22"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Dogtooth (2009) ★★★★",
+    "text": "Disturb the disturbed and disturb the comforted\nJust disturb everybody. Make them laugh too.",
+    "body": "Disturb the disturbed and disturb the comforted\nJust disturb everybody. Make them laugh too.",
+    "url": "https://letterboxd.com/epple_3k/film/dogtooth/",
+    "date": "2026-07-22"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Caché (2005) ★★★★★",
+    "text": "So good so good sooo good.  No fat, no tricks, no gimmicks. Straight movie all the way.",
+    "body": "So good so good sooo good.  No fat, no tricks, no gimmicks. Straight movie all the way.",
+    "url": "https://letterboxd.com/epple_3k/film/cache/",
+    "date": "2026-07-21"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Obsession (2025) ★★★",
+    "text": "This review may contain spoilers.\n\nKinda… dumb…? It’s a little too over-the-top and silly for me. Woulda been cooler if they spent more time on her breaking out of the spell or something. Or if the possessed version was smarter or sneakier.",
+    "body": "This review may contain spoilers.\n\nKinda… dumb…? It’s a little too over-the-top and silly for me. Woulda been cooler if they spent more time on her breaking out of the spell or something. Or if the possessed version was smarter or sneakier.",
+    "url": "https://letterboxd.com/epple_3k/film/obsession-2025/",
+    "date": "2026-07-15"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Serenity (2005) ★★★★",
+    "text": "You know it’s from the 00s because the women are smoking and the dialogue is horrible.",
+    "body": "You know it’s from the 00s because the women are smoking and the dialogue is horrible.",
+    "url": "https://letterboxd.com/epple_3k/film/serenity/",
+    "date": "2026-06-21"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "The Amazing Digital Circus: The Last Act (2026) ★★",
+    "text": "I want some kind of Real YouTube Newgen award for having seen this opening night. \n\nThe funny bits were funny but the dramatic bits were not great. Visuals were cool & creative.\n\nKind of missed the big reveal moments because they did NOT get the plot across well. Cool stuff otherwise though.",
+    "body": "I want some kind of Real YouTube Newgen award for having seen this opening night. \n\nThe funny bits were funny but the dramatic bits were not great. Visuals were cool & creative.\n\nKind of missed the big reveal moments because they did NOT get the plot across well. Cool stuff otherwise though.",
+    "url": "https://letterboxd.com/epple_3k/film/the-amazing-digital-circus-the-last-act/",
+    "date": "2026-06-04"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Backrooms (2026) ★★★",
+    "text": "WAY more mild than I was expecting. Didn’t commit hard enough to its aesthetic decisions and ended up being an amalgamate-average of the backrooms fanon\n\nCool stuff though! Fun to see stuff from the little screen on the big one.",
+    "body": "WAY more mild than I was expecting. Didn’t commit hard enough to its aesthetic decisions and ended up being an amalgamate-average of the backrooms fanon\n\nCool stuff though! Fun to see stuff from the little screen on the big one.",
+    "url": "https://letterboxd.com/epple_3k/film/backrooms-2026/",
+    "date": "2026-06-01"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Caveat (2020) ★★",
+    "text": "It’s called caveat because there are exactly 2 (two) caveats.",
+    "body": "It’s called caveat because there are exactly 2 (two) caveats.",
+    "url": "https://letterboxd.com/epple_3k/film/caveat-2020/",
+    "date": "2026-05-20"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Rubber&#039;s Lover (1996) ★★★",
+    "text": "Too long\nIs all of this … a prequel …?",
+    "body": "Too long\nIs all of this … a prequel …?",
+    "url": "https://letterboxd.com/epple_3k/film/rubbers-lover/",
+    "date": "2026-05-18"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Antichrist (2009) ★★★",
+    "text": "I hate the guy but he makes a good movie. It’s pretty, it’s sad and scary. Most extreme (funniest, saddest, scariest) version of what so many movies try to do. Is that thing cool? Probably not",
+    "body": "I hate the guy but he makes a good movie. It’s pretty, it’s sad and scary. Most extreme (funniest, saddest, scariest) version of what so many movies try to do. Is that thing cool? Probably not",
+    "url": "https://letterboxd.com/epple_3k/film/antichrist/",
+    "date": "2026-05-18"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "The Fourth Dimension (2012) ★★★★★",
+    "text": "Cotton candy kick it into the fourth dimension.\n\nThe other two were blah. Cool enough background. Can be consumed with quarter brain power.",
+    "body": "Cotton candy kick it into the fourth dimension.\n\nThe other two were blah. Cool enough background. Can be consumed with quarter brain power.",
+    "url": "https://letterboxd.com/epple_3k/film/the-fourth-dimension/",
+    "date": "2026-05-17"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "The Lotus Community Workshop (2012) ★★★★★",
+    "text": "VICE used to be so cool bro I cry every time I see that opening. Cotton candy kick it into the fourth dimension.",
+    "body": "VICE used to be so cool bro I cry every time I see that opening. Cotton candy kick it into the fourth dimension.",
+    "url": "https://letterboxd.com/epple_3k/film/the-lotus-community-workshop/",
+    "date": "2026-05-17"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Blood of Havana (2010) ★★★★★",
+    "text": "Trash Humpers 1.0 + o.5 (Havana)",
+    "body": "Trash Humpers 1.0 + o.5 (Havana)",
+    "url": "https://letterboxd.com/epple_3k/film/blood-of-havana/",
+    "date": "2026-05-17"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Curb Dance (2011) ★★★★★",
+    "text": "youtu.be/wu5Lpe8z40Y?si=Mf_b8oudQ5cMNj_K\n\n“ I think we invented curb dancing to the delight of god. “\n\n, Among many other very quotable lines.",
+    "body": "youtu.be/wu5Lpe8z40Y?si=Mf_b8oudQ5cMNj_K\n\n“ I think we invented curb dancing to the delight of god. “\n\n, Among many other very quotable lines.",
+    "url": "https://letterboxd.com/epple_3k/film/curb-dance/",
+    "date": "2026-05-17"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Mister Lonely (2007) ★★★★",
+    "text": "All of his movies have this clearly very intentional quality, where every plot point, dialogue line, visual element, etc is chosen to elicit some specific but otherwise impossible-to-articulate feeling. I can’t tell you what the feelings are, I can only tell you about the movie. There’s nothing you don’t need, nothing to soften the sensation or distract from the abstract quality being distilled. It’s like inventing a universe to articulate an idea you can’t get across with words. You can’t be surreal unless you’re grounded in narrative. When the world is built from the ground up, it’s something different.",
+    "body": "All of his movies have this clearly very intentional quality, where every plot point, dialogue line, visual element, etc is chosen to elicit some specific but otherwise impossible-to-articulate feeling. I can’t tell you what the feelings are, I can only tell you about the movie. There’s nothing you don’t need, nothing to soften the sensation or distract from the abstract quality being distilled. It’s like inventing a universe to articulate an idea you can’t get across with words. You can’t be surreal unless you’re grounded in narrative. When the world is built from the ground up, it’s something different.",
+    "url": "https://letterboxd.com/epple_3k/film/mister-lonely/",
+    "date": "2026-05-16"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Lessons of Darkness (1992) ★★★★",
+    "text": "Absurd. It’s all real, barely doctored footage, but it feels so absolutely foreign. I cant relate to the tastes and smells and touch sensations these people are feeling, let alone the emotions they feel. The movie doesn’t even try to set the viewer in the reality of the scene either - you WONT get it. It is a terrible flaming inky black goo flooding a city, without exaggeration. But the most they can convey is the apparent texture of charred earth and spraying oil. It’s alien and is treated as such.",
+    "body": "Absurd. It’s all real, barely doctored footage, but it feels so absolutely foreign. I cant relate to the tastes and smells and touch sensations these people are feeling, let alone the emotions they feel. The movie doesn’t even try to set the viewer in the reality of the scene either - you WONT get it. It is a terrible flaming inky black goo flooding a city, without exaggeration. But the most they can convey is the apparent texture of charred earth and spraying oil. It’s alien and is treated as such.",
+    "url": "https://letterboxd.com/epple_3k/film/lessons-of-darkness/",
+    "date": "2026-05-14"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "La Haine (1995) ★★★★★",
+    "text": "Sarah and I talked about how the single core quality that defines good art is if it engages the viewer. This movie does that. You&#039;re always in it! It’s boring, but it’s your whole world for the full runtime. Your feelings aren’t the character’s, but that of a passive viewer following them along their day. You feel the characters and you feel trapped by their world, like they do, frustrated with their friends, like they do. So neat.",
+    "body": "Sarah and I talked about how the single core quality that defines good art is if it engages the viewer. This movie does that. You&#039;re always in it! It’s boring, but it’s your whole world for the full runtime. Your feelings aren’t the character’s, but that of a passive viewer following them along their day. You feel the characters and you feel trapped by their world, like they do, frustrated with their friends, like they do. So neat.",
+    "url": "https://letterboxd.com/epple_3k/film/la-haine/",
+    "date": "2026-05-08"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "The Swimmer (1968) ★★",
+    "text": "Not good\nTwist ending but the twist happens the whole time and it’s not that crazy",
+    "body": "Not good\nTwist ending but the twist happens the whole time and it’s not that crazy",
+    "url": "https://letterboxd.com/epple_3k/film/the-swimmer/",
+    "date": "2026-04-30"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "Nowhere (1997) ★★★★★",
+    "text": "Every character is so bright. They talk different, their rooms match their outfits, they’re friends. Though, every body has the acceleration in mind. Nuclear holocaust tomorrow. Everybody sees it differently, but it’s there. Everybody has something they’re running from.",
+    "body": "Every character is so bright. They talk different, their rooms match their outfits, they’re friends. Though, every body has the acceleration in mind. Nuclear holocaust tomorrow. Everybody sees it differently, but it’s there. Everybody has something they’re running from.",
+    "url": "https://letterboxd.com/epple_3k/film/nowhere/",
+    "date": "2026-04-19"
+  },
+  {
+    "platform": "letterboxd",
+    "title": "The Doom Generation (1995) ★★★★½",
+    "text": "Like this one wayyyy more. It’s way more cohesive so it feels like there’s more plot for them to decorate with cool moments and campy cute dialogue. It’s like a lot a lot like Korine! Which is a very good thing. More color and more exciting. Less slowly stab you in the gut than the previous.",
+    "body": "Like this one wayyyy more. It’s way more cohesive so it feels like there’s more plot for them to decorate with cool moments and campy cute dialogue. It’s like a lot a lot like Korine! Which is a very good thing. More color and more exciting. Less slowly stab you in the gut than the previous.",
+    "url": "https://letterboxd.com/epple_3k/film/the-doom-generation/",
+    "date": "2026-04-15"
   }
 ]
