@@ -6,7 +6,7 @@ services:
     rootDir: ledgerline-plugin
     buildCommand: npm install
     startCommand: npm start
-    healthCheckPath: /
+    healthCheckPath: /health
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
