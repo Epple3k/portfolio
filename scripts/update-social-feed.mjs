@@ -135,6 +135,7 @@ async function letterboxd() {
         body,
         url: link,
         date: isoDate(watched || field(item, "pubDate")),
+        tabs: ["reviews"],
       };
     })
     .filter((post) => post.url && post.title && wordCount(post.body) >= MIN_FILM_REVIEW_WORDS)
@@ -166,6 +167,7 @@ async function goodreads() {
         body: review,
         url: link,
         date: isoDate(readAt || field(item, "pubDate")),
+        tabs: ["reviews"],
       };
     })
     .filter((post) => post.url && post.title && wordCount(post.body) >= MIN_BOOK_REVIEW_WORDS)
@@ -215,6 +217,7 @@ async function musicboard() {
         body,
         url: `https://musicboard.app/${MUSICBOARD_USERNAME}/reviews`,
         date: isoDate(review?.created_at || review?.rating?.listened_at),
+        tabs: ["reviews"],
       });
 
       if (reviews.length >= MAX_MUSIC) break;
@@ -245,7 +248,12 @@ async function main() {
   try {
     const raw = await readFile("public/manual-social.json", "utf8");
     const parsed = JSON.parse(raw);
-    manual = Array.isArray(parsed) ? parsed : [];
+    manual = Array.isArray(parsed)
+      ? parsed.map((post) => ({
+          ...post,
+          tabs: Array.isArray(post?.tabs) && post.tabs.length ? post.tabs : ["socials"],
+        }))
+      : [];
   } catch {}
   try {
     const raw = await readFile("public/social-feed.json", "utf8");
