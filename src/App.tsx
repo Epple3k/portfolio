@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import { flushSync } from "react-dom"
 
+import image1 from "./imports/image.png"
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
 
@@ -11,6 +12,7 @@ const PROJECTS = [
     category: "Web Application",
     year: "2026",
     image: image2,
+    url: "https://epple3k.github.io/attention-field/",
     description:
       "An interactive visualization that explores how attention shifts, clusters, and responds across a dynamic field.",
   },
@@ -20,8 +22,19 @@ const PROJECTS = [
     category: "Prototyping",
     year: "2026",
     image: image3,
+    url: "https://epple3k.github.io/fsu-research-atlas-2/",
     description:
       "An interactive tool for mapping ideas, sources, and connections to make complex research easier to explore.",
+  },
+  {
+    id: "03",
+    title: "aural field",
+    category: "Generative Audio",
+    year: "2026",
+    image: image1,
+    url: "https://epple3k.github.io/aural-field/",
+    description:
+      "A generative ambient sound playground for sculpting evolving tones, textures, and spatial forms through a minimal visual interface.",
   },
 ]
 
@@ -275,6 +288,15 @@ export default function App() {
             <p className="text-2xl md:text-3xl leading-tight opacity-80 mb-8 max-w-2xl">
               {activeProject.description}
             </p>
+
+            <a
+              href={activeProject.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 mb-8 font-mono uppercase tracking-wider text-sm border border-black px-4 py-3 hover:bg-black hover:text-[#00ff00] transition-colors"
+            >
+              Open Project ↗
+            </a>
 
             <div className="flex gap-8 font-mono uppercase tracking-wider text-sm border-t border-black/20 pt-8">
               <div>
