@@ -683,6 +683,16 @@ const httpServer = createHttpServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "GET" && url.pathname === "/.well-known/openai-apps-challenge") {
+    const token = process.env.OPENAI_APPS_CHALLENGE;
+    if (!token) {
+      res.writeHead(404, { "content-type": "text/plain; charset=utf-8" }).end("Challenge not configured");
+      return;
+    }
+    res.writeHead(200, { "content-type": "text/plain; charset=utf-8" }).end(token);
+    return;
+  }
+
   if (req.method === "OPTIONS" && url.pathname === MCP_PATH) {
     res.writeHead(204, {
       "Access-Control-Allow-Origin": "*",
