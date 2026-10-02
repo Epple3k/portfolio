@@ -28,14 +28,17 @@ jobs:
         if: env.SCRAPINGBEE_API_KEY == ''
         run: echo "SCRAPINGBEE_API_KEY is not configured; leaving RYM cache unchanged."
 
-      - name: Commit RYM cache
+      - name: Rebuild portfolio feed
+        run: node scripts/update-social-feed.mjs
+
+      - name: Commit media feeds
         run: |
-          if git diff --quiet -- public/rym-feed.json; then
-            echo "No RYM feed changes."
+          if git diff --quiet -- public/rym-feed.json public/social-feed.json; then
+            echo "No media feed changes."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/rym-feed.json
-          git commit -m "Update Rate Your Music feed"
+          git add public/rym-feed.json public/social-feed.json
+          git commit -m "Update Rate Your Music and portfolio feeds"
           git push
