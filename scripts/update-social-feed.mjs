@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 
 const LETTERBOXD = "https://letterboxd.com/epple_3k/rss/";
 const GOODREADS_READ = "https://www.goodreads.com/review/list_rss/204755541?shelf=read";
@@ -168,12 +168,20 @@ async function safe(label, fn) {
 }
 
 async function main() {
+  let manual = [];
+  try {
+    const raw = await readFile("public/manual-social.json", "utf8");
+    const parsed = JSON.parse(raw);
+    manual = Array.isArray(parsed) ? parsed : [];
+  } catch {}
+
   const [films, books] = await Promise.all([
     safe("Letterboxd substantial reviews", letterboxd),
     safe("Goodreads books", goodreads),
   ]);
 
-  const merged = [...films, ...books]
+  // Publisher-created/manual posts are never subject to the book/film caps.
+  const merged = [...manual, ...films, ...books]
     .filter((post) => post?.url && (post?.title || post?.text))
     .filter(
       (post, index, all) =>
