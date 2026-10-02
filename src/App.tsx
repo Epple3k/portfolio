@@ -17,12 +17,15 @@ const trackEvent = (
   window.gtag?.("event", eventName, params)
 }
 
+type BlogTab = "reviews" | "socials" | "professional"
+
 type Note = {
   title: string
   date: string
   summary: string
   body?: string
   tags?: string[]
+  tabs?: BlogTab[]
 }
 
 type SocialPost = {
@@ -32,6 +35,7 @@ type SocialPost = {
   body?: string
   url: string
   date?: string
+  tabs?: BlogTab[]
 }
 
 const PROJECTS = [
@@ -82,6 +86,7 @@ export default function App() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [showBlog, setShowBlog] = useState(false)
   const [activeBlogKey, setActiveBlogKey] = useState<string | null>(null)
+  const [activeBlogTab, setActiveBlogTab] = useState<BlogTab>("professional")
   const [notes, setNotes] = useState<Note[]>([])
   const [socialPosts, setSocialPosts] = useState<SocialPost[]>([])
 
@@ -162,6 +167,7 @@ export default function App() {
       summary: note.summary,
       body: note.body ?? note.summary,
       tags: note.tags ?? [],
+      tabs: note.tabs?.length ? note.tabs : ["professional" as BlogTab],
       url: undefined as string | undefined,
     })),
     ...socialPosts.map((post, index) => ({
@@ -173,10 +179,25 @@ export default function App() {
       summary: post.text,
       body: post.body ?? post.text,
       tags: [] as string[],
+      tabs:
+        post.tabs?.length
+          ? post.tabs
+          : post.platform === "letterboxd" || post.platform === "goodreads" || post.platform === "musicboard"
+            ? ["reviews" as BlogTab]
+            : ["socials" as BlogTab],
       url: post.url,
     })),
   ].sort((a, b) => (b.date || "").localeCompare(a.date || ""))
 
+  const visibleBlogEntries = blogEntries.filter((entry) =>
+    entry.tabs.includes(activeBlogTab),
+  )
+
+  const blogTabs: { id: BlogTab; label: string }[] = [
+    { id: "professional", label: "professional work & updates" },
+    { id: "reviews", label: "reviews & media" },
+    { id: "socials", label: "social posts" },
+  ]
 
   return (
     <div className="relative min-h-screen w-full font-sans text-black overflow-hidden flex selection:bg-black selection:text-[#1aff1a]">
@@ -237,6 +258,7 @@ export default function App() {
               onClick={() => {
                 setShowBlog(true)
                 setActiveBlogKey(null)
+                setActiveBlogTab("professional")
                 trackEvent("blog_open")
               }}
               className="hover:italic hover:translate-x-2 transition-all duration-300 text-left"
@@ -404,6 +426,28 @@ export default function App() {
             <div className="font-mono text-xl">BLOG</div>
           </div>
 
+          <div className="relative z-10 px-4 md:px-8 pb-4 shrink-0">
+            <div className="flex flex-wrap gap-2">
+              {blogTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveBlogTab(tab.id)
+                    setActiveBlogKey(null)
+                    trackEvent("blog_tab_open", { blog_tab: tab.id })
+                  }}
+                  className={`font-mono text-[10px] md:text-xs uppercase tracking-[0.1em] px-3 py-2 border border-black transition-colors ${
+                    activeBlogTab === tab.id
+                      ? "bg-black text-[#00ff00]"
+                      : "bg-transparent text-black hover:bg-black hover:text-[#00ff00]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="relative z-10 flex-1 min-h-0 px-4 md:px-8 pb-4 md:pb-8">
             <div className="h-full grid grid-cols-1 md:grid-cols-[minmax(220px,0.7fr)_minmax(0,1.3fr)] gap-4 md:gap-8">
               <div className="hidden md:flex flex-col justify-end pb-2">
@@ -411,14 +455,18 @@ export default function App() {
                   things i’m<br />into.
                 </h1>
                 <p className="text-xl lg:text-2xl leading-tight max-w-sm opacity-75">
-                  writing, films, books, interfaces, music, and whatever else has my attention.
+                  {activeBlogTab === "professional"
+                    ? "projects, research, experiments, and the work i want people to actually hire me for."
+                    : activeBlogTab === "reviews"
+                      ? "books, films, music, and the things worth thinking about for more than a sentence."
+                      : "posts from elsewhere, collected here without turning the whole site into a feed."}
                 </p>
               </div>
 
               <div className="h-full overflow-y-auto pr-1 md:pr-3">
                 <div className="flex flex-col gap-3 md:gap-4 pb-8">
-                  {blogEntries.length > 0 ? (
-                    blogEntries.map((entry, index) => {
+                  {visibleBlogEntries.length > 0 ? (
+                    visibleBlogEntries.map((entry, index) => {
                       const isOpen = activeBlogKey === entry.key
 
                       return (
