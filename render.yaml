@@ -15,3 +15,7 @@ services:
         sync: false
       - key: OPENAI_APPS_CHALLENGE
         sync: false
+      - key: BLOG_ADMIN_TOKEN
+        sync: false
+      - key: GITHUB_CONTENT_TOKEN
+        sync: false
