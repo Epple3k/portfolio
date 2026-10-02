@@ -6,6 +6,7 @@ const GOODREADS_READ = "https://www.goodreads.com/review/list_rss/204755541?shel
 const MAX_BOOKS = 3;
 const MAX_FILMS = 3;
 const MIN_FILM_REVIEW_WORDS = 70;
+const MIN_BOOK_REVIEW_WORDS = 70;
 
 const headers = {
   "User-Agent": "EmitRicePortfolio/1.0 (+https://epple3k.github.io/portfolio/)",
@@ -146,14 +147,14 @@ async function goodreads() {
       return {
         platform: "goodreads",
         title: displayTitle,
-        text: review || `read: ${displayTitle}`,
-        body: review || `read: ${displayTitle}`,
+        text: review,
+        body: review,
         url: link,
         date: isoDate(readAt || field(item, "pubDate")),
       };
     })
-    .filter((post) => post.url && post.title)
-    .slice(0, MAX_BOOKS);
+    .filter((post) => post.url && post.title && wordCount(post.body) >= MIN_BOOK_REVIEW_WORDS)
+    .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 }
 
 async function safe(label, fn) {
@@ -169,16 +170,32 @@ async function safe(label, fn) {
 
 async function main() {
   let manual = [];
+  let previousFeed = [];
   try {
     const raw = await readFile("public/manual-social.json", "utf8");
     const parsed = JSON.parse(raw);
     manual = Array.isArray(parsed) ? parsed : [];
   } catch {}
+  try {
+    const raw = await readFile("public/social-feed.json", "utf8");
+    const parsed = JSON.parse(raw);
+    previousFeed = Array.isArray(parsed) ? parsed : [];
+  } catch {}
 
-  const [films, books] = await Promise.all([
+  const [films, qualifyingBooks] = await Promise.all([
     safe("Letterboxd substantial reviews", letterboxd),
-    safe("Goodreads books", goodreads),
+    safe("Goodreads substantial reviews", goodreads),
   ]);
+
+  // Keep today's three legacy book entries until qualifying 70+ word reviews replace them.
+  const legacyBooks = previousFeed.filter((post) => post?.platform === "goodreads");
+  const books = [...qualifyingBooks, ...legacyBooks]
+    .filter(
+      (post, index, all) =>
+        all.findIndex((other) => other.url === post.url && other.title === post.title) === index,
+    )
+    .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+    .slice(0, MAX_BOOKS);
 
   // Publisher-created/manual posts are never subject to the book/film caps.
   const merged = [...manual, ...films, ...books]
