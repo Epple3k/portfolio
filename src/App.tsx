@@ -48,17 +48,6 @@ const PROJECTS = [
     description:
       "A generative ambient sound playground for sculpting evolving tones, textures, and spatial forms through a minimal visual interface.",
   },
-  {
-    id: "04",
-    title: "ledgerline",
-    category: "Financial Intelligence",
-    year: "2026",
-    previewUrl:
-      "https://epple3k.github.io/portfolio/ledgerline/?portfolioPreview=1",
-    url: "https://epple3k.github.io/portfolio/ledgerline/",
-    description:
-      "An evidence-first financial research interface that turns SEC filings, XBRL facts, and macro data into conversational analysis with inspectable provenance.",
-  },
 ]
 
 export default function App() {
