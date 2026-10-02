@@ -1,0 +1,65 @@
+name: Validate and package Ledgerline
+
+on:
+  push:
+    branches:
+      - ledgerline-chatgpt-plugin
+      - main
+    paths:
+      - "ledgerline-plugin/**"
+      - "render.yaml"
+      - ".github/workflows/ledgerline.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        working-directory: ledgerline-plugin
+        run: npm install
+
+      - name: Syntax check
+        working-directory: ledgerline-plugin
+        run: npm run check
+
+      - name: Boot server and health-check
+        working-directory: ledgerline-plugin
+        env:
+          LEDGERLINE_USER_AGENT: "Ledgerline-CI/0.1 contact:rice.emit3k@gmail.com"
+          PORT: 8787
+        run: |
+          npm start > /tmp/ledgerline.log 2>&1 &
+          PID=$!
+          trap "kill $PID || true" EXIT
+          for i in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8787/ > /tmp/ledgerline-health.json; then
+              cat /tmp/ledgerline-health.json
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/ledgerline.log
+          exit 1
+
+      - name: Package public plugin ZIP
+        run: |
+          rm -rf /tmp/ledgerline-package
+          mkdir -p /tmp/ledgerline-package
+          cp -R ledgerline-plugin/. /tmp/ledgerline-package/
+          rm -rf /tmp/ledgerline-package/node_modules
+          rm -f /tmp/ledgerline-package/package-lock.json
+          cd /tmp/ledgerline-package
+          zip -r "$GITHUB_WORKSPACE/ledgerline-plugin.zip" .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ledgerline-plugin
+          path: ledgerline-plugin.zip
+          if-no-files-found: error
