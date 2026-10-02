@@ -78,7 +78,8 @@ const PROJECTS = [
 export default function App() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
-  const [showNotes, setShowNotes] = useState(false)
+  const [showBlog, setShowBlog] = useState(false)
+  const [activeBlogKey, setActiveBlogKey] = useState<string | null>(null)
   const [notes, setNotes] = useState<Note[]>([])
   const [socialPosts, setSocialPosts] = useState<SocialPost[]>([])
 
@@ -149,6 +150,33 @@ export default function App() {
   const activeProject = PROJECTS.find((p) => p.id === activeId)
   const hoveredProject = PROJECTS.find((p) => p.id === hoveredId)
 
+  const blogEntries = [
+    ...notes.map((note, index) => ({
+      key: `note-${note.date}-${index}`,
+      type: "blog" as const,
+      label: "blog",
+      title: note.title,
+      date: note.date,
+      summary: note.summary,
+      body: note.body ?? note.summary,
+      tags: note.tags ?? [],
+      url: undefined as string | undefined,
+    })),
+    ...socialPosts.map((post, index) => ({
+      key: `social-${post.platform}-${index}`,
+      type: "social" as const,
+      label: post.platform,
+      title: post.text,
+      date: post.date ?? "",
+      summary: post.text,
+      body: post.text,
+      tags: [] as string[],
+      url: post.url,
+    })),
+  ].sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+
+  const activeBlogEntry = blogEntries.find((entry) => entry.key === activeBlogKey)
+
   return (
     <div className="relative min-h-screen w-full font-sans text-black overflow-hidden flex selection:bg-black selection:text-[#1aff1a]">
       {/* Background Gradient Layer */}
@@ -206,12 +234,13 @@ export default function App() {
           <div className="flex flex-col items-start gap-1 text-xl md:text-2xl tracking-tight mt-auto md:ml-12 lg:ml-24">
             <button
               onClick={() => {
-                setShowNotes(true)
-                trackEvent("notes_open")
+                setShowBlog(true)
+                setActiveBlogKey(null)
+                trackEvent("blog_open")
               }}
               className="hover:italic hover:translate-x-2 transition-all duration-300 text-left"
             >
-              notes
+              blog
             </button>
             {[
               {
@@ -359,87 +388,123 @@ export default function App() {
         </div>
       </main>
 
-      {showNotes && (
-        <div className="fixed inset-0 z-50 bg-[#efffef] text-black overflow-y-auto">
-          <div className="min-h-screen p-4 md:p-8">
-            <div className="flex items-start justify-between gap-6 border-b border-black pb-4">
-              <div>
-                <div className="font-mono text-xs uppercase tracking-[0.14em] mb-3">notes / elsewhere</div>
-                <h1 className="text-5xl md:text-7xl tracking-[-0.055em] font-medium leading-none">things i’m into.</h1>
+      {showBlog && !activeBlogEntry && (
+        <div className="fixed inset-0 z-50 bg-[#00ff00] text-black overflow-hidden flex flex-col">
+          <div className="relative z-10 p-4 md:p-8 flex justify-between items-center w-full shrink-0">
+            <button
+              onClick={() => setShowBlog(false)}
+              className="text-black text-xl hover:italic transition-all uppercase tracking-widest font-mono"
+            >
+              [ Close ]
+            </button>
+            <div className="font-mono text-xl">BLOG</div>
+          </div>
+
+          <div className="relative z-10 flex-1 min-h-0 px-4 md:px-8 pb-4 md:pb-8">
+            <div className="h-full grid grid-cols-1 md:grid-cols-[minmax(220px,0.7fr)_minmax(0,1.3fr)] gap-4 md:gap-8">
+              <div className="hidden md:flex flex-col justify-end pb-2">
+                <h1 className="text-6xl lg:text-8xl tracking-tighter leading-[0.9] mb-5">
+                  things i’m<br />into.
+                </h1>
+                <p className="text-xl lg:text-2xl leading-tight max-w-sm opacity-75">
+                  writing, films, books, interfaces, music, and whatever else has my attention.
+                </p>
               </div>
-              <button
-                onClick={() => setShowNotes(false)}
-                className="font-mono text-sm uppercase tracking-wider hover:italic"
-              >
-                [ close ]
-              </button>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_.8fr] gap-12 lg:gap-20 py-10 md:py-16">
-              <section>
-                <div className="font-mono text-xs uppercase tracking-[0.12em] mb-8">notes</div>
-                {notes.length > 0 ? (
-                  <div className="divide-y divide-black/20 border-t border-black">
-                    {notes.map((note) => (
-                      <article key={`${note.date}-${note.title}`} className="py-7 grid md:grid-cols-[120px_1fr] gap-4 md:gap-8">
-                        <div className="font-mono text-xs opacity-55">{note.date}</div>
-                        <div>
-                          <h2 className="text-2xl md:text-3xl tracking-tight font-medium mb-2">{note.title}</h2>
-                          <p className="text-base md:text-lg leading-relaxed max-w-2xl">{note.summary}</p>
-                          {note.tags?.length ? (
-                            <div className="mt-4 font-mono text-[10px] uppercase tracking-wider opacity-55">
-                              {note.tags.join(" · ")}
-                            </div>
-                          ) : null}
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="border-t border-black py-7 text-lg max-w-xl">
-                    Short notes on interfaces, finance, research, music, games, and whatever else has my attention.
-                  </div>
-                )}
-              </section>
-
-              <aside>
-                <div className="font-mono text-xs uppercase tracking-[0.12em] mb-8">elsewhere</div>
-                <div className="border-t border-black">
-                  {socialPosts.length > 0 ? (
-                    socialPosts.slice(0, 8).map((post) => (
-                      <a
-                        key={post.url}
-                        href={post.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block py-5 border-b border-black/20 hover:translate-x-1 transition-transform"
+              <div className="h-full overflow-y-auto pr-1 md:pr-3">
+                <div className="flex flex-col gap-3 md:gap-4 pb-2">
+                  {blogEntries.length > 0 ? (
+                    blogEntries.map((entry, index) => (
+                      <button
+                        key={entry.key}
+                        onClick={() => {
+                          setActiveBlogKey(entry.key)
+                          trackEvent("blog_entry_open", {
+                            blog_source: entry.label,
+                            blog_title: entry.title.slice(0, 80),
+                          })
+                        }}
+                        className="group w-full min-h-[132px] md:min-h-[150px] bg-[#efffef] border border-black text-left p-5 md:p-6 shadow-[6px_6px_0_#000] hover:translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[4px_8px_0_#000] transition-all"
                       >
-                        <div className="flex justify-between gap-4 font-mono text-[10px] uppercase tracking-wider opacity-55 mb-2">
-                          <span>{post.platform}</span>
-                          <span>{post.date ?? ""}</span>
+                        <div className="h-full flex flex-col justify-between gap-8">
+                          <div className="flex items-start justify-between gap-6 font-mono text-[10px] md:text-xs uppercase tracking-[0.12em]">
+                            <span>{String(index + 1).padStart(2, "0")} / {entry.label}</span>
+                            <span className="opacity-60">{entry.date}</span>
+                          </div>
+
+                          <div className="flex items-end justify-between gap-6">
+                            <h2 className="text-2xl md:text-4xl tracking-tight leading-[1.02] font-medium max-w-3xl line-clamp-2">
+                              {entry.title}
+                            </h2>
+                            <span className="font-mono text-lg opacity-0 group-hover:opacity-100 transition-opacity shrink-0">↗</span>
+                          </div>
                         </div>
-                        <p className="text-sm leading-relaxed line-clamp-4">{post.text}</p>
-                      </a>
+                      </button>
                     ))
                   ) : (
-                    <div className="py-5 border-b border-black/20">
-                      <div className="font-mono text-[10px] uppercase tracking-wider opacity-55 mb-2">social feed</div>
-                      <p className="text-sm leading-relaxed">
-                        LinkedIn and Instagram posts will appear here automatically once the feed connection is authorized.
-                      </p>
+                    <div className="bg-[#efffef] border border-black p-6 shadow-[6px_6px_0_#000]">
+                      <div className="font-mono text-xs uppercase tracking-wider mb-8">01 / blog</div>
+                      <div className="text-3xl tracking-tight">first post coming soon.</div>
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-                <div className="mt-10">
-                  <div className="font-mono text-xs uppercase tracking-[0.12em] mb-5">currently interested in</div>
-                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-lg md:text-xl tracking-tight">
-                    {["human-ai interaction", "financial interfaces", "data visualization", "generative audio", "systems that explain themselves"].map((item) => (
-                      <span key={item} className="border-b border-black/25 pb-1">{item}</span>
-                    ))}
-                  </div>
-                </div>
-              </aside>
+      {showBlog && activeBlogEntry && (
+        <div className="fixed inset-0 z-[60] flex flex-col bg-[#00ff00] overflow-hidden">
+          <div className="relative z-10 p-4 md:p-8 flex justify-between items-center w-full">
+            <button
+              onClick={() => setActiveBlogKey(null)}
+              className="text-black text-xl hover:italic transition-all uppercase tracking-widest font-mono"
+            >
+              [ Back ]
+            </button>
+            <div className="font-mono text-xl uppercase">{activeBlogEntry.label}</div>
+          </div>
+
+          <div className="relative z-10 mt-auto p-6 md:p-16 max-w-5xl">
+            <div className="font-mono uppercase tracking-wider text-sm mb-5 opacity-60">
+              {activeBlogEntry.date || "undated"}
+            </div>
+
+            <h1 className="text-5xl md:text-8xl tracking-tighter leading-[0.92] mb-6">
+              {activeBlogEntry.title}
+            </h1>
+
+            <p className="text-xl md:text-3xl leading-tight opacity-80 mb-8 max-w-3xl whitespace-pre-line">
+              {activeBlogEntry.body}
+            </p>
+
+            {activeBlogEntry.tags.length > 0 && (
+              <div className="font-mono uppercase tracking-wider text-xs mb-8">
+                {activeBlogEntry.tags.join(" · ")}
+              </div>
+            )}
+
+            {activeBlogEntry.url && (
+              <a
+                href={activeBlogEntry.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 mb-8 font-mono uppercase tracking-wider text-sm border border-black px-4 py-3 hover:bg-black hover:text-[#00ff00] transition-colors"
+              >
+                Open source ↗
+              </a>
+            )}
+
+            <div className="flex gap-8 font-mono uppercase tracking-wider text-sm border-t border-black/20 pt-8">
+              <div>
+                <span className="opacity-50 block mb-1">Type</span>
+                {activeBlogEntry.type === "blog" ? "Blog post" : "Elsewhere"}
+              </div>
+              <div>
+                <span className="opacity-50 block mb-1">Source</span>
+                {activeBlogEntry.label}
+              </div>
             </div>
           </div>
         </div>
