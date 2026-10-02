@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "platform": "letterboxd",
+    "text": "film diary, ratings, and reviews",
+    "url": "https://letterboxd.com/epple_3k/",
+    "date": "2026-10-02"
+  },
+  {
+    "platform": "goodreads",
+    "text": "reading log, shelves, and book activity",
+    "url": "https://www.goodreads.com/user/show/204755541-emit-rice",
+    "date": "2026-10-02"
+  }
+]
