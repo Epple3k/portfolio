@@ -8,6 +8,7 @@ on:
       - "scripts/update-social-feed.mjs"
       - ".github/workflows/update-social-feed.yml"
       - "public/manual-social.json"
+      - "public/rym-feed.json"
   schedule:
     - cron: "17 */6 * * *"
 
@@ -24,7 +25,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Aggregate Letterboxd and Goodreads
+      - name: Aggregate portfolio media feeds
         run: node scripts/update-social-feed.mjs
 
       - name: Commit feed changes
