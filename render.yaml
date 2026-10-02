@@ -12,3 +12,5 @@ services:
         value: 22
       - key: LEDGERLINE_USER_AGENT
         sync: false
+      - key: OPENAI_APPS_CHALLENGE
+        sync: false
