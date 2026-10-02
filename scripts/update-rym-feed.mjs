@@ -45,40 +45,85 @@ function normalizeRating(value) {
 }
 
 async function fetchPage(page) {
-  const target = page === 1 ? PROFILE_URL : `${PROFILE_URL}/${page}`;
+  // Start with the primary reviews collection page. RYM's collection pagination
+  // is brittle, so only move past page one after the first page is proven usable.
+  const target = page === 1 ? `${PROFILE_URL}/` : `${PROFILE_URL}/?page=${page}`;
+
+  const rules = {
+    titles: {
+      description: "Release title for each written review on the page, in page order.",
+      type: "list",
+    },
+    artists: {
+      description: "Artist name for each written review on the page, in the same order as titles.",
+      type: "list",
+    },
+    ratings: {
+      description: "The user's personal numeric rating from 0 to 5 for each written review, in the same order. Use an empty string when no rating is visible.",
+      type: "list",
+    },
+    reviews: {
+      description: "Full written review text for each review on the page, in the same order. Exclude entries that have a rating but no written review.",
+      type: "list",
+    },
+    dates: {
+      description: "Review date for each written review, in the same order. Use an empty string if no date is visible.",
+      type: "list",
+    },
+    urls: {
+      description: "Release or review URL for each written review, in the same order. Use an empty string if unavailable.",
+      type: "list",
+    },
+  };
+
   const params = new URLSearchParams({
     api_key: API_KEY,
     url: target,
     mode: "auto",
     max_cost: "75",
-    ai_query:
-      "Extract every written music review visible on this Rate Your Music collection page. Return JSON only as an array. For each review include: title (release title), artist, rating (numeric 0-5 if shown, otherwise null), review (full written review text), date (review date if shown, otherwise empty string), and url (the release or review URL if available). Do not include ratings without written review text.",
+    timeout: "140000",
+    ai_extract_rules: JSON.stringify(rules),
   });
 
   const res = await fetch(`https://app.scrapingbee.com/api/v1/?${params.toString()}`, {
     headers: { Accept: "application/json,text/plain,*/*" },
   });
 
+  const raw = (await res.text()).trim();
+  console.log(
+    `ScrapingBee page ${page}: HTTP ${res.status}, cost=${res.headers.get("spb-cost") ?? "?"}, auto=${res.headers.get("spb-auto-cost") ?? "?"}`,
+  );
+
   if (!res.ok) {
-    throw new Error(`ScrapingBee returned ${res.status}: ${await res.text()}`);
+    throw new Error(`ScrapingBee returned ${res.status}: ${raw.slice(0, 600)}`);
   }
 
-  const raw = (await res.text()).trim();
   if (!raw) return [];
 
   let parsed;
   try {
     parsed = JSON.parse(raw);
   } catch {
-    const fenced = raw.match(/\[\s\S]*\]/);
-    if (!fenced) throw new Error("ScrapingBee extraction did not return JSON");
-    parsed = JSON.parse(fenced[0]);
+    throw new Error(
+      `ScrapingBee returned non-JSON extraction output: ${raw.slice(0, 600)}`,
+    );
   }
 
-  if (Array.isArray(parsed)) return parsed;
-  if (Array.isArray(parsed?.reviews)) return parsed.reviews;
-  if (Array.isArray(parsed?.data)) return parsed.data;
-  return [];
+  const reviews = Array.isArray(parsed?.reviews) ? parsed.reviews : [];
+  const titles = Array.isArray(parsed?.titles) ? parsed.titles : [];
+  const artists = Array.isArray(parsed?.artists) ? parsed.artists : [];
+  const ratings = Array.isArray(parsed?.ratings) ? parsed.ratings : [];
+  const dates = Array.isArray(parsed?.dates) ? parsed.dates : [];
+  const urls = Array.isArray(parsed?.urls) ? parsed.urls : [];
+
+  return reviews.map((review, index) => ({
+    review,
+    title: titles[index] ?? "",
+    artist: artists[index] ?? "",
+    rating: ratings[index] ?? "",
+    date: dates[index] ?? "",
+    url: urls[index] ?? "",
+  }));
 }
 
 async function readPrevious() {
@@ -99,7 +144,7 @@ async function main() {
   const found = [];
   const seen = new Set();
 
-  for (let page = 1; page <= 6 && found.length < MAX_REVIEWS; page += 1) {
+  for (let page = 1; page <= 1 && found.length < MAX_REVIEWS; page += 1) {
     const rows = await fetchPage(page);
     if (!rows.length) break;
 
