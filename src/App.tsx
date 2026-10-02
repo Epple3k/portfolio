@@ -27,7 +27,9 @@ type Note = {
 
 type SocialPost = {
   platform: "linkedin" | "instagram" | "letterboxd" | "goodreads" | "manual"
+  title?: string
   text: string
+  body?: string
   url: string
   date?: string
 }
@@ -166,10 +168,10 @@ export default function App() {
       key: `social-${post.platform}-${index}`,
       type: "social" as const,
       label: post.platform,
-      title: post.text,
+      title: post.title ?? post.text,
       date: post.date ?? "",
       summary: post.text,
-      body: post.text,
+      body: post.body ?? post.text,
       tags: [] as string[],
       url: post.url,
     })),
