@@ -2,6 +2,7 @@ services:
   - type: web
     name: ledgerline-finance
     runtime: node
+    plan: free
     rootDir: ledgerline-plugin
     buildCommand: npm install
     startCommand: npm start
