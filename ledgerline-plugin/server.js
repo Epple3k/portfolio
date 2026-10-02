@@ -426,6 +426,14 @@ function cleanString(value, max = 20000) {
   return String(value ?? "").trim().slice(0, max);
 }
 
+const BLOG_TABS = ["reviews", "socials", "professional"];
+function cleanTabs(value, fallback) {
+  const tabs = Array.isArray(value)
+    ? value.map((tab) => cleanString(tab, 30).toLowerCase()).filter((tab) => BLOG_TABS.includes(tab))
+    : [];
+  return [...new Set(tabs.length ? tabs : fallback)].slice(0, BLOG_TABS.length);
+}
+
 function createLedgerlineServer() {
   const server = new McpServer({
     name: "Ledgerline",
@@ -794,11 +802,12 @@ const httpServer = createHttpServer(async (req, res) => {
       const tags = Array.isArray(body.tags)
         ? body.tags.map((tag) => cleanString(tag, 40)).filter(Boolean).slice(0, 12)
         : [];
+      const tabs = cleanTabs(body.tabs, ["professional"]);
 
       const file = await readRepoJson("public/notes.json");
       const posts = Array.isArray(file.value) ? file.value : [];
       const next = [
-        { title, date, summary, body: postBody, tags },
+        { title, date, summary, body: postBody, tags, tabs },
         ...posts,
       ].slice(0, 200);
 
@@ -832,6 +841,7 @@ const httpServer = createHttpServer(async (req, res) => {
       const sourceUrl = cleanString(body.url, 2000);
       const title = cleanString(body.title, 180) || postBody.split(/\n/)[0].slice(0, 140);
       const date = cleanString(body.date, 10) || new Date().toISOString().slice(0, 10);
+      const tabs = cleanTabs(body.tabs, ["socials"]);
 
       if (!["linkedin", "instagram", "manual"].includes(platform)) {
         jsonResponse(res, 400, { error: "unsupported platform" });
@@ -851,6 +861,7 @@ const httpServer = createHttpServer(async (req, res) => {
         body: postBody,
         url: sourceUrl,
         date,
+        tabs,
       };
       const next = [
         entry,
