@@ -29,7 +29,7 @@ type Note = {
 }
 
 type SocialPost = {
-  platform: "linkedin" | "instagram" | "letterboxd" | "goodreads" | "musicboard" | "manual"
+  platform: "linkedin" | "instagram" | "letterboxd" | "goodreads" | "rateyourmusic" | "manual"
   title?: string
   text: string
   body?: string
@@ -182,7 +182,7 @@ export default function App() {
       tabs:
         post.tabs?.length
           ? post.tabs
-          : post.platform === "letterboxd" || post.platform === "goodreads" || post.platform === "musicboard"
+          : post.platform === "letterboxd" || post.platform === "goodreads" || post.platform === "rateyourmusic"
             ? ["reviews" as BlogTab]
             : ["socials" as BlogTab],
       url: post.url,
