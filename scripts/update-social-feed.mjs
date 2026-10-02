@@ -6,26 +6,42 @@ const GOODREADS_CURRENT = "https://www.goodreads.com/review/list_rss/204755541?s
 
 const headers = {
   "User-Agent": "EmitRicePortfolio/1.0 (+https://epple3k.github.io/portfolio/)",
-  "Accept": "application/rss+xml, application/xml, text/xml, */*",
+  Accept: "application/rss+xml, application/xml, text/xml, */*",
 };
 
-function decodeXml(s = "") {
+function decodeEntities(s = "") {
   return s
-    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, "'")
     .replace(/&#x2F;/g, "/")
-    .replace(/\s+/g, " ")
+    .replace(/&#(d+);/g, (_, n) => String.fromCharCode(Number(n)));
+}
+
+function unwrapCdata(s = "") {
+  return s.replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "");
+}
+
+function cleanText(s = "") {
+  const raw = unwrapCdata(s)
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .replace(/<\/p>/gi, "\n\n")
+    .replace(/<[^>]+>/g, " ");
+  return decodeEntities(raw)
+    .replace(/[ \t]+/g, " ")
+    .replace(/ *\n */g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
 function field(item, name) {
   const escaped = name.replace(/[.*+?^$\{\}()|[\]\\]/g, "\\$&");
-  const match = item.match(new RegExp(`<${escaped}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${escaped}>`, "i"));
-  return decodeXml(match?.[1] ?? "");
+  const match = item.match(
+    new RegExp(`<${escaped}(?:\\s[^>]*)?>([\\s\\S]*?)<\\/${escaped}>`, "i"),
+  );
+  return unwrapCdata(match?.[1]?.trim() ?? "");
 }
 
 function items(xml) {
@@ -34,7 +50,7 @@ function items(xml) {
 
 function isoDate(value) {
   if (!value) return "";
-  const d = new Date(value);
+  const d = new Date(cleanText(value));
   return Number.isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 10);
 }
 
@@ -52,39 +68,79 @@ async function fetchXml(url) {
   return res.text();
 }
 
+function extractGoodreadsReview(item) {
+  const explicit = cleanText(field(item, "user_review"));
+  if (explicit) return explicit;
+
+  const description = field(item, "description");
+  if (!description) return "";
+
+  const reviewMatch = description.match(
+    /<strong>\s*review:\s*<\/strong>\s*([\s\S]*?)(?:<br\s*\/?\s*>\s*<strong>|$)/i,
+  );
+  return cleanText(reviewMatch?.[1] ?? "");
+}
+
 async function letterboxd() {
   const xml = await fetchXml(LETTERBOXD);
-  return items(xml).map((item) => {
-    const film = field(item, "letterboxd:filmTitle") || field(item, "title");
-    const year = field(item, "letterboxd:filmYear");
-    const rating = field(item, "letterboxd:memberRating");
-    const watched = field(item, "letterboxd:watchedDate");
-    const link = field(item, "link");
-    return {
-      platform: "letterboxd",
-      text: `watched ${film}${year ? ` (${year})` : ""}${rating ? ` · ${stars(rating)}` : ""}`,
-      url: link,
-      date: isoDate(watched || field(item, "pubDate")),
-    };
-  }).filter((p) => p.url && p.text);
+
+  return items(xml)
+    .map((item) => {
+      const film = cleanText(field(item, "letterboxd:filmTitle")) || cleanText(field(item, "title"));
+      const year = cleanText(field(item, "letterboxd:filmYear"));
+      const rating = cleanText(field(item, "letterboxd:memberRating"));
+      const watched = field(item, "letterboxd:watchedDate");
+      const link = cleanText(field(item, "link"));
+      const description = cleanText(field(item, "description"));
+
+      // Letterboxd's RSS description includes the review text when the diary entry
+      // has a written review. Keep it verbatim except for HTML cleanup.
+      let body = description;
+      if (body === film || body === `${film}, ${year}`) body = "";
+
+      const ratingText = rating ? stars(rating) : "";
+      const title = [film, year ? `(${year})` : "", ratingText].filter(Boolean).join(" ");
+
+      return {
+        platform: "letterboxd",
+        title,
+        text: body || title,
+        body: body || title,
+        url: link,
+        date: isoDate(watched || field(item, "pubDate")),
+      };
+    })
+    .filter((post) => post.url && post.title);
 }
 
 async function goodreadsShelf(url, mode) {
   const xml = await fetchXml(url);
-  return items(xml).map((item) => {
-    const title = field(item, "book_title") || field(item, "title");
-    const author = field(item, "author_name");
-    const rating = field(item, "user_rating");
-    const readAt = field(item, "user_read_at");
-    const link = field(item, "link");
-    const prefix = mode === "current" ? "currently reading" : "finished";
-    return {
-      platform: "goodreads",
-      text: `${prefix} ${title}${author ? ` — ${author}` : ""}${rating && rating !== "0" ? ` · ${stars(rating)}` : ""}`,
-      url: link,
-      date: isoDate(readAt || field(item, "pubDate")),
-    };
-  }).filter((p) => p.url && p.text);
+
+  return items(xml)
+    .map((item) => {
+      const title = cleanText(field(item, "book_title")) || cleanText(field(item, "title"));
+      const author = cleanText(field(item, "author_name"));
+      const rating = cleanText(field(item, "user_rating"));
+      const readAt = field(item, "user_read_at");
+      const link = cleanText(field(item, "link"));
+      const review = extractGoodreadsReview(item);
+      const ratingText = rating && rating !== "0" ? stars(rating) : "";
+      const status = mode === "current" ? "currently reading" : "read";
+
+      const displayTitle = [title, author ? `— ${author}` : "", ratingText]
+        .filter(Boolean)
+        .join(" ");
+
+      return {
+        platform: "goodreads",
+        title: displayTitle,
+        text: review || `${status}: ${displayTitle}`,
+        body: review || `${status}: ${displayTitle}`,
+        url: link,
+        date: isoDate(readAt || field(item, "pubDate")),
+      };
+    })
+    .filter((post) => post.url && post.title);
 }
 
 async function safe(label, fn) {
@@ -113,13 +169,16 @@ async function main() {
   ]);
 
   const merged = [...manual, ...films, ...read, ...current]
-    .filter((p) => p?.url && p?.text)
-    .filter((p, i, all) => all.findIndex((q) => q.url === p.url && q.text === p.text) === i)
+    .filter((post) => post?.url && (post?.title || post?.text))
+    .filter(
+      (post, index, all) =>
+        all.findIndex((other) => other.url === post.url && other.title === post.title) === index,
+    )
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
-    .slice(0, 40);
+    .slice(0, 60);
 
   await writeFile("public/social-feed.json", JSON.stringify(merged, null, 2) + "\n");
-  console.log(`Wrote ${merged.length} items to public/social-feed.json`);
+  console.log(`Wrote ${merged.length} real social entries to public/social-feed.json`);
 }
 
 main().catch((err) => {
