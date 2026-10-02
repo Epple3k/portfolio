@@ -2,6 +2,12 @@ name: Update social feed
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/update-social-feed.mjs"
+      - ".github/workflows/update-social-feed.yml"
+      - "public/manual-social.json"
   schedule:
     - cron: "17 */6 * * *"
 
