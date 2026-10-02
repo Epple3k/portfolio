@@ -1,8 +1,21 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { flushSync } from "react-dom"
 
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void
+  }
+}
+
+const trackEvent = (
+  eventName: string,
+  params: Record<string, string | number | boolean | undefined> = {},
+) => {
+  window.gtag?.("event", eventName, params)
+}
 
 const PROJECTS = [
   {
@@ -41,7 +54,27 @@ export default function App() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+
+    trackEvent("portfolio_view", {
+      application_source: params.get("utm_source") ?? undefined,
+      application_medium: params.get("utm_medium") ?? undefined,
+      application_campaign: params.get("utm_campaign") ?? undefined,
+      page_path: window.location.pathname,
+    })
+  }, [])
+
   const handleProjectClick = (id: string) => {
+    const project = PROJECTS.find((p) => p.id === id)
+
+    if (project) {
+      trackEvent("project_open", {
+        project_id: project.id,
+        project_title: project.title,
+        project_category: project.category,
+      })
+    }
     // @ts-ignore - startViewTransition is relatively new
     if (!document.startViewTransition) {
       setActiveId(id)
@@ -155,6 +188,11 @@ export default function App() {
                   href.startsWith("mailto:")
                     ? undefined
                     : "noopener noreferrer"
+                }
+                onClick={() =>
+                  trackEvent(`${label}_click`, {
+                    destination: href,
+                  })
                 }
                 className="hover:italic hover:translate-x-2 transition-all duration-300"
               >
@@ -322,6 +360,13 @@ export default function App() {
               href={activeProject.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                trackEvent("project_visit", {
+                  project_id: activeProject.id,
+                  project_title: activeProject.title,
+                  destination: activeProject.url,
+                })
+              }
               className="inline-flex items-center gap-2 mb-8 font-mono uppercase tracking-wider text-sm border border-black px-4 py-3 hover:bg-black hover:text-[#00ff00] transition-colors"
             >
               Open Project ↗
