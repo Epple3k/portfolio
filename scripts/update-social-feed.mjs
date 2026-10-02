@@ -2,11 +2,15 @@ import { readFile, writeFile } from "node:fs/promises";
 
 const LETTERBOXD = "https://letterboxd.com/epple_3k/rss/";
 const GOODREADS_READ = "https://www.goodreads.com/review/list_rss/204755541?shelf=read";
+const MUSICBOARD_USERNAME = "epple";
+const MUSICBOARD_API = "https://api.musicboard.app/v2";
 
 const MAX_BOOKS = 3;
 const MAX_FILMS = 3;
+const MAX_MUSIC = 3;
 const MIN_FILM_REVIEW_WORDS = 70;
 const MIN_BOOK_REVIEW_WORDS = 70;
+const MIN_MUSIC_REVIEW_WORDS = 70;
 
 const headers = {
   "User-Agent": "EmitRicePortfolio/1.0 (+https://epple3k.github.io/portfolio/)",
@@ -80,6 +84,17 @@ async function fetchXml(url) {
   const res = await fetch(url, { headers });
   if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
   return res.text();
+}
+
+async function fetchJson(url) {
+  const res = await fetch(url, {
+    headers: {
+      ...headers,
+      Accept: "application/json",
+    },
+  });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
+  return res.json();
 }
 
 function extractGoodreadsReview(item) {
@@ -157,6 +172,62 @@ async function goodreads() {
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 }
 
+async function musicboard() {
+  const user = await fetchJson(
+    `${MUSICBOARD_API}/users/from_username/?username=${encodeURIComponent(MUSICBOARD_USERNAME)}`,
+  );
+  if (!user?.uid) throw new Error("Musicboard user lookup returned no uid");
+
+  const listing = await fetchJson(
+    `${MUSICBOARD_API}/reviews/?content_type=&limit=24&offset=0&creator=${encodeURIComponent(user.uid)}&genres__id=&styles__id=&release_date__year=&release_date__lte=&release_date__gte=&record_type=&private=&speedup=true`,
+  );
+
+  const candidates = Array.isArray(listing?.results) ? listing.results : [];
+  const reviews = [];
+
+  for (const item of candidates) {
+    const slug = item?.review_url_slug || item?.url_slug;
+    if (!slug) continue;
+
+    try {
+      const review = await fetchJson(
+        `${MUSICBOARD_API}/reviews/from_url_slug/?url_slug=${encodeURIComponent(slug)}`,
+      );
+      const content = review?.rating?.content;
+      const type = content?.type;
+      if (!content || type === "artist") continue;
+
+      const body = cleanText(review?.description ?? "");
+      if (wordCount(body) < MIN_MUSIC_REVIEW_WORDS) continue;
+
+      const artist = cleanText(content?.artist?.name ?? "");
+      const release = cleanText(content?.title ?? "");
+      const rating = Number(review?.rating?.rating);
+      const ratingText = Number.isFinite(rating) ? stars(rating) : "";
+      const title = [release, artist ? `— ${artist}` : "", ratingText]
+        .filter(Boolean)
+        .join(" ");
+
+      reviews.push({
+        platform: "musicboard",
+        title,
+        text: body,
+        body,
+        url: `https://musicboard.app/${MUSICBOARD_USERNAME}/reviews`,
+        date: isoDate(review?.created_at || review?.rating?.listened_at),
+      });
+
+      if (reviews.length >= MAX_MUSIC) break;
+    } catch (err) {
+      console.warn("Musicboard review detail failed:", err.message);
+    }
+  }
+
+  return reviews
+    .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+    .slice(0, MAX_MUSIC);
+}
+
 async function safe(label, fn) {
   try {
     const value = await fn();
@@ -182,9 +253,10 @@ async function main() {
     previousFeed = Array.isArray(parsed) ? parsed : [];
   } catch {}
 
-  const [films, qualifyingBooks] = await Promise.all([
+  const [films, qualifyingBooks, fetchedMusic] = await Promise.all([
     safe("Letterboxd substantial reviews", letterboxd),
     safe("Goodreads substantial reviews", goodreads),
+    safe("Musicboard substantial reviews", musicboard),
   ]);
 
   // Keep today's three legacy book entries until qualifying 70+ word reviews replace them.
@@ -197,8 +269,13 @@ async function main() {
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
     .slice(0, MAX_BOOKS);
 
-  // Publisher-created/manual posts are never subject to the book/film caps.
-  const merged = [...manual, ...films, ...books]
+  const previousMusic = previousFeed
+    .filter((post) => post?.platform === "musicboard")
+    .slice(0, MAX_MUSIC);
+  const music = fetchedMusic.length > 0 ? fetchedMusic : previousMusic;
+
+  // Publisher-created/manual posts are never subject to the media caps.
+  const merged = [...manual, ...films, ...books, ...music]
     .filter((post) => post?.url && (post?.title || post?.text))
     .filter(
       (post, index, all) =>
