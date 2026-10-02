@@ -48,6 +48,16 @@ const PROJECTS = [
     description:
       "A generative ambient sound playground for sculpting evolving tones, textures, and spatial forms through a minimal visual interface.",
   },
+  {
+    id: "04",
+    title: "ledgerline",
+    category: "Finance / MCP",
+    year: "2026",
+    previewUrl: "https://ledgerline-finance.onrender.com/",
+    url: "https://ledgerline-finance.onrender.com/",
+    description:
+      "A finance-native ChatGPT plugin for exploring company fundamentals, filings, macro data, and source-linked financial analysis directly in the conversation.",
+  },
 ]
 
 export default function App() {
