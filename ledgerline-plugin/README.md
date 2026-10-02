@@ -75,8 +75,9 @@ The repository includes `render.yaml`.
 1. Merge this branch.
 2. In Render, create a Blueprint from `https://github.com/Epple3k/portfolio`.
 3. Set `LEDGERLINE_USER_AGENT` to a descriptive SEC-compatible user agent with your contact email.
-4. Deploy.
-5. Verify:
+4. Leave `OPENAI_APPS_CHALLENGE` blank until the OpenAI submission portal gives you a domain-verification token.
+5. Deploy.
+6. Verify:
    - `https://ledgerline-finance.onrender.com/`
    - `https://ledgerline-finance.onrender.com/mcp`
 
@@ -111,9 +112,10 @@ Before public submission you still need to:
 3. complete OpenAI individual or business publisher verification;
 4. record a reviewer-accessible walkthrough video and add its URL in the submission portal (or manifest);
 5. upload a ZIP whose root is this `ledgerline-plugin/` folder;
-6. connect and domain-verify the MCP endpoint in the plugin submission portal;
-7. run the automated checks and submit for review;
-8. after approval, select **Publish plugin**.
+6. connect the MCP endpoint in the plugin submission portal;
+7. when the portal displays its domain-verification token, set that exact value as the Render environment variable `OPENAI_APPS_CHALLENGE`, redeploy, and verify that `/.well-known/openai-apps-challenge` returns only that token as plain text;
+8. run the automated checks and submit for review;
+9. after approval, select **Publish plugin**.
 
 OpenAI review is required before Ledgerline can appear in the universal ChatGPT/Codex plugin directory. Approval cannot be bypassed or pre-approved from the repository.
 
