@@ -98,7 +98,7 @@ export default function App() {
       />
 
       {/* Main Content Layout */}
-      <main className="relative z-10 w-full h-screen flex flex-col md:flex-row p-4 md:p-8 md:gap-8">
+      <main className="relative z-10 w-full h-screen flex flex-col md:flex-row p-4 md:p-8 md:gap-4">
         {/* Left Column */}
         <div className="w-full md:w-1/2 h-full flex flex-col justify-between max-w-xl pb-8 md:pb-0">
           <div className="flex flex-col gap-6 lg:gap-12 mt-4 md:mt-8">
@@ -167,7 +167,7 @@ export default function App() {
 
         {/* Right Column (Ribbon) */}
         <div
-          className="w-full md:w-1/2 h-full flex flex-col gap-2 md:gap-3"
+          className="w-full md:w-1/2 lg:w-[54%] h-full flex flex-col gap-2 md:gap-3"
           onMouseLeave={() => setHoveredId(null)}
         >
           {PROJECTS.map((p) => {
