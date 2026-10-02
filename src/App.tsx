@@ -175,7 +175,6 @@ export default function App() {
     })),
   ].sort((a, b) => (b.date || "").localeCompare(a.date || ""))
 
-  const activeBlogEntry = blogEntries.find((entry) => entry.key === activeBlogKey)
 
   return (
     <div className="relative min-h-screen w-full font-sans text-black overflow-hidden flex selection:bg-black selection:text-[#1aff1a]">
@@ -388,11 +387,14 @@ export default function App() {
         </div>
       </main>
 
-      {showBlog && !activeBlogEntry && (
+      {showBlog && (
         <div className="fixed inset-0 z-50 bg-[#00ff00] text-black overflow-hidden flex flex-col">
           <div className="relative z-10 p-4 md:p-8 flex justify-between items-center w-full shrink-0">
             <button
-              onClick={() => setShowBlog(false)}
+              onClick={() => {
+                setShowBlog(false)
+                setActiveBlogKey(null)
+              }}
               className="text-black text-xl hover:italic transition-all uppercase tracking-widest font-mono"
             >
               [ Close ]
@@ -412,98 +414,100 @@ export default function App() {
               </div>
 
               <div className="h-full overflow-y-auto pr-1 md:pr-3">
-                <div className="flex flex-col gap-3 md:gap-4 pb-2">
+                <div className="flex flex-col gap-3 md:gap-4 pb-8">
                   {blogEntries.length > 0 ? (
-                    blogEntries.map((entry, index) => (
-                      <button
-                        key={entry.key}
-                        onClick={() => {
-                          setActiveBlogKey(entry.key)
-                          trackEvent("blog_entry_open", {
-                            blog_source: entry.label,
-                            blog_title: entry.title.slice(0, 80),
-                          })
-                        }}
-                        className="group w-full min-h-[132px] md:min-h-[150px] bg-[#efffef] border border-black text-left p-5 md:p-6 shadow-[6px_6px_0_#000] hover:translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[4px_8px_0_#000] transition-all"
-                      >
-                        <div className="h-full flex flex-col justify-between gap-8">
-                          <div className="flex items-start justify-between gap-6 font-mono text-[10px] md:text-xs uppercase tracking-[0.12em]">
-                            <span>{String(index + 1).padStart(2, "0")} / {entry.label}</span>
-                            <span className="opacity-60">{entry.date}</span>
-                          </div>
+                    blogEntries.map((entry, index) => {
+                      const isOpen = activeBlogKey === entry.key
 
-                          <div className="flex items-end justify-between gap-6">
-                            <h2 className="text-2xl md:text-4xl tracking-tight leading-[1.02] font-medium max-w-3xl line-clamp-2">
-                              {entry.title}
-                            </h2>
-                            <span className="font-mono text-lg opacity-0 group-hover:opacity-100 transition-opacity shrink-0">↗</span>
-                          </div>
-                        </div>
-                      </button>
-                    ))
+                      return (
+                        <article
+                          key={entry.key}
+                          className={`w-full bg-[#efffef] transition-[min-height,background-color] duration-300 ease-out overflow-hidden ${
+                            isOpen ? "min-h-[72vh]" : "min-h-[104px]"
+                          }`}
+                        >
+                          <button
+                            onClick={() => {
+                              setActiveBlogKey(isOpen ? null : entry.key)
+                              if (!isOpen) {
+                                trackEvent("blog_entry_open", {
+                                  blog_source: entry.label,
+                                  blog_title: entry.title.slice(0, 80),
+                                })
+                              }
+                            }}
+                            className="w-full min-h-[104px] p-5 md:p-6 flex items-center justify-between gap-6 text-left"
+                          >
+                            <div className="min-w-0">
+                              <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.12em] opacity-55 mb-2">
+                                {String(index + 1).padStart(2, "0")} / {entry.label}
+                              </div>
+                              <h2 className="text-2xl md:text-4xl tracking-tight leading-[1.02] font-medium line-clamp-2">
+                                {entry.title}
+                              </h2>
+                            </div>
+
+                            <div className="flex flex-col items-end gap-3 shrink-0">
+                              <span className="font-mono text-[10px] md:text-xs uppercase tracking-[0.12em] opacity-55">
+                                {entry.date}
+                              </span>
+                              <span className="font-mono text-lg">{isOpen ? "−" : "+"}</span>
+                            </div>
+                          </button>
+
+                          {isOpen && (
+                            <div
+                              className="h-[calc(72vh-104px)] overflow-y-auto px-5 md:px-6 pb-10"
+                              onWheel={(event) => {
+                                const target = event.currentTarget
+                                const atBottom =
+                                  target.scrollHeight - target.scrollTop - target.clientHeight < 6
+
+                                if (atBottom && event.deltaY > 0) {
+                                  setActiveBlogKey(null)
+                                }
+                              }}
+                            >
+                              <div className="border-t border-black/15 pt-7">
+                                <div className="max-w-3xl">
+                                  <p className="text-xl md:text-2xl leading-[1.35] whitespace-pre-line">
+                                    {entry.body}
+                                  </p>
+
+                                  {entry.tags.length > 0 && (
+                                    <div className="mt-8 font-mono uppercase tracking-wider text-[10px] md:text-xs opacity-55">
+                                      {entry.tags.join(" · ")}
+                                    </div>
+                                  )}
+
+                                  {entry.url && (
+                                    <a
+                                      href={entry.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-2 mt-8 font-mono uppercase tracking-wider text-sm underline underline-offset-4 hover:italic"
+                                    >
+                                      Open source ↗
+                                    </a>
+                                  )}
+
+                                  <div className="mt-12 pt-5 border-t border-black/15 font-mono text-[10px] uppercase tracking-[0.12em] opacity-45">
+                                    keep scrolling to collapse
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </article>
+                      )
+                    })
                   ) : (
-                    <div className="bg-[#efffef] border border-black p-6 shadow-[6px_6px_0_#000]">
-                      <div className="font-mono text-xs uppercase tracking-wider mb-8">01 / blog</div>
+                    <div className="bg-[#efffef] p-6 min-h-[104px]">
+                      <div className="font-mono text-xs uppercase tracking-wider mb-4">01 / blog</div>
                       <div className="text-3xl tracking-tight">first post coming soon.</div>
                     </div>
                   )}
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showBlog && activeBlogEntry && (
-        <div className="fixed inset-0 z-[60] flex flex-col bg-[#00ff00] overflow-hidden">
-          <div className="relative z-10 p-4 md:p-8 flex justify-between items-center w-full">
-            <button
-              onClick={() => setActiveBlogKey(null)}
-              className="text-black text-xl hover:italic transition-all uppercase tracking-widest font-mono"
-            >
-              [ Back ]
-            </button>
-            <div className="font-mono text-xl uppercase">{activeBlogEntry.label}</div>
-          </div>
-
-          <div className="relative z-10 mt-auto p-6 md:p-16 max-w-5xl">
-            <div className="font-mono uppercase tracking-wider text-sm mb-5 opacity-60">
-              {activeBlogEntry.date || "undated"}
-            </div>
-
-            <h1 className="text-5xl md:text-8xl tracking-tighter leading-[0.92] mb-6">
-              {activeBlogEntry.title}
-            </h1>
-
-            <p className="text-xl md:text-3xl leading-tight opacity-80 mb-8 max-w-3xl whitespace-pre-line">
-              {activeBlogEntry.body}
-            </p>
-
-            {activeBlogEntry.tags.length > 0 && (
-              <div className="font-mono uppercase tracking-wider text-xs mb-8">
-                {activeBlogEntry.tags.join(" · ")}
-              </div>
-            )}
-
-            {activeBlogEntry.url && (
-              <a
-                href={activeBlogEntry.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mb-8 font-mono uppercase tracking-wider text-sm border border-black px-4 py-3 hover:bg-black hover:text-[#00ff00] transition-colors"
-              >
-                Open source ↗
-              </a>
-            )}
-
-            <div className="flex gap-8 font-mono uppercase tracking-wider text-sm border-t border-black/20 pt-8">
-              <div>
-                <span className="opacity-50 block mb-1">Type</span>
-                {activeBlogEntry.type === "blog" ? "Blog post" : "Elsewhere"}
-              </div>
-              <div>
-                <span className="opacity-50 block mb-1">Source</span>
-                {activeBlogEntry.label}
               </div>
             </div>
           </div>
