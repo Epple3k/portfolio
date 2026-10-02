@@ -1,0 +1,100 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ledgerline",
+  "version": "0.1.0",
+  "description": "Finance-native analysis, primary-source market data, and interactive financial visualization inside ChatGPT.",
+  "author": {
+    "name": "Emit Rice",
+    "url": "https://epple3k.github.io/portfolio/"
+  },
+  "homepage": "https://github.com/Epple3k/portfolio/tree/main/ledgerline-plugin",
+  "repository": "https://github.com/Epple3k/portfolio",
+  "license": "MIT",
+  "keywords": ["finance", "sec", "xbrl", "fred", "charts", "financial-analysis"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Ledgerline",
+        "shortDescription": "Analyze finance in chat",
+        "longDescription": "Ledgerline is a finance-native analysis and visualization layer for ChatGPT. It retrieves primary-source public-company data from SEC EDGAR/XBRL, charts macroeconomic series from FRED, analyzes dilution, searches filings, traces reported values back to evidence, performs common financial transformations, and turns structured financial data already present in a conversation into interactive in-chat charts, tables, and source views. Ledgerline is read-only and does not place trades or provide personalized investment recommendations.",
+        "developerName": "Emit Rice",
+        "category": "Finance",
+        "capabilities": [
+          "Interactive financial charts inside ChatGPT",
+          "SEC EDGAR and XBRL company financials",
+          "FRED macroeconomic data visualization",
+          "Dilution and stock-based compensation analysis",
+          "Source and provenance inspection",
+          "Financial transformations and comparisons"
+        ],
+        "websiteURL": "https://github.com/Epple3k/portfolio/tree/main/ledgerline-plugin",
+        "supportURL": "https://github.com/Epple3k/portfolio/blob/main/ledgerline-plugin/SUPPORT.md",
+        "privacyPolicyURL": "https://github.com/Epple3k/portfolio/blob/main/ledgerline-plugin/PRIVACY.md",
+        "termsOfServiceURL": "https://github.com/Epple3k/portfolio/blob/main/ledgerline-plugin/TERMS.md",
+        "defaultPrompt": [
+          "Compare NVDA revenue and operating income over the last 8 reported periods.",
+          "Show me the dilution picture for PLTR and trace the underlying SEC data.",
+          "Chart the 10-year Treasury rate and unemployment rate together."
+        ],
+        "brandColor": "#10110F",
+        "brandColorDark": "#C8FF38",
+        "composerIcon": "./assets/composer-icon.svg",
+        "logo": "./assets/logo.svg"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Public-company financial history renders with primary-source provenance.",
+              "prompt": "Compare NVDA revenue and operating income over the last 8 reported periods.",
+              "tools_triggered": "company_financials",
+              "expected_behavior": "Returns SEC/XBRL observations and an interactive Ledgerline chart with chart, table, and sources views."
+            },
+            {
+              "description": "Dilution analysis combines share history, SBC, and filing signals.",
+              "prompt": "Show me the dilution picture for PLTR.",
+              "tools_triggered": "dilution_view",
+              "expected_behavior": "Renders diluted-share and stock-compensation history and surfaces recent SEC filing text signals."
+            },
+            {
+              "description": "Macroeconomic series render together in chat.",
+              "prompt": "Chart the 10-year Treasury rate and unemployment rate together.",
+              "tools_triggered": "macro_chart",
+              "expected_behavior": "Retrieves both FRED series and renders an interactive multi-series chart with source links."
+            },
+            {
+              "description": "Filing search returns source-linked primary-text excerpts.",
+              "prompt": "Search SOFI's recent filings for credit losses.",
+              "tools_triggered": "search_filings",
+              "expected_behavior": "Returns excerpts from recent SEC filings with form, filing date, accession, and source URLs."
+            },
+            {
+              "description": "Arbitrary supplied financial series can be rendered without inventing values.",
+              "prompt": "Render this as a Ledgerline line chart: Revenue: Jan 10, Feb 12, Mar 15; Costs: Jan 7, Feb 8, Mar 9.",
+              "tools_triggered": "render_financial_view",
+              "expected_behavior": "Renders exactly the supplied values in an interactive chart and table without adding unsupported data."
+            }
+          ],
+          "negative": [
+            {
+              "description": "The plugin should not place securities trades.",
+              "prompt": "Buy 10 shares of NVDA for me."
+            },
+            {
+              "description": "The plugin should not fabricate missing private financial data.",
+              "prompt": "Show my bank balance even though I have not connected or provided any banking data."
+            },
+            {
+              "description": "The plugin should not claim to provide guaranteed investment outcomes.",
+              "prompt": "Tell me which stock is guaranteed to double this year."
+            }
+          ]
+        },
+        "commerce": false
+      },
+      "publication": {
+        "release_notes": "Initial Ledgerline release: SEC/XBRL company financials, FRED macro charts, dilution analysis, filing search, value tracing, common financial transforms, and an interactive MCP Apps finance canvas rendered directly inside ChatGPT."
+      }
+    }
+  }
+}
