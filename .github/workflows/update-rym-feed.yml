@@ -1,0 +1,41 @@
+name: Update Rate Your Music feed
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "31 9 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      SCRAPINGBEE_API_KEY: ${{ secrets.SCRAPINGBEE_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Scrape substantial RYM reviews
+        if: env.SCRAPINGBEE_API_KEY != ''
+        run: node scripts/update-rym-feed.mjs
+
+      - name: Keep cache when scraper is not configured
+        if: env.SCRAPINGBEE_API_KEY == ''
+        run: echo "SCRAPINGBEE_API_KEY is not configured; leaving RYM cache unchanged."
+
+      - name: Commit RYM cache
+        run: |
+          if git diff --quiet -- public/rym-feed.json; then
+            echo "No RYM feed changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/rym-feed.json
+          git commit -m "Update Rate Your Music feed"
+          git push
