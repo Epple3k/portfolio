@@ -14,12 +14,18 @@ const MCP_PATH = "/mcp";
 const WIDGET_URI = "ui://ledgerline/finance-canvas.html";
 const widgetHtml = readFileSync(new URL("./public/finance-canvas.html", import.meta.url), "utf8");
 const siteHtml = readFileSync(new URL("./public/index.html", import.meta.url), "utf8");
+const blogAdminHtml = readFileSync(new URL("./public/blog-admin.html", import.meta.url), "utf8");
 
 const SEC_BASE = "https://data.sec.gov";
 const SEC_WWW = "https://www.sec.gov";
 const USER_AGENT =
   process.env.LEDGERLINE_USER_AGENT ??
   "Ledgerline/0.1 financial-research-plugin contact@example.com";
+
+const BLOG_ADMIN_TOKEN = process.env.BLOG_ADMIN_TOKEN ?? "";
+const GITHUB_CONTENT_TOKEN = process.env.GITHUB_CONTENT_TOKEN ?? "";
+const CONTENT_REPO = "Epple3k/portfolio";
+const CONTENT_BRANCH = "main";
 
 const cache = new Map();
 
@@ -347,6 +353,79 @@ function appReply(view, summary) {
     structuredContent: view,
   };
 }
+async function readRequestJson(req) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  const raw = Buffer.concat(chunks).toString("utf8");
+  return raw ? JSON.parse(raw) : {};
+}
+
+function jsonResponse(res, status, payload) {
+  res
+    .writeHead(status, {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+    })
+    .end(JSON.stringify(payload));
+}
+
+function isAuthorized(req) {
+  if (!BLOG_ADMIN_TOKEN) return false;
+  const auth = req.headers.authorization ?? "";
+  return auth === `Bearer ${BLOG_ADMIN_TOKEN}`;
+}
+
+async function githubApi(path, options = {}) {
+  if (!GITHUB_CONTENT_TOKEN) {
+    throw new Error("GITHUB_CONTENT_TOKEN is not configured");
+  }
+  const res = await fetch(`https://api.github.com${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${GITHUB_CONTENT_TOKEN}`,
+      Accept: "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      "User-Agent": "EmitRicePortfolioPublisher/1.0",
+      ...(options.headers ?? {}),
+    },
+  });
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : {};
+  if (!res.ok) {
+    throw new Error(data?.message ?? `GitHub API error ${res.status}`);
+  }
+  return data;
+}
+
+async function readRepoJson(path) {
+  const data = await githubApi(
+    `/repos/${CONTENT_REPO}/contents/${path}?ref=${encodeURIComponent(CONTENT_BRANCH)}`,
+  );
+  const decoded = Buffer.from(data.content ?? "", "base64").toString("utf8");
+  return {
+    sha: data.sha,
+    value: JSON.parse(decoded || "[]"),
+  };
+}
+
+async function writeRepoJson(path, value, message, sha) {
+  const content = Buffer.from(JSON.stringify(value, null, 2) + "\n", "utf8").toString("base64");
+  return githubApi(`/repos/${CONTENT_REPO}/contents/${path}`, {
+    method: "PUT",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      message,
+      content,
+      sha,
+      branch: CONTENT_BRANCH,
+    }),
+  });
+}
+
+function cleanString(value, max = 20000) {
+  return String(value ?? "").trim().slice(0, max);
+}
+
 function createLedgerlineServer() {
   const server = new McpServer({
     name: "Ledgerline",
@@ -681,6 +760,118 @@ const httpServer = createHttpServer(async (req, res) => {
     res
       .writeHead(200, { "content-type": "application/json" })
       .end(JSON.stringify({ name: "Ledgerline", version: "0.1.0", status: "ok", mcp: MCP_PATH }));
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/blog-admin") {
+    res
+      .writeHead(200, {
+        "content-type": "text/html; charset=utf-8",
+        "cache-control": "no-store",
+      })
+      .end(blogAdminHtml);
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/blog/post") {
+    if (!isAuthorized(req)) {
+      jsonResponse(res, 401, { error: "Unauthorized" });
+      return;
+    }
+    try {
+      const body = await readRequestJson(req);
+      const title = cleanString(body.title, 180);
+      const postBody = cleanString(body.body, 50000);
+      if (!title || !postBody) {
+        jsonResponse(res, 400, { error: "title and body are required" });
+        return;
+      }
+
+      const date = cleanString(body.date, 10) || new Date().toISOString().slice(0, 10);
+      const summary =
+        cleanString(body.summary, 600) ||
+        postBody.replace(/\s+/g, " ").slice(0, 240);
+      const tags = Array.isArray(body.tags)
+        ? body.tags.map((tag) => cleanString(tag, 40)).filter(Boolean).slice(0, 12)
+        : [];
+
+      const file = await readRepoJson("public/notes.json");
+      const posts = Array.isArray(file.value) ? file.value : [];
+      const next = [
+        { title, date, summary, body: postBody, tags },
+        ...posts,
+      ].slice(0, 200);
+
+      const commit = await writeRepoJson(
+        "public/notes.json",
+        next,
+        `Publish blog post: ${title.slice(0, 72)}`,
+        file.sha,
+      );
+
+      jsonResponse(res, 200, {
+        ok: true,
+        commit: commit.commit?.sha ?? null,
+      });
+    } catch (error) {
+      console.error(error);
+      jsonResponse(res, 500, { error: error.message ?? "Publish failed" });
+    }
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/blog/import") {
+    if (!isAuthorized(req)) {
+      jsonResponse(res, 401, { error: "Unauthorized" });
+      return;
+    }
+    try {
+      const body = await readRequestJson(req);
+      const platform = cleanString(body.platform, 30).toLowerCase();
+      const postBody = cleanString(body.body, 50000);
+      const sourceUrl = cleanString(body.url, 2000);
+      const title = cleanString(body.title, 180) || postBody.split(/\n/)[0].slice(0, 140);
+      const date = cleanString(body.date, 10) || new Date().toISOString().slice(0, 10);
+
+      if (!["linkedin", "instagram", "manual"].includes(platform)) {
+        jsonResponse(res, 400, { error: "unsupported platform" });
+        return;
+      }
+      if (!postBody || !/^https?:\/\//i.test(sourceUrl)) {
+        jsonResponse(res, 400, { error: "post text and a valid source URL are required" });
+        return;
+      }
+
+      const file = await readRepoJson("public/manual-social.json");
+      const posts = Array.isArray(file.value) ? file.value : [];
+      const entry = {
+        platform,
+        title,
+        text: postBody,
+        body: postBody,
+        url: sourceUrl,
+        date,
+      };
+      const next = [
+        entry,
+        ...posts.filter((post) => post?.url !== sourceUrl),
+      ].slice(0, 200);
+
+      const commit = await writeRepoJson(
+        "public/manual-social.json",
+        next,
+        `Import ${platform} post`,
+        file.sha,
+      );
+
+      jsonResponse(res, 200, {
+        ok: true,
+        commit: commit.commit?.sha ?? null,
+      });
+    } catch (error) {
+      console.error(error);
+      jsonResponse(res, 500, { error: error.message ?? "Import failed" });
+    }
     return;
   }
 
