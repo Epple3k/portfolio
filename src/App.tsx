@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { flushSync } from "react-dom"
 
-import image1 from "./imports/image.png"
+import image1 from "./imports/aural-field-thumbnail.svg"
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
 
