@@ -13,6 +13,7 @@ const PORT = Number(process.env.PORT ?? 8787);
 const MCP_PATH = "/mcp";
 const WIDGET_URI = "ui://ledgerline/finance-canvas.html";
 const widgetHtml = readFileSync(new URL("./public/finance-canvas.html", import.meta.url), "utf8");
+const siteHtml = readFileSync(new URL("./public/index.html", import.meta.url), "utf8");
 
 const SEC_BASE = "https://data.sec.gov";
 const SEC_WWW = "https://www.sec.gov";
@@ -671,15 +672,15 @@ const httpServer = createHttpServer(async (req, res) => {
 
   if (req.method === "GET" && url.pathname === "/") {
     res
+      .writeHead(200, { "content-type": "text/html; charset=utf-8" })
+      .end(siteHtml);
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/health") {
+    res
       .writeHead(200, { "content-type": "application/json" })
-      .end(
-        JSON.stringify({
-          name: "Ledgerline",
-          version: "0.1.0",
-          status: "ok",
-          mcp: MCP_PATH,
-        }),
-      );
+      .end(JSON.stringify({ name: "Ledgerline", version: "0.1.0", status: "ok", mcp: MCP_PATH }));
     return;
   }
 
