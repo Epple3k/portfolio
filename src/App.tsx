@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import { flushSync } from "react-dom"
 
-import image1 from "./imports/aural-field-thumbnail.svg"
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
 
@@ -31,7 +30,7 @@ const PROJECTS = [
     title: "aural field",
     category: "Generative Audio",
     year: "2026",
-    image: image1,
+    previewUrl: "https://epple3k.github.io/aural-field/?portfolioPreview=1",
     url: "https://epple3k.github.io/aural-field/",
     description:
       "A generative ambient sound playground for sculpting evolving tones, textures, and spatial forms through a minimal visual interface.",
@@ -194,16 +193,36 @@ export default function App() {
                   } as React.CSSProperties
                 }
               >
-                {/* Project Image */}
-                <img
-                  src={p.image}
-                  alt={p.title}
-                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-out origin-center ${
-                    isHovered
-                      ? "grayscale-0 opacity-100 scale-100"
-                      : "grayscale opacity-30 scale-105"
-                  }`}
-                />
+                {/* Project Visual */}
+                {"previewUrl" in p && p.previewUrl ? (
+                  <iframe
+                    src={p.previewUrl}
+                    title={`${p.title} preview`}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    className={`absolute top-0 left-0 border-0 pointer-events-none transition-all duration-500 ease-out ${
+                      isHovered
+                        ? "grayscale-0 opacity-100"
+                        : "grayscale opacity-30"
+                    }`}
+                    style={{
+                      width: "200%",
+                      height: "200%",
+                      transform: "scale(0.5)",
+                      transformOrigin: "top left",
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-out origin-center ${
+                      isHovered
+                        ? "grayscale-0 opacity-100 scale-100"
+                        : "grayscale opacity-30 scale-105"
+                    }`}
+                  />
+                )}
 
                 {/* Overlay */}
                 <div
@@ -261,11 +280,21 @@ export default function App() {
             } as React.CSSProperties
           }
         >
-          <img
-            src={activeProject.image}
-            alt={activeProject.title}
-            className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-multiply"
-          />
+          {"previewUrl" in activeProject && activeProject.previewUrl ? (
+            <iframe
+              src={activeProject.previewUrl}
+              title={`${activeProject.title} preview`}
+              tabIndex={-1}
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full border-0 pointer-events-none opacity-30"
+            />
+          ) : (
+            <img
+              src={activeProject.image}
+              alt={activeProject.title}
+              className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-multiply"
+            />
+          )}
 
           <div className="relative z-10 p-8 flex justify-between items-center w-full">
             <button
