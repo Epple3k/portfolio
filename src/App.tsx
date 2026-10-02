@@ -26,7 +26,7 @@ type Note = {
 }
 
 type SocialPost = {
-  platform: "linkedin" | "instagram" | "letterboxd" | "goodreads" | "manual"
+  platform: "linkedin" | "instagram" | "letterboxd" | "goodreads" | "musicboard" | "manual"
   title?: string
   text: string
   body?: string
