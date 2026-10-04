@@ -3,6 +3,7 @@ import { flushSync } from "react-dom"
 
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
+import auralFieldThumbnail from "./imports/aural-field-thumbnail.svg"
 
 declare global {
   interface Window {
@@ -45,6 +46,7 @@ const PROJECTS = [
     category: "Web Application",
     year: "2026",
     image: image2,
+    previewUrl: "https://epple3k.github.io/attention-field/?portfolioPreview=1",
     url: "https://epple3k.github.io/attention-field/",
     description:
       "An interactive visualization that explores how attention shifts, clusters, and responds across a dynamic field.",
@@ -55,6 +57,7 @@ const PROJECTS = [
     category: "Prototyping",
     year: "2026",
     image: image3,
+    previewUrl: "https://epple3k.github.io/fsu-research-atlas-2/?portfolioPreview=1",
     url: "https://epple3k.github.io/fsu-research-atlas-2/",
     description:
       "An interactive tool for mapping ideas, sources, and connections to make complex research easier to explore.",
@@ -64,6 +67,7 @@ const PROJECTS = [
     title: "aural field",
     category: "Generative Audio",
     year: "2026",
+    image: auralFieldThumbnail,
     previewUrl: "https://epple3k.github.io/aural-field/?portfolioPreview=1",
     url: "https://epple3k.github.io/aural-field/",
     description:
@@ -334,18 +338,19 @@ export default function App() {
                   } as React.CSSProperties
                 }
               >
-                {/* Project Visual */}
-                {"previewUrl" in p && p.previewUrl ? (
+                {/* Project Visual
+                    Live sites are mounted only while hovered. Unmounting the
+                    iframe on mouse-leave guarantees off-hover previews stop
+                    running instead of quietly animating in the background. */}
+                {isHovered && "previewUrl" in p && p.previewUrl ? (
                   <iframe
+                    key={`live-preview-${p.id}`}
                     src={p.previewUrl}
-                    title={`${p.title} preview`}
+                    title={`${p.title} live preview`}
                     tabIndex={-1}
                     aria-hidden="true"
-                    className={`absolute top-0 left-0 border-0 pointer-events-none transition-all duration-500 ease-out ${
-                      isHovered
-                        ? "grayscale-0 opacity-100"
-                        : "grayscale opacity-30"
-                    }`}
+                    loading="eager"
+                    className="absolute top-0 left-0 border-0 pointer-events-none grayscale-0 opacity-100"
                     style={{
                       width: "200%",
                       height: "200%",
@@ -353,16 +358,27 @@ export default function App() {
                       transformOrigin: "top left",
                     }}
                   />
-                ) : (
+                ) : "image" in p && p.image ? (
                   <img
                     src={p.image}
                     alt={p.title}
-                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-500 ease-out origin-center ${
-                      isHovered
-                        ? "grayscale-0 opacity-100 scale-100"
-                        : "grayscale opacity-30 scale-105"
-                    }`}
+                    className="absolute inset-0 w-full h-full object-cover grayscale opacity-30 scale-105"
                   />
+                ) : (
+                  <div className="absolute inset-0 bg-[#efffef] text-black p-6 flex flex-col justify-between grayscale opacity-40">
+                    <div className="font-mono text-[10px] uppercase tracking-[0.12em]">
+                      {p.category}
+                    </div>
+                    <div>
+                      <div className="text-4xl md:text-5xl tracking-[-0.05em] leading-[0.9]">
+                        {p.title}
+                      </div>
+                      <div className="mt-4 h-px bg-black/50" />
+                      <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.12em]">
+                        live preview on hover
+                      </div>
+                    </div>
+                  </div>
                 )}
 
                 {/* Overlay */}
