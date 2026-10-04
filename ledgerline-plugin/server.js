@@ -26,6 +26,10 @@ const BLOG_ADMIN_TOKEN = process.env.BLOG_ADMIN_TOKEN ?? "";
 const GITHUB_CONTENT_TOKEN = process.env.GITHUB_CONTENT_TOKEN ?? "";
 const CONTENT_REPO = "Epple3k/portfolio";
 const CONTENT_BRANCH = "main";
+const RESEND_API_KEY = process.env.RESEND_API_KEY ?? "";
+const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? "";
+const BLOG_FROM_EMAIL = process.env.BLOG_FROM_EMAIL ?? "Emit Rice <blog@emitrice.com>";
+const BLOG_PUBLIC_URL = process.env.BLOG_PUBLIC_URL ?? "https://emitrice.com/?blog=1";
 
 const cache = new Map();
 
@@ -426,6 +430,70 @@ function cleanString(value, max = 20000) {
   return String(value ?? "").trim().slice(0, max);
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+async function resendApi(path, options = {}) {
+  if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
+  const response = await fetch(`https://api.resend.com${path}`, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      "content-type": "application/json",
+      ...(options.headers ?? {}),
+    },
+  });
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : {};
+  if (!response.ok) {
+    throw new Error(data?.message ?? data?.error ?? `Resend API error ${response.status}`);
+  }
+  return data;
+}
+
+async function addBlogSubscriber(email) {
+  if (!RESEND_AUDIENCE_ID) throw new Error("RESEND_AUDIENCE_ID is not configured");
+  return resendApi(`/audiences/${encodeURIComponent(RESEND_AUDIENCE_ID)}/contacts`, {
+    method: "POST",
+    body: JSON.stringify({ email, unsubscribed: false }),
+  });
+}
+
+async function notifyBlogSubscribers({ title, summary, date }) {
+  if (!RESEND_AUDIENCE_ID) throw new Error("RESEND_AUDIENCE_ID is not configured");
+  const safeTitle = escapeHtml(title);
+  const safeSummary = escapeHtml(summary);
+  const safeDate = escapeHtml(date);
+  const safeUrl = escapeHtml(BLOG_PUBLIC_URL);
+  const html = `
+    <div style="background:#00ff00;color:#000;padding:32px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="max-width:640px;margin:0 auto;">
+        <div style="font-family:monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:28px;">emit rice / new post</div>
+        <h1 style="font-size:38px;line-height:1.05;margin:0 0 18px;font-weight:600;">${safeTitle}</h1>
+        <div style="font-family:monospace;font-size:12px;margin-bottom:22px;">${safeDate}</div>
+        <p style="font-size:19px;line-height:1.5;margin:0 0 28px;">${safeSummary}</p>
+        <a href="${safeUrl}" style="display:inline-block;background:#000;color:#00ff00;padding:13px 18px;text-decoration:none;font-family:monospace;text-transform:uppercase;letter-spacing:.08em;">read the post →</a>
+        <p style="font-family:monospace;font-size:11px;line-height:1.5;margin-top:40px;opacity:.65;">You subscribed to new posts from emitrice.com. <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color:#000;">Unsubscribe</a>.</p>
+      </div>
+    </div>`;
+
+  return resendApi("/broadcasts", {
+    method: "POST",
+    body: JSON.stringify({
+      audience_id: RESEND_AUDIENCE_ID,
+      from: BLOG_FROM_EMAIL,
+      subject: `New post: ${title}`,
+      html,
+      send: true,
+    }),
+  });
+}
 const BLOG_TABS = ["reviews", "socials", "professional"];
 function cleanTabs(value, fallback) {
   const tabs = Array.isArray(value)
@@ -771,6 +839,44 @@ const httpServer = createHttpServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "OPTIONS" && url.pathname === "/api/blog/subscribe") {
+    res.writeHead(204, {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "content-type",
+    });
+    res.end();
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/blog/subscribe") {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    try {
+      const body = await readRequestJson(req);
+      const email = cleanString(body.email, 320).toLowerCase();
+      const honeypot = cleanString(body.company, 200);
+      if (honeypot) {
+        jsonResponse(res, 200, { ok: true });
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        jsonResponse(res, 400, { error: "Enter a valid email address." });
+        return;
+      }
+      await addBlogSubscriber(email);
+      jsonResponse(res, 200, { ok: true });
+    } catch (error) {
+      console.error(error);
+      const message = String(error?.message ?? "Subscription failed");
+      const duplicate = /already exists|already.*contact|duplicate/i.test(message);
+      if (duplicate) {
+        jsonResponse(res, 200, { ok: true });
+        return;
+      }
+      jsonResponse(res, 500, { error: "Could not subscribe right now." });
+    }
+    return;
+  }
   if (req.method === "GET" && url.pathname === "/blog-admin") {
     res
       .writeHead(200, {
@@ -818,9 +924,22 @@ const httpServer = createHttpServer(async (req, res) => {
         file.sha,
       );
 
+      let notification = { sent: false, error: null };
+      try {
+        await notifyBlogSubscribers({ title, summary, date });
+        notification = { sent: true, error: null };
+      } catch (notifyError) {
+        console.error("Blog notification failed:", notifyError);
+        notification = {
+          sent: false,
+          error: notifyError?.message ?? "Notification failed",
+        };
+      }
+
       jsonResponse(res, 200, {
         ok: true,
         commit: commit.commit?.sha ?? null,
+        notification,
       });
     } catch (error) {
       console.error(error);
