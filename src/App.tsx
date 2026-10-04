@@ -84,6 +84,8 @@ const PROJECTS = [
   },
 ]
 
+const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL ?? "https://ledgerline-finance.onrender.com"
+
 export default function App() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -92,9 +94,16 @@ export default function App() {
   const [activeBlogTab, setActiveBlogTab] = useState<BlogTab>("professional")
   const [notes, setNotes] = useState<Note[]>([])
   const [socialPosts, setSocialPosts] = useState<SocialPost[]>([])
+  const [subscriberEmail, setSubscriberEmail] = useState("")
+  const [subscribeState, setSubscribeState] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [subscribeMessage, setSubscribeMessage] = useState("")
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
+
+    if (params.get("blog") === "1") {
+      setShowBlog(true)
+    }
 
     trackEvent("portfolio_view", {
       application_source: params.get("utm_source") ?? undefined,
@@ -118,6 +127,34 @@ export default function App() {
       })
   }, [])
 
+  const handleBlogSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const email = subscriberEmail.trim().toLowerCase()
+    if (!email || subscribeState === "loading") return
+
+    setSubscribeState("loading")
+    setSubscribeMessage("")
+
+    try {
+      const response = await fetch(`${BLOG_API_URL}/api/blog/subscribe`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, company: "" }),
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error(data?.error ?? "Could not subscribe right now.")
+      }
+
+      setSubscribeState("success")
+      setSubscribeMessage("you’re on the list.")
+      setSubscriberEmail("")
+      trackEvent("blog_subscribe", { source: "blog_header" })
+    } catch (error) {
+      setSubscribeState("error")
+      setSubscribeMessage(error instanceof Error ? error.message : "Could not subscribe right now.")
+    }
+  }
   const handleProjectClick = (id: string) => {
     const project = PROJECTS.find((p) => p.id === id)
 
@@ -458,24 +495,68 @@ export default function App() {
           </div>
 
           <div className="relative z-10 px-4 md:px-8 pb-4 shrink-0">
-            <div className="flex flex-wrap gap-2">
-              {blogTabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    setActiveBlogTab(tab.id)
-                    setActiveBlogKey(null)
-                    trackEvent("blog_tab_open", { blog_tab: tab.id })
-                  }}
-                  className={`font-mono text-[10px] md:text-xs uppercase tracking-[0.1em] px-3 py-2 border border-black transition-colors ${
-                    activeBlogTab === tab.id
-                      ? "bg-black text-[#00ff00]"
-                      : "bg-transparent text-black hover:bg-black hover:text-[#00ff00]"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+            <div className="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-3 xl:gap-6">
+              <div className="flex flex-wrap gap-2">
+                {blogTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setActiveBlogTab(tab.id)
+                      setActiveBlogKey(null)
+                      trackEvent("blog_tab_open", { blog_tab: tab.id })
+                    }}
+                    className={`font-mono text-[10px] md:text-xs uppercase tracking-[0.1em] px-3 py-2 border border-black transition-colors ${
+                      activeBlogTab === tab.id
+                        ? "bg-black text-[#00ff00]"
+                        : "bg-transparent text-black hover:bg-black hover:text-[#00ff00]"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              <form
+                onSubmit={handleBlogSubscribe}
+                className="flex flex-col sm:flex-row sm:items-center gap-2 xl:min-w-[520px]"
+              >
+                <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.1em] whitespace-nowrap">
+                  new posts → inbox
+                </div>
+                <div className="flex min-w-0 flex-1">
+                  <input
+                    type="email"
+                    value={subscriberEmail}
+                    onChange={(event) => {
+                      setSubscriberEmail(event.target.value)
+                      if (subscribeState !== "idle") {
+                        setSubscribeState("idle")
+                        setSubscribeMessage("")
+                      }
+                    }}
+                    placeholder="you@email.com"
+                    aria-label="Email address for blog updates"
+                    required
+                    className="min-w-0 flex-1 border border-black border-r-0 bg-[#efffef] px-3 py-2 font-mono text-xs md:text-sm outline-none placeholder:text-black/40 focus:bg-white"
+                  />
+                  <button
+                    type="submit"
+                    disabled={subscribeState === "loading"}
+                    className="border border-black bg-black text-[#00ff00] px-3 py-2 font-mono text-[10px] md:text-xs uppercase tracking-[0.1em] hover:bg-transparent hover:text-black transition-colors disabled:opacity-50"
+                  >
+                    {subscribeState === "loading" ? "joining…" : "subscribe"}
+                  </button>
+                </div>
+                {subscribeMessage && (
+                  <div
+                    className={`font-mono text-[10px] uppercase tracking-[0.08em] ${
+                      subscribeState === "error" ? "text-black" : "text-black/60"
+                    }`}
+                  >
+                    {subscribeMessage}
+                  </div>
+                )}
+              </form>
             </div>
           </div>
 
