@@ -124,3 +124,27 @@ OpenAI review is required before Ledgerline can appear in the universal ChatGPT/
 Ledgerline v0.1 is read-only. It does not place trades or modify financial accounts.
 
 SEC issuers do not all use identical XBRL concepts, so the metric layer includes common concept fallbacks but should still be treated as a prototype rather than a production market-data terminal. Material conclusions should be checked against the linked primary source.
+
+
+## Portfolio blog email subscriptions
+
+The portfolio Blog includes an email signup form. Subscribers are stored in a Resend Audience/Segment and the existing private publisher sends a Broadcast automatically after a new `public/notes.json` post is committed.
+
+Configure these environment variables on the Render service:
+
+- `RESEND_API_KEY` — Resend API key with contact + broadcast access.
+- `RESEND_AUDIENCE_ID` — the Resend Audience/Segment ID used for blog subscribers.
+- `BLOG_FROM_EMAIL` — sender identity, for example `Emit Rice <blog@emitrice.com>`.
+- `BLOG_PUBLIC_URL` — link used in notification emails. Defaults to `https://emitrice.com/?blog=1`.
+
+Before using `blog@emitrice.com`, verify `emitrice.com` in Resend and add the DNS records Resend provides.
+
+Flow:
+
+1. Visitor enters an email in the Blog header.
+2. `POST /api/blog/subscribe` adds the address to the Resend list.
+3. Publishing through `/blog-admin` still commits the post to GitHub first.
+4. After that commit succeeds, the server creates and sends a Resend Broadcast.
+5. The email contains Resend's unsubscribe URL, so opt-outs are handled by Resend.
+
+If notification delivery fails, the blog post remains published and the publisher response includes a `notification.error` value for debugging.
