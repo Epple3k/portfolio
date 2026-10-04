@@ -3,7 +3,6 @@ import { flushSync } from "react-dom"
 
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
-import auralFieldThumbnail from "./imports/aural-field-thumbnail.svg"
 
 declare global {
   interface Window {
@@ -67,8 +66,8 @@ const PROJECTS = [
     title: "aural field",
     category: "Generative Audio",
     year: "2026",
-    image: auralFieldThumbnail,
     previewUrl: "https://epple3k.github.io/aural-field/?portfolioPreview=1",
+    idlePreviewUrl: "https://epple3k.github.io/aural-field/?portfolioPreview=1&portfolioStatic=1",
     url: "https://epple3k.github.io/aural-field/",
     description:
       "A generative ambient sound playground for sculpting evolving tones, textures, and spatial forms through a minimal visual interface.",
@@ -351,6 +350,22 @@ export default function App() {
                     aria-hidden="true"
                     loading="eager"
                     className="absolute top-0 left-0 border-0 pointer-events-none grayscale-0 opacity-100"
+                    style={{
+                      width: "200%",
+                      height: "200%",
+                      transform: "scale(0.5)",
+                      transformOrigin: "top left",
+                    }}
+                  />
+                ) : "idlePreviewUrl" in p && p.idlePreviewUrl ? (
+                  <iframe
+                    key={`idle-preview-${p.id}`}
+                    src={p.idlePreviewUrl}
+                    title={`${p.title} paused preview`}
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    loading="eager"
+                    className="absolute top-0 left-0 border-0 pointer-events-none grayscale opacity-30"
                     style={{
                       width: "200%",
                       height: "200%",
