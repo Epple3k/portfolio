@@ -36,7 +36,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
-      - run: pnpm run build --base=/${{ github.event.repository.name }}/
+      - run: pnpm run build
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
