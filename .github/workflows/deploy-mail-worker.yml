@@ -2,7 +2,7 @@ name: Deploy mail worker
 
 on:
   push:
-    branches: [main]
+    branches: [main, professional-presentation-cleanup, blog-mailing-cloudflare]
     paths:
       - "mail-worker/**"
       - ".github/workflows/deploy-mail-worker.yml"
