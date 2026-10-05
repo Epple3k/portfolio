@@ -141,7 +141,7 @@ const LINKS = [
 ]
 
 const BLOG_API_URL =
-  import.meta.env.VITE_BLOG_API_URL ?? "https://ledgerline-finance.onrender.com"
+  import.meta.env.VITE_BLOG_API_URL ?? "https://api.emitrice.com"
 
 const isInternalTraffic = () => {
   try {
