@@ -84,7 +84,7 @@ const PROJECTS = [
   },
 ]
 
-const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL ?? "https://ledgerline-finance.onrender.com"
+const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL ?? "https://api.emitrice.com"
 
 export default function App() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
