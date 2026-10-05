@@ -2,35 +2,79 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MMLXHYG5YY"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-MMLXHYG5YY');
-    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Emit Rice</title>
-    <link rel="icon" type="image/png" href="%BASE_URL%favicon.png" />
-
+    <title>Emit Rice · Product Design, Design Engineering & HCI</title>
     <meta
       name="description"
-      content="Design, data, and interactive experiments."
+      content="Emit Rice designs and builds data-heavy, AI-enabled products and interfaces for complex systems."
     />
+    <link rel="canonical" href="https://emitrice.com/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#c8ff00" />
 
-    <meta property="og:title" content="Emit Rice" />
+    <meta property="og:title" content="Emit Rice · Product Design, Design Engineering & HCI" />
     <meta
       property="og:description"
-      content="Design, data, and interactive experiments."
+      content="Data-heavy, AI-enabled products where the hard part is making the right structure visible."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://emitrice.com/" />
+    <meta property="og:site_name" content="Emit Rice" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Emit Rice · Product Design, Design Engineering & HCI" />
     <meta
-      property="og:url"
-      content="https://epple3k.github.io/portfolio/"
+      name="twitter:description"
+      content="Product design, design engineering, HCI, fintech, and data interfaces."
     />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Emit Rice",
+        "url": "https://emitrice.com/",
+        "sameAs": [
+          "https://www.linkedin.com/in/emit-rice/",
+          "https://github.com/Epple3k"
+        ],
+        "knowsAbout": [
+          "Product Design",
+          "Design Engineering",
+          "Human-Computer Interaction",
+          "Data Visualization",
+          "Financial Technology",
+          "Human-Centered AI"
+        ]
+      }
+    </script>
+
+    <script>
+      (function () {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          if (params.get("internal") === "1") {
+            localStorage.setItem("portfolio_internal", "1");
+          }
+          if (params.get("external") === "1") {
+            localStorage.removeItem("portfolio_internal");
+          }
+          if (localStorage.getItem("portfolio_internal") === "1") return;
+        } catch (e) {}
+
+        var script = document.createElement("script");
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-MMLXHYG5YY";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag("js", new Date());
+        window.gtag("config", "G-MMLXHYG5YY");
+      })();
+    </script>
   </head>
 
   <body>
