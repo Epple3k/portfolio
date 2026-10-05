@@ -1,0 +1,8 @@
+{
+  "name": "Emit Rice",
+  "short_name": "Emit Rice",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f5ef",
+  "theme_color": "#c8ff00"
+}
