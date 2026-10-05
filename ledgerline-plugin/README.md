@@ -128,23 +128,24 @@ SEC issuers do not all use identical XBRL concepts, so the metric layer includes
 
 ## Portfolio blog email subscriptions
 
-The portfolio Blog includes an email signup form. Subscribers are stored in a Resend Audience/Segment and the existing private publisher sends a Broadcast automatically after a new `public/notes.json` post is committed.
-
-Configure these environment variables on the Render service:
-
-- `RESEND_API_KEY` — Resend API key with contact + broadcast access.
-- `RESEND_AUDIENCE_ID` — the Resend Audience/Segment ID used for blog subscribers.
-- `BLOG_FROM_EMAIL` — sender identity, for example `Emit Rice <blog@emitrice.com>`.
-- `BLOG_PUBLIC_URL` — link used in notification emails. Defaults to `https://emitrice.com/?blog=1`.
-
-Before using `blog@emitrice.com`, verify `emitrice.com` in Resend and add the DNS records Resend provides.
+The portfolio newsletter now uses the Cloudflare Worker in `/mail-worker` rather than exposing newsletter logic from Ledgerline.
 
 Flow:
 
-1. Visitor enters an email in the Blog header.
-2. `POST /api/blog/subscribe` adds the address to the Resend list.
-3. Publishing through `/blog-admin` still commits the post to GitHub first.
-4. After that commit succeeds, the server creates and sends a Resend Broadcast.
-5. The email contains Resend's unsubscribe URL, so opt-outs are handled by Resend.
+1. The portfolio posts subscriptions directly to `https://api.emitrice.com/api/blog/subscribe`.
+2. The Worker creates/uses the `Emit Rice Blog Updates` Resend Segment and stores the subscriber there.
+3. Publishing through `/blog-admin` still commits the post to `public/notes.json` first.
+4. After the commit succeeds, this server calls the Worker's private `/api/blog/publish` endpoint.
+5. The Worker creates and sends the Resend Broadcast from `updates@contact.emitrice.com`.
+6. Resend's unsubscribe URL is embedded in every broadcast.
+
+Configure these environment variables on the Render service:
+
+- `BLOG_MAILER_URL=https://api.emitrice.com`
+- `BLOG_MAILER_TOKEN` — must match the Worker's `BLOG_PUBLISH_TOKEN` secret.
+- `BLOG_PUBLIC_URL=https://emitrice.com/#writing`
+
+Resend credentials belong only in the Cloudflare Worker secret store. They should not be configured on the portfolio frontend or Render service.
 
 If notification delivery fails, the blog post remains published and the publisher response includes a `notification.error` value for debugging.
+
