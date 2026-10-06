@@ -977,6 +977,7 @@ const httpServer = createHttpServer(async (req, res) => {
         ? body.tags.map((tag) => cleanString(tag, 40)).filter(Boolean).slice(0, 12)
         : [];
       const tabs = cleanTabs(body.tabs, ["professional"]);
+      const notifySubscribers = body.notifySubscribers === true;
 
       const file = await readRepoJson("public/notes.json");
       const posts = Array.isArray(file.value) ? file.value : [];
@@ -992,16 +993,19 @@ const httpServer = createHttpServer(async (req, res) => {
         file.sha,
       );
 
-      let notification = { sent: false, error: null };
-      try {
-        await notifyBlogSubscribers({ title, summary, date });
-        notification = { sent: true, error: null };
-      } catch (notifyError) {
-        console.error("Blog notification failed:", notifyError);
-        notification = {
-          sent: false,
-          error: notifyError?.message ?? "Notification failed",
-        };
+      let notification = { requested: notifySubscribers, sent: false, error: null };
+      if (notifySubscribers) {
+        try {
+          await notifyBlogSubscribers({ title, summary, date });
+          notification = { requested: true, sent: true, error: null };
+        } catch (notifyError) {
+          console.error("Blog notification failed:", notifyError);
+          notification = {
+            requested: true,
+            sent: false,
+            error: notifyError?.message ?? "Notification failed",
+          };
+        }
       }
 
       jsonResponse(res, 200, {
