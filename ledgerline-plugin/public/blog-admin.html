@@ -27,9 +27,18 @@
     .note{font-size:13px;line-height:1.5;max-width:700px;margin:14px 0 28px}
     .actions{display:flex;align-items:center;gap:14px;margin-top:16px}
     .status{font:700 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em}
+    .history-toolbar{display:flex;align-items:center;gap:14px;margin:0 0 14px}
+    .history-list{display:grid;gap:10px}
+    .history-item{background:var(--p);padding:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:start}
+    .history-title{font-size:20px;line-height:1.15;font-weight:600;margin:0 0 7px}
+    .history-meta{font:700 9px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.07em;opacity:.62}
+    .history-excerpt{font-size:13px;line-height:1.45;margin:10px 0 0;max-width:780px;opacity:.78}
+    .danger{border:1px solid var(--k);background:transparent;padding:10px 12px;cursor:pointer;text-transform:uppercase;font:700 9px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.07em}
+    .danger:hover{background:var(--k);color:var(--g)}
+    .history-empty{background:rgba(239,255,239,.55);padding:18px;font:700 10px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em}
     .links{display:flex;gap:14px;flex-wrap:wrap;margin-top:60px;font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.06em}
     .links a{color:inherit}
-    @media(max-width:720px){header{flex-direction:column;margin-bottom:38px}.grid{grid-template-columns:1fr}.token{width:100%}}
+    @media(max-width:720px){header{flex-direction:column;margin-bottom:38px}.grid{grid-template-columns:1fr}.token{width:100%}.history-item{grid-template-columns:1fr}.danger{width:100%}}
   </style>
 </head>
 <body>
@@ -48,6 +57,7 @@
     <div class="tabs">
       <button class="active" data-tab="write">write</button>
       <button data-tab="import">import elsewhere</button>
+      <button data-tab="history">post history</button>
     </div>
 
     <section id="write" class="panel active">
@@ -94,6 +104,15 @@
       </form>
     </section>
 
+    <section id="history" class="panel">
+      <p class="note">Review posts published directly to the portfolio Blog. Deleting a post removes it from <span class="mono">public/notes.json</span>; it does not send another subscriber email.</p>
+      <div class="history-toolbar">
+        <button id="refreshHistory" class="submit" type="button">refresh history ↻</button>
+        <span id="historyStatus" class="status"></span>
+      </div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
     <div class="links">
       <a href="https://epple3k.github.io/portfolio/" target="_blank" rel="noreferrer">open portfolio ↗</a>
       <a href="https://letterboxd.com/epple_3k/" target="_blank" rel="noreferrer">letterboxd ↗</a>
@@ -110,6 +129,7 @@ tokenInput.addEventListener("change",()=>localStorage.setItem("portfolioBlogToke
 document.querySelectorAll("[data-tab]").forEach(btn=>btn.addEventListener("click",()=>{
   document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===btn));
   document.querySelectorAll(".panel").forEach(x=>x.classList.toggle("active",x.id===btn.dataset.tab));
+  if(btn.dataset.tab==="history") loadHistory();
 }));
 
 for(const input of document.querySelectorAll('input[type="date"]')) input.value=new Date().toISOString().slice(0,10);
@@ -129,6 +149,98 @@ async function submit(path,payload,statusEl){
     statusEl.textContent="published ✓";
   }catch(err){statusEl.textContent=err.message}
 }
+
+let historyPosts=[];
+
+function esc(value){
+  return String(value??"")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function renderHistory(posts){
+  const list=document.querySelector("#historyList");
+  if(!posts.length){
+    list.innerHTML='<div class="history-empty">no published posts yet.</div>';
+    return;
+  }
+  list.innerHTML=posts.map((post,index)=>{
+    const tags=Array.isArray(post.tags)&&post.tags.length?post.tags.join(" · "):"no tags";
+    const tabs=Array.isArray(post.tabs)&&post.tabs.length?post.tabs.join(" · "):"";
+    const excerpt=String(post.summary||post.body||"").replace(/\s+/g," ").slice(0,220);
+    return `
+      <article class="history-item">
+        <div>
+          <h2 class="history-title">${esc(post.title||"Untitled")}</h2>
+          <div class="history-meta">${esc(post.date||"no date")} · ${esc(tags)}${tabs?" · "+esc(tabs):""}</div>
+          <p class="history-excerpt">${esc(excerpt)}${excerpt.length>=220?"…":""}</p>
+        </div>
+        <button class="danger" type="button" data-delete-index="${index}">delete</button>
+      </article>`;
+  }).join("");
+}
+
+async function loadHistory(){
+  const token=tokenInput.value.trim();
+  const status=document.querySelector("#historyStatus");
+  if(!token){
+    status.textContent="enter admin token";
+    document.querySelector("#historyList").innerHTML="";
+    return;
+  }
+  status.textContent="loading…";
+  try{
+    const res=await fetch("/api/blog/posts",{
+      headers:{"authorization":"Bearer "+token}
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data.error||("HTTP "+res.status));
+    historyPosts=Array.isArray(data.posts)?data.posts:[];
+    renderHistory(historyPosts);
+    status.textContent=historyPosts.length+" post"+(historyPosts.length===1?"":"s");
+  }catch(err){
+    status.textContent=err.message;
+  }
+}
+
+document.querySelector("#refreshHistory").addEventListener("click",loadHistory);
+
+document.querySelector("#historyList").addEventListener("click",async e=>{
+  const button=e.target.closest("[data-delete-index]");
+  if(!button) return;
+  const index=Number(button.dataset.deleteIndex);
+  const post=historyPosts[index];
+  if(!post) return loadHistory();
+
+  const confirmed=window.confirm(`Delete “${post.title||"Untitled"}” from the portfolio blog?\n\nThis removes the post from the site after the next deploy.`);
+  if(!confirmed) return;
+
+  const token=tokenInput.value.trim();
+  const status=document.querySelector("#historyStatus");
+  button.disabled=true;
+  status.textContent="deleting…";
+  try{
+    const res=await fetch("/api/blog/post",{
+      method:"DELETE",
+      headers:{"content-type":"application/json","authorization":"Bearer "+token},
+      body:JSON.stringify({
+        index,
+        expectedTitle:post.title||"",
+        expectedDate:post.date||""
+      })
+    });
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok) throw new Error(data.error||("HTTP "+res.status));
+    status.textContent="deleted ✓";
+    await loadHistory();
+  }catch(err){
+    button.disabled=false;
+    status.textContent=err.message;
+  }
+});
 
 document.querySelector("#writeForm").addEventListener("submit",async e=>{
   e.preventDefault();
