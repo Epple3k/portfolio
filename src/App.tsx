@@ -72,6 +72,16 @@ const PROJECTS = [
   },
 ]
 
+const HERO_SUBHEADINGS = [
+  "i design interfaces that make complex information easier to think with",
+  "i study information systems and finance at florida state",
+  "i research how AI can support civic participation and public decision-making",
+  "i prototype human-centered AI tools for research, finance, and public systems",
+  "i turn messy systems into legible tools, visualizations, and interactions",
+  "i build at the intersection of design, data, and emerging technology",
+  "i care about how people understand, trust, and act on information",
+]
+
 const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL ?? "https://api.emitrice.com"
 
 export default function App() {
@@ -85,6 +95,8 @@ export default function App() {
   const [subscriberEmail, setSubscriberEmail] = useState("")
   const [subscribeState, setSubscribeState] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [subscribeMessage, setSubscribeMessage] = useState("")
+  const [heroSubheadingIndex, setHeroSubheadingIndex] = useState(0)
+  const [heroSubheadingVisible, setHeroSubheadingVisible] = useState(true)
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -113,6 +125,27 @@ export default function App() {
         setNotes([])
         setSocialPosts([])
       })
+  }, [])
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    if (reduceMotion) return
+
+    let fadeTimer: number | undefined
+
+    const rotateTimer = window.setInterval(() => {
+      setHeroSubheadingVisible(false)
+
+      fadeTimer = window.setTimeout(() => {
+        setHeroSubheadingIndex((current) => (current + 1) % HERO_SUBHEADINGS.length)
+        setHeroSubheadingVisible(true)
+      }, 500)
+    }, 5000)
+
+    return () => {
+      window.clearInterval(rotateTimer)
+      if (fadeTimer) window.clearTimeout(fadeTimer)
+    }
   }, [])
 
   const handleBlogSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -266,7 +299,13 @@ export default function App() {
                     : "opacity-100 translate-y-0"
                 }`}
               >
-                i make interfaces that connect people to information
+                <span
+                  className={`block transition-opacity duration-500 ease-in-out ${
+                    heroSubheadingVisible ? "opacity-100" : "opacity-0"
+                  }`}
+                >
+                  {HERO_SUBHEADINGS[heroSubheadingIndex]}
+                </span>
               </p>
 
               <p
