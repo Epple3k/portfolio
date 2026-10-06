@@ -1,21 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { flushSync } from "react-dom"
+import { trackEvent } from "./analytics"
 
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
-
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void
-  }
-}
-
-const trackEvent = (
-  eventName: string,
-  params: Record<string, string | number | boolean | undefined> = {},
-) => {
-  window.gtag?.("event", eventName, params)
-}
 
 type BlogTab = "reviews" | "socials" | "professional"
 
