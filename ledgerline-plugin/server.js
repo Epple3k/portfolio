@@ -888,6 +888,73 @@ const httpServer = createHttpServer(async (req, res) => {
     return;
   }
 
+  if (req.method === "GET" && url.pathname === "/api/blog/posts") {
+    if (!isAuthorized(req)) {
+      jsonResponse(res, 401, { error: "Unauthorized" });
+      return;
+    }
+    try {
+      const file = await readRepoJson("public/notes.json");
+      const posts = Array.isArray(file.value) ? file.value : [];
+      jsonResponse(res, 200, { ok: true, posts });
+    } catch (error) {
+      console.error(error);
+      jsonResponse(res, 500, { error: error.message ?? "Could not load post history" });
+    }
+    return;
+  }
+
+  if (req.method === "DELETE" && url.pathname === "/api/blog/post") {
+    if (!isAuthorized(req)) {
+      jsonResponse(res, 401, { error: "Unauthorized" });
+      return;
+    }
+    try {
+      const body = await readRequestJson(req);
+      const index = Number(body.index);
+      if (!Number.isInteger(index) || index < 0) {
+        jsonResponse(res, 400, { error: "A valid post index is required" });
+        return;
+      }
+
+      const file = await readRepoJson("public/notes.json");
+      const posts = Array.isArray(file.value) ? file.value : [];
+      const post = posts[index];
+      if (!post) {
+        jsonResponse(res, 404, { error: "Post not found. Refresh history and try again." });
+        return;
+      }
+
+      const expectedTitle = cleanString(body.expectedTitle, 180);
+      const expectedDate = cleanString(body.expectedDate, 10);
+      if (
+        (expectedTitle && cleanString(post.title, 180) !== expectedTitle) ||
+        (expectedDate && cleanString(post.date, 10) !== expectedDate)
+      ) {
+        jsonResponse(res, 409, { error: "Post history changed. Refresh and try again." });
+        return;
+      }
+
+      const next = posts.filter((_, postIndex) => postIndex !== index);
+      const commit = await writeRepoJson(
+        "public/notes.json",
+        next,
+        `Delete blog post: ${cleanString(post.title, 72) || "untitled"}`,
+        file.sha,
+      );
+
+      jsonResponse(res, 200, {
+        ok: true,
+        deleted: { title: post.title ?? "", date: post.date ?? "" },
+        commit: commit.commit?.sha ?? null,
+      });
+    } catch (error) {
+      console.error(error);
+      jsonResponse(res, 500, { error: error.message ?? "Delete failed" });
+    }
+    return;
+  }
+
   if (req.method === "POST" && url.pathname === "/api/blog/post") {
     if (!isAuthorized(req)) {
       jsonResponse(res, 401, { error: "Unauthorized" });
