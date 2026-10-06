@@ -73,6 +73,11 @@
             <label class="check"><input type="checkbox" name="tabs" value="professional" checked>professional work & updates</label>
           </div></div>
           <div class="field wide"><label>summary</label><textarea name="summary" style="min-height:90px" placeholder="Optional. If blank, the first part of the post is used."></textarea></div>
+          <div class="field wide">
+            <label>subscriber email</label>
+            <label class="check"><input type="checkbox" name="notifySubscribers" value="yes">send an email update to subscribers</label>
+            <p class="note" style="margin:8px 0 0">Leave this unchecked for smaller updates. Check it only when this post is important enough to land in subscribers’ inboxes.</p>
+          </div>
           <div class="field wide"><label>post</label><textarea name="body" required></textarea></div>
         </div>
         <div class="actions"><button class="submit" type="submit">publish post ↗</button><span id="writeStatus" class="status"></span></div>
@@ -146,7 +151,13 @@ async function submit(path,payload,statusEl){
     });
     const data=await res.json().catch(()=>({}));
     if(!res.ok) throw new Error(data.error||("HTTP "+res.status));
-    statusEl.textContent="published ✓";
+    if(data.notification?.requested){
+      statusEl.textContent=data.notification.sent
+        ?"published ✓ · email sent ✓"
+        :"published ✓ · email failed: "+(data.notification.error||"unknown error");
+    }else{
+      statusEl.textContent="published ✓ · no email";
+    }
   }catch(err){statusEl.textContent=err.message}
 }
 
@@ -251,7 +262,8 @@ document.querySelector("#writeForm").addEventListener("submit",async e=>{
     tags:String(f.get("tags")||"").split(",").map(x=>x.trim()).filter(Boolean),
     summary:f.get("summary"),
     body:f.get("body"),
-    tabs:f.getAll("tabs")
+    tabs:f.getAll("tabs"),
+    notifySubscribers:f.get("notifySubscribers")==="yes"
   },document.querySelector("#writeStatus"));
 });
 
