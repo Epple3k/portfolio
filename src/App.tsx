@@ -80,6 +80,7 @@ const HERO_SUBHEADINGS = [
   "i turn messy systems into legible tools, visualizations, and interactions",
   "i build at the intersection of design, data, and emerging technology",
   "i care about how people understand, trust, and act on information",
+  "i'm planning large-scale campus events around building, design, and technology",
 ]
 
 const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL ?? "https://api.emitrice.com"
@@ -140,7 +141,7 @@ export default function App() {
         setHeroSubheadingIndex((current) => (current + 1) % HERO_SUBHEADINGS.length)
         setHeroSubheadingVisible(true)
       }, 500)
-    }, 5000)
+    }, 4000)
 
     return () => {
       window.clearInterval(rotateTimer)
