@@ -8,6 +8,8 @@ declare global {
 
 let initialized = false
 
+// PostHog is configured at build time through the GitHub Pages repository variable.
+
 export function initAnalytics() {
   if (initialized || typeof window === "undefined") return
 
