@@ -28,6 +28,7 @@ const CONTENT_REPO = "Epple3k/portfolio";
 const CONTENT_BRANCH = "main";
 const RESEND_API_KEY = process.env.RESEND_API_KEY ?? "";
 const RESEND_AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID ?? "";
+const RESEND_SEGMENT_ID = process.env.RESEND_SEGMENT_ID ?? RESEND_AUDIENCE_ID;
 const BLOG_FROM_EMAIL = process.env.BLOG_FROM_EMAIL ?? "Emit Rice <blog@emitrice.com>";
 const BLOG_PUBLIC_URL = process.env.BLOG_PUBLIC_URL ?? "https://emitrice.com/?blog=1";
 
@@ -466,7 +467,7 @@ async function addBlogSubscriber(email) {
 }
 
 async function notifyBlogSubscribers({ title, summary, date }) {
-  if (!RESEND_AUDIENCE_ID) throw new Error("RESEND_AUDIENCE_ID is not configured");
+  if (!RESEND_SEGMENT_ID) throw new Error("RESEND_SEGMENT_ID is not configured");
   const safeTitle = escapeHtml(title);
   const safeSummary = escapeHtml(summary);
   const safeDate = escapeHtml(date);
@@ -486,7 +487,7 @@ async function notifyBlogSubscribers({ title, summary, date }) {
   return resendApi("/broadcasts", {
     method: "POST",
     body: JSON.stringify({
-      audience_id: RESEND_AUDIENCE_ID,
+      segment_id: RESEND_SEGMENT_ID,
       from: BLOG_FROM_EMAIL,
       subject: `New post: ${title}`,
       html,
