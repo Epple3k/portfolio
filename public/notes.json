@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "title": "Blog Publisher Gets Smarter",
+    "date": "2026-10-06",
+    "summary": "I just finished a small but useful upgrade to the blog publisher behind emitrice.com. The publisher now has a post history view, so I can see previously published posts and delete old ones directly from the tool. More importantly, email upd",
+    "body": "I just finished a small but useful upgrade to the blog publisher behind emitrice.com.\n\nThe publisher now has a post history view, so I can see previously published posts and delete old ones directly from the tool. More importantly, email updates are now optional per post.\nWhen I publish something, I can choose whether it should also send an email to subscribers. Bigger updates can still hit the inbox, while smaller notes, experiments, and quick progress posts can stay quietly on the site.\n\nThe whole flow now connects the publisher, GitHub, Render, and Resend into one cleaner system, with clearer feedback about whether a post was published and whether an email was actually sent.",
+    "tags": [
+      "site update",
+      "newsletter",
+      "email",
+      "portfolio"
+    ],
+    "tabs": [
+      "professional"
+    ]
+  }
+]
