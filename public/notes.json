@@ -1,5 +1,17 @@
 [
   {
+    "title": "Second",
+    "date": "2026-10-06",
+    "summary": "Testing, more",
+    "body": "Testing, more",
+    "tags": [
+      "portfolio"
+    ],
+    "tabs": [
+      "professional"
+    ]
+  },
+  {
     "title": "First Email Release",
     "date": "2026-10-06",
     "summary": "First emails are going out from emitrice.com. I finally wired the blog into its own mailing list, so new posts can now be sent directly to subscribers instead of quietly appearing in a forgotten corner of the internet. If you subscribed, th",
