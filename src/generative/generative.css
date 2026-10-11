@@ -1,0 +1,213 @@
+/*
+ * GENERATIVE PORTFOLIO, V3
+ *
+ * Deliberately an edition of the existing site, not a re-skin.
+ * Keep the original split view, project ribbon, grayscale thumbnails,
+ * hover expansion, and close/open transitions. Vary only gradients,
+ * bold type treatments, and small changes to the same composition.
+ */
+
+.gen-shell {
+  --gen-paper: #effff0;
+  --gen-middle: #b0ffa8;
+  --gen-edge: #12f520;
+  --gen-ink: #102510;
+  --gen-panel: #e5e5e5;
+  --gen-accent: #008e17;
+  --gen-secondary: #8cff79;
+  --gen-bloom: #bfffbb;
+  --gen-display: "Helvetica Neue", Arial, sans-serif;
+  --gen-body: "Helvetica Neue", Arial, sans-serif;
+  --gen-mono: ui-monospace, monospace;
+  --gen-title-size: 3.7rem;
+  --gen-display-weight: 700;
+  color: var(--gen-ink);
+  font-family: var(--gen-body);
+  position: relative;
+  isolation: isolate;
+}
+.gen-shell ::selection {
+  background: var(--gen-ink);
+  color: var(--gen-paper);
+}
+.gen-shell :focus-visible {
+  outline: 2px solid var(--gen-ink);
+  outline-offset: 3px;
+}
+
+/* The source site is a smooth, directional gradient, not an illustrated canvas. */
+.gen-atmosphere,
+.gen-gradient,
+.gen-wash,
+.gen-hover-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.gen-atmosphere { position: fixed; z-index: 0; overflow: hidden; }
+.gen-gradient { opacity: 1; }
+.gen-wash { opacity: .24; mix-blend-mode: screen; }
+.gen-hover-glow {
+  opacity: 0;
+  mix-blend-mode: overlay;
+  transition: opacity 700ms ease-out;
+}
+.gen-shell.gen-hovering .gen-hover-glow { opacity: .65; }
+
+/* One understated, fixed regenerate control, independent of the composition. */
+.gen-reload {
+  position: fixed;
+  z-index: 45;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  color: var(--gen-ink);
+  background: color-mix(in srgb, var(--gen-paper) 65%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gen-ink) 24%, transparent);
+  border-radius: 999px;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: background .2s, transform .2s, color .2s;
+}
+.gen-reload:hover {
+  color: var(--gen-paper);
+  background: var(--gen-ink);
+  transform: rotate(36deg);
+}
+.gen-reload:focus-visible {
+  outline: 3px solid var(--gen-ink);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gen-reload:hover { transform: none; }
+}
+
+/* Small changes of proportion within the original split-screen composition. */
+.gen-main { gap: clamp(12px, 1.7vw, 26px); }
+.gen-intro { min-width: 0; }
+.gen-name {
+  font-family: var(--gen-display);
+  font-size: clamp(2.5rem, var(--gen-title-size), 4.5rem);
+  font-weight: var(--gen-display-weight);
+  line-height: .98;
+  letter-spacing: -.065em;
+  color: var(--gen-ink);
+  text-wrap: nowrap;
+}
+/* All treatments stay typographic, not decorative lettering floating behind text. */
+.gen-type-0 .gen-name { letter-spacing: -.065em; }
+.gen-type-1 .gen-name { letter-spacing: -.09em; }
+.gen-type-2 .gen-name { letter-spacing: -.045em; }
+.family-wide .gen-name { letter-spacing: -.095em; }
+.family-heavy .gen-name { letter-spacing: -.07em; }
+.gen-description p { font-family: var(--gen-body); }
+.gen-links { font-family: var(--gen-body); }
+.gen-links button:hover, .gen-links a:hover { color: var(--gen-ink); }
+.gen-projects { gap: var(--gen-gap); }
+.gen-card { border-radius: 0; }
+
+/* Preserve original grayscale/resting previews, expand-on-hover and hidden
+ * until hovered project metadata. Only tint the existing project overlay. */
+.gen-card-overlay { background: var(--gen-secondary) !important; }
+.gen-card-preview-fallback { background: var(--gen-panel) !important; }
+.gen-card-meta h2 {
+  font-family: var(--gen-display);
+  font-weight: var(--gen-display-weight);
+  letter-spacing: -.055em;
+}
+.gen-card-meta .font-mono { font-family: var(--gen-mono); }
+
+@media (min-width: 768px) {
+  .gen-main {
+    display: flex;
+    flex-direction: row;
+  }
+  .gen-intro {
+    flex: 1 1 49%;
+    width: auto;
+  }
+  .gen-projects {
+    flex: 1 1 51%;
+    width: auto;
+  }
+  .gen-original .gen-intro > div:first-child { margin-top: clamp(18px, 4vh, 44px); }
+  .gen-high .gen-intro > div:first-child { margin-top: clamp(5px, 1.5vh, 18px); }
+  .gen-low .gen-intro > div:first-child { margin-top: clamp(55px, 11vh, 130px); }
+  .gen-spread .gen-intro > div:first-child { margin-top: clamp(30px, 7vh, 75px); }
+  .gen-high .gen-links { margin-left: clamp(0px, 3vw, 45px); }
+  .gen-low .gen-links { margin-left: clamp(30px, 10vw, 145px); }
+  .gen-spread .gen-links { margin-left: clamp(0px, 1vw, 22px); }
+  .gen-spread .gen-intro { flex-basis: 55%; }
+  .gen-spread .gen-projects { flex-basis: 45%; }
+  .gen-low .gen-intro { flex-basis: 45%; }
+  .gen-low .gen-projects { flex-basis: 55%; }
+  .gen-high .gen-intro { flex-basis: 52%; }
+  .gen-high .gen-projects { flex-basis: 48%; }
+}
+@media (max-width: 767px) {
+  .gen-main { min-height: 100svh; height: auto; display: flex; flex-direction: column; }
+  .gen-intro {
+    width: 100%;
+    height: auto;
+    min-height: 325px;
+    max-width: none;
+    gap: 16px;
+  }
+  .gen-intro > div:first-child { margin-top: 55px; gap: 24px; }
+  .gen-name { font-size: clamp(2.5rem, 10vw, 4.2rem); }
+  .gen-description { height: 100px; min-height: 100px; }
+  .gen-description p { font-size: clamp(1.2rem, 4.3vw, 1.75rem); }
+  .gen-links { margin: 5px 0 0; flex-direction: row; flex-wrap: wrap; gap: 7px 22px; font-size: 1.15rem; }
+  .gen-projects { width: 100%; height: auto; min-height: 0; gap: 8px; }
+  .gen-card { flex: none !important; height: 165px; min-height: 165px; }
+  .gen-card-meta { opacity: 1 !important; transform: none !important; }
+  .gen-card-scrim { opacity: .8 !important; }
+  .gen-card-meta h2 { font-size: 1.8rem; }
+}
+@media (max-width: 480px) {
+  .gen-controls { top: 7px; right: 8px; left: 8px; justify-content: space-between; }
+  .gen-edition { min-width: 0; padding: 2px 5px; }
+  .gen-edition span:first-child { font-size: 9px; }
+  .gen-edition span:last-child { font-size: 8px; }
+  .gen-controls button { padding: 9px 7px; font-size: 9px; }
+  .gen-intro { min-height: 315px; }
+}
+
+/* Same fullscreen cases and blog UI, simply color matched to the edition. */
+.gen-modal {
+  background: linear-gradient(92deg,
+    var(--gen-paper),
+    var(--gen-middle) 50%,
+    var(--gen-edge)) !important;
+  color: var(--gen-ink) !important;
+  font-family: var(--gen-body);
+}
+.gen-modal .gen-panel { background: var(--gen-paper) !important; }
+.gen-modal .gen-modal-title {
+  font-family: var(--gen-display);
+  font-weight: var(--gen-display-weight);
+}
+.gen-modal .gen-modal-tab { border-color: var(--gen-ink) !important; color: var(--gen-ink) !important; }
+.gen-modal .gen-modal-tab[aria-pressed="true"] {
+  background: var(--gen-ink) !important;
+  color: var(--gen-paper) !important;
+}
+.gen-modal .gen-modal-action {
+  background: var(--gen-ink) !important;
+  border-color: var(--gen-ink) !important;
+  color: var(--gen-paper) !important;
+}
+.gen-modal .gen-modal-action:hover { background: var(--gen-accent) !important; color: white !important; }
+.gen-modal .gen-modal-input { background: var(--gen-paper) !important; }
+@media (prefers-reduced-motion: reduce) {
+  .gen-shell *, .gen-shell *::before, .gen-shell *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+}

@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { flushSync } from "react-dom"
 import { trackEvent } from "./analytics"
 import ReviewShelf from "./ReviewShelf"
 
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
+import { createDesign, initialSeed } from "./generative/design"
+import { GenerativeArt } from "./generative/GenerativeArt"
 
 type BlogTab = "reviews" | "socials" | "professional"
 
@@ -93,6 +95,24 @@ const HERO_SUBHEADINGS = [
 const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL ?? "https://api.emitrice.com"
 
 export default function App() {
+  const [seed] = useState(initialSeed)
+  const design = useMemo(() => createDesign(seed), [seed])
+
+  useEffect(() => {
+    try { window.sessionStorage.setItem("generative-last-layout", design.layout) } catch { /* storage optional */ }
+  }, [design.layout])
+
+  const reloadEdition = () => {
+    // A copied ?seed= permalink normally pins its design. When this
+    // control is clicked we deliberately unpin it for a fresh edition.
+    const url = new URL(window.location.href)
+    if (url.searchParams.has("seed")) {
+      url.searchParams.delete("seed")
+      window.history.replaceState(window.history.state, "", url.toString())
+    }
+    window.location.reload()
+  }
+
   const [hoveredId, setHoveredId] = useState<string | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [showBlog, setShowBlog] = useState(false)
@@ -223,6 +243,9 @@ export default function App() {
     })
   }
 
+  const orderedProjects = PROJECTS.slice().sort(
+    (a, b) => design.order.indexOf(a.id) - design.order.indexOf(b.id),
+  )
   const activeProject = PROJECTS.find((p) => p.id === activeId)
   const hoveredProject = PROJECTS.find((p) => p.id === hoveredId)
 
@@ -275,37 +298,74 @@ export default function App() {
   ]
 
   return (
-    <div className="relative min-h-screen w-full font-sans text-black overflow-hidden flex selection:bg-black selection:text-[#1aff1a]">
-      {/* Background Gradient Layer */}
-      <div
-        className="absolute inset-0 z-0 transition-all duration-700 ease-out"
-        style={{
-          background:
-            "linear-gradient(90deg, #f0fff0 0%, #c2ffc2 45%, #00ff00 100%)",
-          opacity: hoveredId ? 0.9 : 1,
-        }}
-      />
+    <div
+      className={`gen-shell gen-${design.layout} gen-align-${design.introAlignment} family-${design.family.id} gen-type-${design.nameTreatment} ${hoveredId ? "gen-hovering" : ""} relative min-h-screen w-full overflow-hidden flex`}
+      style={{
+        "--gen-paper": design.palette.paper,
+        "--gen-ink": design.palette.ink,
+        "--gen-panel": design.palette.panel,
+        "--gen-accent": design.palette.accent,
+        "--gen-secondary": design.palette.secondary,
+        "--gen-middle": design.palette.middle,
+        "--gen-edge": design.palette.edge,
+        "--gen-bloom": design.palette.bloom,
+        "--gen-display-weight": design.displayWeight,
+        "--gen-title-size": `${3.7 * design.typeScale}rem`,
+        "--gen-headline-size": `${(4.8 * design.headlineScale).toFixed(2)}rem`,
+        "--gen-banner-headline-size": `${(4.8 * design.headlineScale * 1.55).toFixed(2)}rem`,
+        "--gen-scatter-headline-size": `${(4.8 * design.headlineScale * 1.65).toFixed(2)}rem`,
+        "--gen-description-size": `${(1.75 * design.descriptionScale).toFixed(2)}rem`,
+        "--gen-project-title-size": `${(2.2 * design.projectTitleScale).toFixed(2)}rem`,
+        "--gen-headline-shift": `${design.headlineShift}px`,
+        "--gen-column-bias": `${design.columnBias}px`,
+        "--gen-left-width": `${50 + design.columnBias / 20}%`,
+        "--gen-link-spread": `${design.linkSpread}px`,
+        "--gen-word-spacing": `${design.wordSpacing}em`,
+        "--gen-panel-weight": design.panelWeight,
+        "--gen-card-gap": `${design.cardGap}px`,
+        "--gen-title-tracking": `${design.titleTracking.toFixed(3)}em`,
+        "--gen-display": design.family.display,
+        "--gen-body": design.family.body,
+        "--gen-mono": design.family.mono,
+        "--gen-gap": `${design.spacing}px`,
+        "--gen-scale": design.typeScale,
 
-      {/* Dynamic Glow Shift based on Hover */}
-      <div
-        className="absolute inset-0 z-0 transition-opacity duration-700 ease-out mix-blend-overlay"
-        style={{
-          background:
-            "radial-gradient(circle at 75% 50%, #00ff00 0%, transparent 60%)",
-          opacity: hoveredId ? 0.8 : 0,
-        }}
-      />
+      } as React.CSSProperties}
+    >
+      <GenerativeArt design={design} />
+      <button
+        type="button"
+        className="gen-reload"
+        onClick={reloadEdition}
+        aria-label="Reload site and generate a new design"
+        title="Regenerate"
+      >
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          width="21"
+          height="21"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20 11a8 8 0 1 1-2.3-5.65" />
+          <path d="M20 4v6h-6" />
+        </svg>
+      </button>
 
       {/* Main Content Layout */}
-      <main className="relative z-10 w-full h-screen flex flex-col md:flex-row p-4 md:p-8 md:gap-4">
+      <main className="gen-main relative z-10 w-full h-screen flex flex-col md:flex-row p-4 md:p-8 md:gap-4">
         {/* Left Column */}
-        <div className="w-full md:w-1/2 h-full flex flex-col justify-between max-w-[720px] pb-8 md:pb-0">
+        <div className="gen-intro w-full md:w-1/2 h-full flex flex-col justify-between max-w-[720px] pb-8 md:pb-0">
           <div className="flex flex-col gap-6 lg:gap-12 mt-4 md:mt-8">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl tracking-tight font-medium">
+            <h1 className="gen-name text-4xl md:text-5xl lg:text-6xl tracking-tight font-medium">
               emit rice
             </h1>
 
-            <div className="relative h-32 md:h-48">
+            <div className="gen-description relative h-32 md:h-48">
               <p
                 className={`absolute inset-0 text-xl md:text-2xl lg:text-3xl leading-snug md:leading-snug transition-all duration-400 ease-out ${
                   hoveredProject
@@ -334,7 +394,8 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex flex-col items-start gap-1 text-xl md:text-2xl tracking-tight mt-auto md:ml-12 lg:ml-24">
+          <nav className="gen-links flex flex-col items-start gap-1 text-xl md:text-2xl tracking-tight mt-auto md:ml-12 lg:ml-24" aria-label="Explore and contact">
+            <span className="gen-links-kicker" aria-hidden="true">explore / connect</span>
             <button
               onClick={() => {
                 setShowBlog(true)
@@ -383,15 +444,16 @@ export default function App() {
                 {label}
               </a>
             ))}
-          </div>
+          </nav>
+
         </div>
 
         {/* Right Column (Ribbon) */}
         <div
-          className="w-full md:w-1/2 lg:w-[54%] h-full flex flex-col gap-2 md:gap-3"
+          className="gen-projects w-full md:w-1/2 lg:w-[54%] h-full flex flex-col gap-2 md:gap-3"
           onMouseLeave={() => setHoveredId(null)}
         >
-          {PROJECTS.map((p) => {
+          {orderedProjects.map((p) => {
             const isHovered = hoveredId === p.id
             const isAnyHovered = hoveredId !== null
 
@@ -400,7 +462,18 @@ export default function App() {
                 key={p.id}
                 onMouseEnter={() => setHoveredId(p.id)}
                 onClick={() => handleProjectClick(p.id)}
-                className="relative overflow-hidden cursor-pointer group will-change-transform"
+                onFocus={() => setHoveredId(p.id)}
+                onBlur={() => setHoveredId(null)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault()
+                    handleProjectClick(p.id)
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`View ${p.title} project`}
+                className="gen-card relative overflow-hidden cursor-pointer group will-change-transform"
                 style={
                   {
                     flex: isHovered
@@ -410,7 +483,7 @@ export default function App() {
                         : "1",
                     transition:
                       "flex 400ms cubic-bezier(0.25, 1, 0.5, 1)",
-                    backgroundColor: "#e5e5e5",
+                    backgroundColor: design.palette.panel,
                     viewTransitionName: `project-${p.id}`,
                   } as React.CSSProperties
                 }
@@ -458,7 +531,7 @@ export default function App() {
                     className="absolute inset-0 w-full h-full object-cover grayscale opacity-30 scale-105"
                   />
                 ) : (
-                  <div className="absolute inset-0 bg-[#efffef] text-black p-6 flex flex-col justify-between grayscale opacity-40">
+                  <div className="gen-card-preview-fallback absolute inset-0 bg-[#efffef] text-black p-6 flex flex-col justify-between grayscale opacity-40">
                     <div className="font-mono text-[10px] uppercase tracking-[0.12em]">
                       {p.category}
                     </div>
@@ -476,21 +549,21 @@ export default function App() {
 
                 {/* Overlay */}
                 <div
-                  className={`absolute inset-0 bg-[#d1d1d1] mix-blend-multiply transition-opacity duration-500 ${
+                  className={`gen-card-overlay absolute inset-0 bg-[#d1d1d1] mix-blend-multiply transition-opacity duration-500 ${
                     isHovered ? "opacity-0" : "opacity-60"
                   }`}
                 />
 
                 {/* Scrim */}
                 <div
-                  className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-400 ${
+                  className={`gen-card-scrim absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-400 ${
                     isHovered ? "opacity-100" : "opacity-0"
                   }`}
                 />
 
                 {/* Metadata */}
                 <div
-                  className={`absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 flex justify-between items-end transition-all duration-400 transform ${
+                  className={`gen-card-meta absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 flex justify-between items-end transition-all duration-400 transform ${
                     isHovered
                       ? "opacity-100 translate-y-0"
                       : "opacity-0 translate-y-4"
@@ -521,7 +594,7 @@ export default function App() {
       </main>
 
       {showBlog && (
-        <div className="fixed inset-0 z-50 bg-[#00ff00] text-black overflow-hidden flex flex-col">
+        <div className="gen-modal fixed inset-0 z-50 bg-[#00ff00] text-black overflow-hidden flex flex-col">
           <div className="relative z-10 p-4 md:p-8 flex justify-between items-center w-full shrink-0">
             <button
               onClick={() => {
@@ -546,7 +619,8 @@ export default function App() {
                       setActiveBlogKey(null)
                       trackEvent("blog_tab_open", { blog_tab: tab.id })
                     }}
-                    className={`font-mono text-[10px] md:text-xs uppercase tracking-[0.1em] px-3 py-2 border border-black transition-colors ${
+                    aria-pressed={activeBlogTab === tab.id}
+                    className={`gen-modal-tab font-mono text-[10px] md:text-xs uppercase tracking-[0.1em] px-3 py-2 border border-black transition-colors ${
                       activeBlogTab === tab.id
                         ? "bg-black text-[#00ff00]"
                         : "bg-transparent text-black hover:bg-black hover:text-[#00ff00]"
@@ -578,12 +652,12 @@ export default function App() {
                     placeholder="you@email.com"
                     aria-label="Email address for blog updates"
                     required
-                    className="min-w-0 flex-1 border border-black border-r-0 bg-[#efffef] px-3 py-2 font-mono text-xs md:text-sm outline-none placeholder:text-black/40 focus:bg-white"
+                    className="gen-modal-input min-w-0 flex-1 border border-black border-r-0 bg-[#efffef] px-3 py-2 font-mono text-xs md:text-sm outline-none placeholder:text-black/40 focus:bg-white"
                   />
                   <button
                     type="submit"
                     disabled={subscribeState === "loading"}
-                    className="border border-black bg-black text-[#00ff00] px-3 py-2 font-mono text-[10px] md:text-xs uppercase tracking-[0.1em] hover:bg-transparent hover:text-black transition-colors disabled:opacity-50"
+                    className="gen-modal-action border border-black bg-black text-[#00ff00] px-3 py-2 font-mono text-[10px] md:text-xs uppercase tracking-[0.1em] hover:bg-transparent hover:text-black transition-colors disabled:opacity-50"
                   >
                     {subscribeState === "loading" ? "joining…" : "subscribe"}
                   </button>
@@ -609,13 +683,13 @@ export default function App() {
           <div className="relative z-10 flex-1 min-h-0 px-4 md:px-8 pb-4 md:pb-8">
             <div className="h-full grid grid-cols-1 md:grid-cols-[minmax(220px,0.7fr)_minmax(0,1.3fr)] gap-4 md:gap-8">
               <div className="hidden md:flex flex-col justify-end pb-2">
-                <h1 className="text-6xl lg:text-8xl tracking-tighter leading-[0.9] mb-5">
+                <h1 className="gen-modal-title text-6xl lg:text-8xl tracking-tighter leading-[0.9] mb-5">
                   things i’m<br />into.
                 </h1>
                 <p className="text-xl lg:text-2xl leading-tight max-w-sm opacity-75">
                   {activeBlogTab === "professional"
                     ? "projects, research, experiments, and the work i want people to actually hire me for."
-                    : activeBlogTab === "reviews"
+                    : String(activeBlogTab) === "reviews"
                       ? "books, films, music, and the things worth thinking about for more than a sentence."
                       : "posts from elsewhere, collected here without turning the whole site into a feed."}
                 </p>
@@ -630,7 +704,7 @@ export default function App() {
                       return (
                         <article
                           key={entry.key}
-                          className={`w-full bg-[#efffef] transition-[min-height,background-color] duration-300 ease-out overflow-hidden ${
+                          className={`gen-panel w-full bg-[#efffef] transition-[min-height,background-color] duration-300 ease-out overflow-hidden ${
                             isOpen ? "min-h-[72vh]" : "min-h-[104px]"
                           }`}
                         >
@@ -650,7 +724,7 @@ export default function App() {
                               <div className="font-mono text-[10px] md:text-xs uppercase tracking-[0.12em] opacity-55 mb-2">
                                 {String(index + 1).padStart(2, "0")} / {entry.label}
                               </div>
-                              <h2 className="text-2xl md:text-4xl tracking-tight leading-[1.02] font-medium line-clamp-2">
+                              <h2 className="gen-modal-title text-2xl md:text-4xl tracking-tight leading-[1.02] font-medium line-clamp-2">
                                 {entry.title}
                               </h2>
                             </div>
@@ -710,7 +784,7 @@ export default function App() {
                       )
                     })
                   ) : (
-                    <div className="bg-[#efffef] p-6 min-h-[104px]">
+                    <div className="gen-panel bg-[#efffef] p-6 min-h-[104px]">
                       <div className="font-mono text-xs uppercase tracking-wider mb-4">01 / blog</div>
                       <div className="text-3xl tracking-tight">first post coming soon.</div>
                     </div>
@@ -726,7 +800,7 @@ export default function App() {
       {/* Fullscreen Case Study Overlay */}
       {activeProject && (
         <div
-          className="fixed inset-0 z-50 flex flex-col bg-[#00ff00] overflow-hidden"
+          className="gen-modal fixed inset-0 z-50 flex flex-col bg-[#00ff00] overflow-hidden"
           style={
             {
               viewTransitionName: `project-${activeProject.id}`,
@@ -763,7 +837,7 @@ export default function App() {
           </div>
 
           <div className="relative z-10 mt-auto p-8 md:p-16 max-w-4xl">
-            <h1 className="text-6xl md:text-8xl tracking-tighter mb-4">
+            <h1 className="gen-modal-title text-6xl md:text-8xl tracking-tighter mb-4">
               {activeProject.title}
             </h1>
 
@@ -782,7 +856,7 @@ export default function App() {
                   destination: activeProject.url,
                 })
               }
-              className="inline-flex items-center gap-2 mb-8 font-mono uppercase tracking-wider text-sm border border-black px-4 py-3 hover:bg-black hover:text-[#00ff00] transition-colors"
+              className="gen-modal-action inline-flex items-center gap-2 mb-8 font-mono uppercase tracking-wider text-sm border border-black px-4 py-3 hover:bg-black hover:text-[#00ff00] transition-colors"
             >
               Open Project ↗
             </a>
