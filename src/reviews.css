@@ -465,3 +465,103 @@
   outline: 2px solid #000;
   outline-offset: 3px;
 }
+
+
+/* Full-space shelving: the frame occupies all space below the title. */
+.review-gallery {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+.review-gallery__masthead {
+  flex: 0 0 auto;
+}
+.review-gallery__shelf-frame {
+  display: block;
+  flex: 1 1 0;
+  width: 100%;
+  min-width: 0;
+  min-height: 225px;
+  overflow: hidden;
+  position: relative;
+  background: #efffef;
+  border: 2px solid #000;
+  border-bottom: 0;
+}
+.review-gallery__track {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 0;
+  padding: 10px 36px 0 23px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+  perspective: 1600px;
+  perspective-origin: 50% 45%;
+}
+.review-gallery__item {
+  flex: 0 0 var(--slot-width);
+  width: var(--slot-width);
+  min-width: var(--slot-width);
+  max-width: var(--slot-width);
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  transform: none;
+  overflow: visible;
+}
+.review-gallery__item .review-case {
+  position: absolute;
+  left: 7px;
+  bottom: 23px;
+  width: var(--case-w);
+  transform: rotateY(var(--shelf-tilt, 63deg));
+  transform-origin: left bottom;
+}
+.review-gallery__item:nth-child(3n + 2) .review-case,
+.review-gallery__item:nth-child(3n + 3) .review-case {
+  transform: rotateY(var(--shelf-tilt, 63deg));
+}
+.review-gallery__item:hover .review-case,
+.review-gallery__item:focus-visible .review-case,
+.review-gallery__item:nth-child(n):hover .review-case,
+.review-gallery__item:nth-child(n):focus-visible .review-case {
+  transform: translate3d(0,-13px,0) rotateY(45deg);
+}
+.review-gallery__shelf-edge {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 23px;
+  background: #080808;
+  border-top: 3px solid #00ff00;
+}
+.review-gallery__controls {
+  width: 100%;
+  flex: 0 0 54px;
+  min-height: 54px;
+}
+@media (max-width: 800px) {
+  .review-gallery__shelf-frame {
+    min-height: 210px;
+  }
+  .review-gallery__track {
+    padding: 8px 28px 0 15px;
+  }
+  .review-gallery__item .review-case {
+    left: 5px;
+  }
+}
