@@ -1,97 +1,88 @@
 /**
- * A family resemblance, not a collection of templates.
- * The original portfolio's split hero, glowing gradients and expanding
- * project ribbon remain constant. Seeds bend its color, type, composition
- * and procedural artwork into new visual editions.
+ * Editions of the original portfolio rather than interchangeable templates.
+ * The site structure, projects, expanding ribbon, and interactions stay the
+ * same. A seed controls only bold type, luminous gradients, and small shifts
+ * in the layout's composition.
  */
-export type Layout = "ribbon" | "offset" | "wide" | "cascade"
-export type Motif = "liquid" | "orbit" | "prism" | "echo" | "bloom"
+export type Layout = "original" | "high" | "low" | "spread"
+export type Motif = "gradient" | "gradient-soft" | "gradient-bright" | "gradient-deep" | "gradient-warm"
 
 type Palette = {
   paper: string
+  middle: string
+  edge: string
   ink: string
   panel: string
   accent: string
   secondary: string
   bloom: string
-  middle: string
-  edge: string
 }
 type Family = {
   id: string
   name: string
-  layouts: Layout[]
   motif: Motif
+  layouts: Layout[]
   display: string
   body: string
   mono: string
+  weight: number
   palettes: Palette[]
 }
 
 const FAMILIES: Family[] = [
   {
-    id: "signal",
-    name: "Chromatic Signal",
-    layouts: ["ribbon", "wide", "offset"],
-    motif: "orbit",
+    id: "grotesk", name: "grotesk", motif: "gradient",
+    layouts: ["original", "high", "spread"],
     display: '"Space Grotesk", "Helvetica Neue", Arial, sans-serif',
-    body: '"Space Grotesk", Arial, sans-serif',
-    mono: '"IBM Plex Mono", monospace',
+    body: '"Space Grotesk", "Helvetica Neue", Arial, sans-serif',
+    mono: '"IBM Plex Mono", monospace', weight: 700,
     palettes: [
-      { paper: "#dfffe0", ink: "#102c22", panel: "#effff0", accent: "#00ad38", secondary: "#5cff00", bloom: "#e7ff9d", middle: "#91ff70", edge: "#00ed70" },
-      { paper: "#cefff4", ink: "#08332e", panel: "#effff9", accent: "#0879a0", secondary: "#6bfff4", bloom: "#fff197", middle: "#5df7d4", edge: "#0bd0c6" },
+      { paper: "#effff0", middle: "#b0ffa8", edge: "#12f520", ink: "#102510", panel: "#e5e5e5", accent: "#008e17", secondary: "#8cff79", bloom: "#bfffbb" },
+      { paper: "#e4fff6", middle: "#8af6d4", edge: "#09d5a0", ink: "#103128", panel: "#e5e5e5", accent: "#02785e", secondary: "#69eac8", bloom: "#abffe9" },
     ],
   },
   {
-    id: "liquid",
-    name: "Liquid Spectrum",
-    layouts: ["ribbon", "cascade", "offset"],
-    motif: "liquid",
-    display: '"Syne", "Helvetica Neue", sans-serif',
-    body: '"DM Sans", Arial, sans-serif',
-    mono: '"IBM Plex Mono", monospace',
+    id: "heavy", name: "heavy", motif: "gradient-bright",
+    layouts: ["original", "low", "spread"],
+    display: '"Archivo Black", "Arial Black", Arial, sans-serif',
+    body: '"Space Grotesk", "Helvetica Neue", Arial, sans-serif',
+    mono: '"IBM Plex Mono", monospace', weight: 400,
     palettes: [
-      { paper: "#ffe5f6", ink: "#401339", panel: "#fff1fa", accent: "#b8007d", secondary: "#ff65bd", bloom: "#ffd87e", middle: "#ff9acb", edge: "#c787ff" },
-      { paper: "#d5e3ff", ink: "#1a2351", panel: "#f2f7ff", accent: "#5032bd", secondary: "#7af4ff", bloom: "#b6edff", middle: "#8cafff", edge: "#9f63ff" },
+      { paper: "#fff1ee", middle: "#ffb4c7", edge: "#ff4f90", ink: "#341925", panel: "#e5e5e5", accent: "#a92356", secondary: "#f98aba", bloom: "#ffd2e0" },
+      { paper: "#e9f7ff", middle: "#8cdbff", edge: "#1894ff", ink: "#10273c", panel: "#e5e5e5", accent: "#1265ad", secondary: "#85cfff", bloom: "#c3ecff" },
     ],
   },
   {
-    id: "prism",
-    name: "Soft Prism",
-    layouts: ["wide", "offset", "cascade"],
-    motif: "prism",
-    display: '"Outfit", "Helvetica Neue", sans-serif',
-    body: '"Outfit", Arial, sans-serif',
-    mono: '"IBM Plex Mono", monospace',
+    id: "syne", name: "syne", motif: "gradient-deep",
+    layouts: ["high", "low", "original"],
+    display: '"Syne", "Helvetica Neue", Arial, sans-serif',
+    body: '"Syne", "Helvetica Neue", Arial, sans-serif',
+    mono: '"IBM Plex Mono", monospace', weight: 800,
     palettes: [
-      { paper: "#ffe6d3", ink: "#392325", panel: "#fff7f0", accent: "#c7444e", secondary: "#fb725e", bloom: "#f8ff87", middle: "#ffad7e", edge: "#ff6083" },
-      { paper: "#fff1b7", ink: "#342719", panel: "#fffae7", accent: "#ac4827", secondary: "#fc705c", bloom: "#dcff81", middle: "#ffcf61", edge: "#ff824c" },
+      { paper: "#f3ecff", middle: "#cbb0ff", edge: "#8754fd", ink: "#25193f", panel: "#e5e5e5", accent: "#6037b2", secondary: "#b592ff", bloom: "#e0ccff" },
+      { paper: "#fff2e4", middle: "#ffc58f", edge: "#ff7a36", ink: "#38271b", panel: "#e5e5e5", accent: "#ab4726", secondary: "#ffbd87", bloom: "#ffe0b5" },
     ],
   },
   {
-    id: "echo",
-    name: "Type Echo",
-    layouts: ["ribbon", "wide", "cascade"],
-    motif: "echo",
-    display: '"Unbounded", "Arial Black", sans-serif',
-    body: '"Space Grotesk", Arial, sans-serif',
-    mono: '"IBM Plex Mono", monospace',
+    id: "rounded", name: "rounded", motif: "gradient-soft",
+    layouts: ["original", "high", "spread"],
+    display: '"Outfit", "Helvetica Neue", Arial, sans-serif',
+    body: '"Outfit", "Helvetica Neue", Arial, sans-serif',
+    mono: '"IBM Plex Mono", monospace', weight: 800,
     palettes: [
-      { paper: "#e3e0ff", ink: "#2b2054", panel: "#f3f0ff", accent: "#5c39ad", secondary: "#9d69fb", bloom: "#ffc0e7", middle: "#c0aaff", edge: "#7890ff" },
-      { paper: "#ceecff", ink: "#152c4c", panel: "#ecf9ff", accent: "#2767b0", secondary: "#ff64a1", bloom: "#ffe5fb", middle: "#a2caff", edge: "#4abcf5" },
+      { paper: "#f6f7ff", middle: "#b2bdff", edge: "#616ff4", ink: "#202645", panel: "#e5e5e5", accent: "#444cb0", secondary: "#b3bcff", bloom: "#dce2ff" },
+      { paper: "#fffde6", middle: "#f2ff9e", edge: "#beff26", ink: "#253012", panel: "#e5e5e5", accent: "#597f00", secondary: "#e4fb6d", bloom: "#f5ffc7" },
     ],
   },
   {
-    id: "bloom",
-    name: "Radiant Bloom",
-    layouts: ["offset", "ribbon", "wide"],
-    motif: "bloom",
-    display: '"Instrument Serif", Georgia, serif',
-    body: '"DM Sans", Arial, sans-serif',
-    mono: '"IBM Plex Mono", monospace',
+    id: "wide", name: "wide", motif: "gradient-warm",
+    layouts: ["low", "spread", "original"],
+    display: '"Unbounded", "Arial Black", Arial, sans-serif',
+    body: '"Space Grotesk", "Helvetica Neue", Arial, sans-serif',
+    mono: '"IBM Plex Mono", monospace', weight: 700,
     palettes: [
-      { paper: "#eaffed", ink: "#183b2e", panel: "#f3fff7", accent: "#176f49", secondary: "#00c97a", bloom: "#f6ffb4", middle: "#9afbc9", edge: "#60dbed" },
-      { paper: "#fff0e6", ink: "#40262b", panel: "#fff9f4", accent: "#b73c62", secondary: "#ff77b7", bloom: "#fff1a0", middle: "#ffc0b8", edge: "#ffa0e6" },
+      { paper: "#fdf0ff", middle: "#edb0fd", edge: "#ce48ec", ink: "#38213b", panel: "#e5e5e5", accent: "#9734a7", secondary: "#e39bff", bloom: "#f6d7ff" },
+      { paper: "#e7fff9", middle: "#87f8f4", edge: "#20cadc", ink: "#173039", panel: "#e5e5e5", accent: "#09808b", secondary: "#9cf6fa", bloom: "#c8ffff" },
     ],
   },
 ]
@@ -131,38 +122,27 @@ export function initialSeed(): string {
 }
 
 export function createDesign(seed: string) {
-  const random = randomFromSeed(hashSeed(seed))
-  const family = FAMILIES[Math.floor(random() * FAMILIES.length)]
-  const palette = family.palettes[Math.floor(random() * family.palettes.length)]
-  const layout = family.layouts[Math.floor(random() * family.layouts.length)]
+  const rnd = randomFromSeed(hashSeed(seed))
+  const family = FAMILIES[Math.floor(rnd() * FAMILIES.length)]
+  const palette = family.palettes[Math.floor(rnd() * family.palettes.length)]
+  const layout = family.layouts[Math.floor(rnd() * family.layouts.length)]
+  // Preserve all four projects and their metadata; only their order changes.
   const ids = ["01", "02", "03", "04"]
-
-  // Change the browsing rhythm, never the content or links.
   for (let i = ids.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1))
+    const j = Math.floor(rnd() * (i + 1))
     ;[ids[i], ids[j]] = [ids[j], ids[i]]
   }
 
   return {
-    seed,
-    family,
-    palette,
-    layout,
-    order: ids,
-    artSeed: Math.floor(random() * 0xffffffff),
-    artTilt: -38 + random() * 76,
-    artScale: 0.76 + random() * 0.68,
-    artOffset: 10 + Math.round(random() * 70),
-    typeScale: 0.85 + random() * 0.35,
-    spacing: 8 + Math.round(random() * 10),
-    // All gradient positions, opacity, and typographic rhythm share the seed.
-    glowX: 56 + Math.round(random() * 36),
-    glowY: 22 + Math.round(random() * 54),
-    bloomX: 48 + Math.round(random() * 40),
-    bloomY: 10 + Math.round(random() * 75),
-    displayWeight: family.id === "bloom" ? 400 : family.id === "echo" ? 600 : 500,
-    nameTreatment: Math.floor(random() * 3),
-    wavePhase: random() * Math.PI * 2,
+    seed, family, palette, layout, order: ids,
+    angle: 82 + Math.round(rnd() * 21),
+    middleStop: 35 + Math.round(rnd() * 16),
+    glowX: 60 + Math.round(rnd() * 28),
+    glowY: 28 + Math.round(rnd() * 42),
+    typeScale: .94 + rnd() * .19,
+    spacing: 8 + Math.round(rnd() * 6),
+    displayWeight: family.weight,
+    nameTreatment: Math.floor(rnd() * 3),
   }
 }
 
