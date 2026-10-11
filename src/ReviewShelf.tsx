@@ -32,6 +32,16 @@ function reviewKind(entry: ReviewEntry): MediaKind {
   return "book"
 }
 
+function caseRatio(entry: ReviewEntry): number {
+  const kind = reviewKind(entry)
+  return kind === "album" ? 1 : kind === "book" ? .69 : kind === "game" ? .67 : .71
+}
+
+function caseDepth(entry: ReviewEntry): number {
+  const kind = reviewKind(entry)
+  return kind === "book" ? 23 : kind === "album" ? 13 : kind === "game" ? 16 : 19
+}
+
 function displayTitle(entry: ReviewEntry): string {
   if (entry.mediaTitle) return entry.mediaTitle
   return entry.title
@@ -51,7 +61,17 @@ function platformStyle(entry: ReviewEntry) {
   return { name: entry.gamePlatform || "VIDEO GAME", style: "generic" }
 }
 
-function ReviewCase({ entry, enlarged = false }: { entry: ReviewEntry; enlarged?: boolean }) {
+function ReviewCase({
+  entry,
+  enlarged = false,
+  shelfCaseHeight,
+  shelfTilt,
+}: {
+  entry: ReviewEntry
+  enlarged?: boolean
+  shelfCaseHeight?: number
+  shelfTilt?: number
+}) {
   const [imageFailed, setImageFailed] = useState(false)
   const type = reviewKind(entry)
   const game = platformStyle(entry)
@@ -62,6 +82,10 @@ function ReviewCase({ entry, enlarged = false }: { entry: ReviewEntry; enlarged?
 
   return (
     <div
+      style={!enlarged && shelfCaseHeight ? ({
+        "--case-w": `${Math.round(shelfCaseHeight * caseRatio(entry))}px`,
+        "--shelf-tilt": `${shelfTilt ?? 63}deg`,
+      } as React.CSSProperties) : undefined}
       className={[
         "review-case",
         "review-case--" + type,
@@ -107,6 +131,8 @@ function ReviewCase({ entry, enlarged = false }: { entry: ReviewEntry; enlarged?
 
 export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
   const shelfRef = useRef<HTMLDivElement>(null)
+  const shelfFrameRef = useRef<HTMLDivElement>(null)
+  const [shelfSize, setShelfSize] = useState({ width: 0, height: 0 })
   const closeRef = useRef<HTMLButtonElement>(null)
   const openerRef = useRef<HTMLElement | null>(null)
   const drag = useRef({ x: 0, left: 0, moved: false, down: false })
@@ -115,6 +141,38 @@ export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
   const [canScroll, setCanScroll] = useState(false)
 
   const active = activeIndex === null ? null : entries[activeIndex] ?? null
+
+  // Size physical cases against the real shelf, not against fixed CSS pixels.
+  // Widths reserve each transformed object's actual footprint so neighboring
+  // cases meet edge-to-edge rather than painting over one another.
+  const shelfHeight = Math.max(185, Math.min(780, (shelfSize.height || 540) - 46))
+  const totalFlatWidth = entries.reduce((sum, entry) => sum + shelfHeight * caseRatio(entry), 0)
+  const spineSpace = entries.reduce((sum, entry) => sum + caseDepth(entry) * .94 + 3, 0)
+  const availableWidth = Math.max(230, (shelfSize.width || 1100) - 65)
+  const targetCosine = totalFlatWidth > 0 ? (availableWidth - spineSpace) / totalFlatWidth : .44
+  const shelfTilt = Math.round(Math.acos(Math.max(.326, Math.min(.5, targetCosine))) * 180 / Math.PI)
+  const shelfSlots = entries.map((entry) =>
+    Math.ceil(shelfHeight * caseRatio(entry) * Math.cos(shelfTilt * Math.PI / 180) + caseDepth(entry) * .94 + 3)
+  )
+
+  useEffect(() => {
+    const element = shelfFrameRef.current
+    if (!element) return
+    const measure = () => {
+      const width = Math.round(element.clientWidth)
+      const height = Math.round(element.clientHeight)
+      setShelfSize((previous) => previous.width === width && previous.height === height
+        ? previous : { width, height })
+    }
+    measure()
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure)
+    observer?.observe(element)
+    window.addEventListener("resize", measure)
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener("resize", measure)
+    }
+  }, [entries.length])
 
   useEffect(() => {
     const el = shelfRef.current
@@ -189,7 +247,7 @@ export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
       </div>
       {entries.length ? (
         <>
-          <div className="review-gallery__shelf-frame">
+          <div className="review-gallery__shelf-frame" ref={shelfFrameRef}>
             <div
               ref={shelfRef}
               className="review-gallery__track"
@@ -223,10 +281,11 @@ export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
                   key={entry.key}
                   type="button"
                   className="review-gallery__item"
+                  style={{ "--slot-width": `${shelfSlots[index]}px`, "--stack-order": entries.length - index } as React.CSSProperties}
                   onClick={(event) => open(entry, index, event.currentTarget)}
                   aria-label={"Read review of " + displayTitle(entry)}
                 >
-                  <ReviewCase entry={entry} />
+                  <ReviewCase entry={entry} shelfCaseHeight={shelfHeight} shelfTilt={shelfTilt} />
                   <span className="review-gallery__item-meta">
                     <span className="review-gallery__item-number">{String(index + 1).padStart(2, "0")} / {reviewKind(entry)}</span>
                     <span className="review-gallery__item-title">{displayTitle(entry)}</span>
