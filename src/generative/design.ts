@@ -4,7 +4,8 @@
  * same. A seed controls only bold type, luminous gradients, and small shifts
  * in the layout's composition.
  */
-export type Layout = "original" | "high" | "low" | "spread"
+export type Layout = "split" | "flip" | "banner" | "runway" | "scatter"
+export const LAYOUTS: readonly Layout[] = ["split", "flip", "banner", "runway", "scatter"]
 export type Motif = "gradient" | "gradient-soft" | "gradient-bright" | "gradient-deep" | "gradient-warm"
 
 type Palette = {
@@ -32,7 +33,7 @@ type Family = {
 const FAMILIES: Family[] = [
   {
     id: "grotesk", name: "grotesk", motif: "gradient",
-    layouts: ["original", "high", "spread"],
+    layouts: ["split", "flip", "banner", "runway", "scatter"],
     display: '"Space Grotesk", "Helvetica Neue", Arial, sans-serif',
     body: '"Space Grotesk", "Helvetica Neue", Arial, sans-serif',
     mono: '"IBM Plex Mono", monospace', weight: 700,
@@ -43,7 +44,7 @@ const FAMILIES: Family[] = [
   },
   {
     id: "heavy", name: "heavy", motif: "gradient-bright",
-    layouts: ["original", "low", "spread"],
+    layouts: ["split", "flip", "banner", "runway", "scatter"],
     display: '"Archivo Black", "Arial Black", Arial, sans-serif',
     body: '"Space Grotesk", "Helvetica Neue", Arial, sans-serif',
     mono: '"IBM Plex Mono", monospace', weight: 400,
@@ -54,7 +55,7 @@ const FAMILIES: Family[] = [
   },
   {
     id: "syne", name: "syne", motif: "gradient-deep",
-    layouts: ["high", "low", "original"],
+    layouts: ["split", "flip", "banner", "runway", "scatter"],
     display: '"Syne", "Helvetica Neue", Arial, sans-serif',
     body: '"Syne", "Helvetica Neue", Arial, sans-serif',
     mono: '"IBM Plex Mono", monospace', weight: 800,
@@ -65,7 +66,7 @@ const FAMILIES: Family[] = [
   },
   {
     id: "rounded", name: "rounded", motif: "gradient-soft",
-    layouts: ["original", "high", "spread"],
+    layouts: ["split", "flip", "banner", "runway", "scatter"],
     display: '"Outfit", "Helvetica Neue", Arial, sans-serif',
     body: '"Outfit", "Helvetica Neue", Arial, sans-serif',
     mono: '"IBM Plex Mono", monospace', weight: 800,
@@ -76,7 +77,7 @@ const FAMILIES: Family[] = [
   },
   {
     id: "wide", name: "wide", motif: "gradient-warm",
-    layouts: ["low", "spread", "original"],
+    layouts: ["split", "flip", "banner", "runway", "scatter"],
     display: '"Unbounded", "Arial Black", Arial, sans-serif',
     body: '"Space Grotesk", "Helvetica Neue", Arial, sans-serif',
     mono: '"IBM Plex Mono", monospace', weight: 700,
@@ -125,7 +126,7 @@ export function createDesign(seed: string) {
   const rnd = randomFromSeed(hashSeed(seed))
   const family = FAMILIES[Math.floor(rnd() * FAMILIES.length)]
   const palette = family.palettes[Math.floor(rnd() * family.palettes.length)]
-  const layout = family.layouts[Math.floor(rnd() * family.layouts.length)]
+  const layout = LAYOUTS[Math.floor(rnd() * LAYOUTS.length)]
   // Preserve all four projects and their metadata; only their order changes.
   const ids = ["01", "02", "03", "04"]
   for (let i = ids.length - 1; i > 0; i--) {
@@ -142,7 +143,14 @@ export function createDesign(seed: string) {
     typeScale: .94 + rnd() * .19,
     spacing: 8 + Math.round(rnd() * 6),
     displayWeight: family.weight,
-    nameTreatment: Math.floor(rnd() * 3),
+    nameTreatment: Math.floor(rnd() * 4),
+    headlineScale: 0.87 + rnd() * .45,
+    descriptionScale: 0.90 + rnd() * .28,
+    headlineShift: Math.round((rnd() - .5) * 32),
+    columnBias: Math.round((rnd() - .5) * 80),
+    linkSpread: 7 + Math.round(rnd() * 12),
+    titleTracking: -0.09 + rnd() * .045,
+    projectTitleScale: 0.85 + rnd() * .35,
   }
 }
 
