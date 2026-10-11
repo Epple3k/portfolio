@@ -5,6 +5,7 @@ import { initAnalytics } from "./analytics"
 import "./index.css"
 import "./generative/generative.css"
 import "./generative/compositions.css"
+import "./generative/navigation.css"
 
 initAnalytics()
 
