@@ -309,6 +309,7 @@ export default function App() {
         "--gen-project-title-size": `${(2.2 * design.projectTitleScale).toFixed(2)}rem`,
         "--gen-headline-shift": `${design.headlineShift}px`,
         "--gen-column-bias": `${design.columnBias}px`,
+        "--gen-left-width": `${50 + design.columnBias / 20}%`,
         "--gen-link-spread": `${design.linkSpread}px`,
         "--gen-title-tracking": `${design.titleTracking.toFixed(3)}em`,
         "--gen-display": design.family.display,
