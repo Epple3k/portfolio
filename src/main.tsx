@@ -4,6 +4,7 @@ import App from "./App"
 import { initAnalytics } from "./analytics"
 import "./index.css"
 import "./generative/generative.css"
+import "./generative/compositions.css"
 
 initAnalytics()
 
