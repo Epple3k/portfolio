@@ -105,7 +105,11 @@ async function letterboxd() {
       const rating = cleanText(field(item, "letterboxd:memberRating"));
       const watched = field(item, "letterboxd:watchedDate");
       const link = cleanText(field(item, "link"));
-      const description = stripLetterboxdBoilerplate(cleanText(field(item, "description")));
+      const rawDescription = field(item, "description");
+      const description = stripLetterboxdBoilerplate(cleanText(rawDescription));
+      const posterMatch = rawDescription.match(/<img\b[^>]*\bsrc=["']([^"']+)["']/i);
+      const posterUrl = decodeEntities(posterMatch?.[1] ?? "");
+      const coverUrl = /^https:\/\//i.test(posterUrl) ? posterUrl : "";
 
       let body = description;
       if (body === film || body === `${film}, ${year}`) body = "";
@@ -120,6 +124,7 @@ async function letterboxd() {
         body,
         url: link,
         date: isoDate(watched || field(item, "pubDate")),
+        coverUrl,
         tabs: ["reviews"],
       };
     })
