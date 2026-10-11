@@ -292,7 +292,7 @@ export default function App() {
 
   return (
     <div
-      className={`gen-shell gen-${design.layout} family-${design.family.id} gen-type-${design.nameTreatment} relative min-h-screen w-full overflow-hidden flex`}
+      className={`gen-shell gen-${design.layout} family-${design.family.id} gen-type-${design.nameTreatment} ${hoveredId ? "gen-hovering" : ""} relative min-h-screen w-full overflow-hidden flex`}
       style={{
         "--gen-paper": design.palette.paper,
         "--gen-ink": design.palette.ink,
@@ -303,17 +303,13 @@ export default function App() {
         "--gen-edge": design.palette.edge,
         "--gen-bloom": design.palette.bloom,
         "--gen-display-weight": design.displayWeight,
+        "--gen-title-size": `${3.7 * design.typeScale}rem`,
         "--gen-display": design.family.display,
         "--gen-body": design.family.body,
         "--gen-mono": design.family.mono,
         "--gen-gap": `${design.spacing}px`,
         "--gen-scale": design.typeScale,
-        "--gen-name-size": `${5.4 * design.typeScale}rem`,
-        "--gen-index-name-size": `${8.4 * design.typeScale}rem`,
-        "--gen-name-fluid": `${5.6 * design.typeScale}vw`,
-        "--gen-echo-fluid": `${4.7 * design.typeScale}vw`,
-        "--gen-bloom-fluid": `${6 * design.typeScale}vw`,
-        "--gen-wide-fluid": `${6.5 * design.typeScale}vw`,
+
       } as React.CSSProperties}
     >
       <GenerativeArt design={design} />
@@ -335,8 +331,7 @@ export default function App() {
         {/* Left Column */}
         <div className="gen-intro w-full md:w-1/2 h-full flex flex-col justify-between max-w-[720px] pb-8 md:pb-0">
           <div className="flex flex-col gap-6 lg:gap-12 mt-4 md:mt-8">
-            <h1 className="gen-name text-4xl md:text-5xl lg:text-6xl tracking-tight font-medium"
-              data-text="emit rice">
+            <h1 className="gen-name text-4xl md:text-5xl lg:text-6xl tracking-tight font-medium">
               emit rice
             </h1>
 
