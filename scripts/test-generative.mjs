@@ -95,6 +95,19 @@ test("all eight layouts preserve a dedicated, visible navigation module", () => 
   }
 })
 
+test("reload control replaces the old toolbar and triggers an actual page refresh", () => {
+  const app = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8")
+  const css = readFileSync(new URL("../src/generative/generative.css", import.meta.url), "utf8")
+  assert.ok(app.includes('className="gen-reload"'))
+  assert.ok(app.includes('window.location.reload()'))
+  assert.ok(app.includes('url.searchParams.delete("seed")'))
+  assert.ok(app.includes('aria-label="Reload site and generate a new design"'))
+  assert.ok(!app.includes('className="gen-controls"'))
+  assert.ok(!app.includes('copy edition'))
+  assert.ok(css.includes('position: fixed;'))
+  assert.ok(css.includes('left: max(12px, env(safe-area-inset-left))'))
+})
+
 test("a valid URL seed reproduces an edition", () => {
   globalThis.window = { location: { search: "?blog=1&seed=shared2026" } }
   assert.equal(initialSeed(), "shared2026")
