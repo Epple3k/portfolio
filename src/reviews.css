@@ -565,3 +565,158 @@
     left: 5px;
   }
 }
+
+
+/* Open, frameless physical-media collection. The later case sits in front of
+ * the preceding case, covering part of its artwork without obscuring its spine. */
+.review-gallery__shelf-frame {
+  background: #efffef;
+  border: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+.review-gallery__shelf-edge {
+  display: none;
+}
+.review-gallery__controls {
+  border-bottom: 0;
+}
+.review-gallery__track {
+  display: flex;
+  gap: 0;
+  align-items: flex-end;
+  justify-content: flex-start;
+  position: absolute;
+  inset: 0;
+  padding: 8px 35px 0 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  perspective: none;
+}
+.review-gallery__item {
+  width: var(--slot-width);
+  min-width: var(--slot-width);
+  max-width: var(--slot-width);
+  flex: 0 0 var(--slot-width);
+  position: relative;
+  z-index: var(--stack-order, 1);
+  overflow: visible;
+  height: 100%;
+}
+.review-gallery__item:hover,
+.review-gallery__item:focus-visible {
+  z-index: 1000;
+}
+.review-gallery__item .review-case {
+  --case-w: calc(var(--case-face-width) + var(--case-depth));
+  --case-ratio: auto;
+  width: var(--case-w);
+  height: var(--case-h);
+  aspect-ratio: auto;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  align-items: stretch;
+  transform: none;
+  transform-style: flat;
+  transform-origin: bottom left;
+  filter: drop-shadow(3px 0 3px rgba(0, 0, 0, .2));
+  transition: transform .25s ease, filter .25s ease;
+}
+.review-gallery__item:nth-child(3n + 2) .review-case,
+.review-gallery__item:nth-child(3n + 3) .review-case {
+  transform: none;
+}
+.review-gallery__item:hover .review-case,
+.review-gallery__item:focus-visible .review-case,
+.review-gallery__item:nth-child(n):hover .review-case,
+.review-gallery__item:nth-child(n):focus-visible .review-case {
+  transform: translateY(-9px) translateX(3px);
+  filter: drop-shadow(6px 5px 5px rgba(0, 0, 0, .23));
+}
+.review-gallery__item .review-case__spine {
+  position: relative;
+  left: auto;
+  top: auto;
+  bottom: auto;
+  width: var(--case-depth);
+  min-width: var(--case-depth);
+  flex: 0 0 var(--case-depth);
+  height: 100%;
+  transform: none;
+  box-shadow: inset -4px 0 5px rgba(0,0,0,.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4px;
+  overflow: hidden;
+  border: 0;
+  border-right: 1px solid rgba(0,0,0,.3);
+  z-index: 3;
+}
+.review-gallery__item .review-case__spine-title {
+  writing-mode: vertical-rl;
+  transform: none;
+  font: 600 clamp(12px, 1.2vw, 18px)/1.15 Arial, sans-serif;
+  letter-spacing: .01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 10px 0 0;
+}
+.review-gallery__item .review-case__spine-mark {
+  writing-mode: vertical-rl;
+  transform: none;
+  font: 700 8px/1 monospace;
+  letter-spacing: .07em;
+}
+.review-gallery__item .review-case__front {
+  position: relative;
+  width: var(--case-face-width);
+  flex: 0 0 var(--case-face-width);
+  height: 100%;
+  transform: none;
+  overflow: hidden;
+}
+.review-gallery__item .review-case__edge {
+  display: none;
+}
+.review-gallery__item .review-case--book .review-case__front {
+  border: 0;
+}
+.review-gallery__item .review-case--book .review-case__spine {
+  color: #fff;
+  background-color: #343434;
+}
+.review-gallery__item .review-case--album .review-case__spine {
+  background: #e7e7e7;
+  color: #111;
+}
+.review-gallery__item .review-case--movie .review-case__spine {
+  background: #151515;
+  color: #fff;
+}
+.review-gallery__item .review-case--switch .review-case__spine {
+  background: #ed1b2f;
+  color: #fff;
+}
+.review-gallery__item .review-case--playstation .review-case__spine {
+  background: #074da0;
+  color: #fff;
+}
+.review-gallery__item .review-case--xbox .review-case__spine {
+  background: #147738;
+  color: #fff;
+}
+@media(max-width:800px) {
+  .review-gallery__track { padding: 6px 24px 0 12px; }
+  .review-gallery__item .review-case { left: 0; }
+  .review-gallery__item .review-case__spine-title { font-size: 11px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .review-gallery__item .review-case { transition: none; }
+}

@@ -39,7 +39,12 @@ function caseRatio(entry: ReviewEntry): number {
 
 function caseDepth(entry: ReviewEntry): number {
   const kind = reviewKind(entry)
-  return kind === "book" ? 23 : kind === "album" ? 13 : kind === "game" ? 16 : 19
+  return kind === "book" ? 37 : kind === "album" ? 19 : kind === "game" ? 24 : 25
+}
+
+function caseHeight(entry: ReviewEntry, shelfHeight: number): number {
+  // An album is physically shorter than a book, DVD, or game case.
+  return Math.round(shelfHeight * (reviewKind(entry) === "album" ? .77 : .98))
 }
 
 function displayTitle(entry: ReviewEntry): string {
@@ -65,12 +70,10 @@ function ReviewCase({
   entry,
   enlarged = false,
   shelfCaseHeight,
-  shelfTilt,
 }: {
   entry: ReviewEntry
   enlarged?: boolean
   shelfCaseHeight?: number
-  shelfTilt?: number
 }) {
   const [imageFailed, setImageFailed] = useState(false)
   const type = reviewKind(entry)
@@ -83,8 +86,9 @@ function ReviewCase({
   return (
     <div
       style={!enlarged && shelfCaseHeight ? ({
-        "--case-w": `${Math.round(shelfCaseHeight * caseRatio(entry))}px`,
-        "--shelf-tilt": `${shelfTilt ?? 63}deg`,
+        "--case-h": `${shelfCaseHeight}px`,
+        "--case-face-width": `${Math.round(shelfCaseHeight * caseRatio(entry))}px`,
+        "--case-depth": `${caseDepth(entry)}px`,
       } as React.CSSProperties) : undefined}
       className={[
         "review-case",
@@ -93,7 +97,14 @@ function ReviewCase({
         enlarged ? "review-case--enlarged" : "",
       ].filter(Boolean).join(" ")}
     >
-      <div className="review-case__spine">
+      <div
+        className="review-case__spine"
+        style={!enlarged && type === "book" && hasCover ? {
+          backgroundImage: `linear-gradient(90deg, rgba(0,0,0,.67), rgba(0,0,0,.4)), url(${JSON.stringify(entry.coverUrl)})`,
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+        } : undefined}
+      >
         <span className="review-case__spine-mark">
           {type === "game" ? game.name : type === "movie" ? "DVD" : type === "album" ? "COMPACT DISC" : "BOOK"}
         </span>
@@ -142,17 +153,23 @@ export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
 
   const active = activeIndex === null ? null : entries[activeIndex] ?? null
 
-  // Size physical cases against the real shelf, not against fixed CSS pixels.
-  // Widths reserve each transformed object's actual footprint so neighboring
-  // cases meet edge-to-edge rather than painting over one another.
-  const shelfHeight = Math.max(185, Math.min(780, (shelfSize.height || 540) - 46))
-  const totalFlatWidth = entries.reduce((sum, entry) => sum + shelfHeight * caseRatio(entry), 0)
-  const spineSpace = entries.reduce((sum, entry) => sum + caseDepth(entry) * .94 + 3, 0)
-  const availableWidth = Math.max(230, (shelfSize.width || 1100) - 65)
-  const targetCosine = totalFlatWidth > 0 ? (availableWidth - spineSpace) / totalFlatWidth : .44
-  const shelfTilt = Math.round(Math.acos(Math.max(.326, Math.min(.5, targetCosine))) * 180 / Math.PI)
-  const shelfSlots = entries.map((entry) =>
-    Math.ceil(shelfHeight * caseRatio(entry) * Math.cos(shelfTilt * Math.PI / 180) + caseDepth(entry) * .94 + 3)
+  // Each object keeps its real front-cover aspect ratio and an independently
+  // readable spine. The next object sits in front, hiding part of the previous
+  // cover; its allocated slot is deliberately narrower than its painted width.
+  const shelfHeight = Math.max(184, Math.min(760, (shelfSize.height || 490) - 16))
+  const caseWidths = entries.map((entry) =>
+    caseHeight(entry, shelfHeight) * caseRatio(entry) + caseDepth(entry)
+  )
+  const availableWidth = Math.max(240, (shelfSize.width || 1100) - 52)
+  const lastWidth = caseWidths.at(-1) || 0
+  const earlierWidths = caseWidths.slice(0, -1).reduce((sum, width) => sum + width, 0)
+  // More space exposes more cover art. Small screens keep a meaningful sliver
+  // visible and scroll instead of crushing covers and spine text.
+  const overlapSpacing = earlierWidths > 0
+    ? Math.max(.48, Math.min(.82, (availableWidth - lastWidth) / earlierWidths))
+    : 1
+  const shelfSlots = caseWidths.map((width, index) =>
+    Math.round(index === entries.length - 1 ? width : width * overlapSpacing)
   )
 
   useEffect(() => {
@@ -281,11 +298,11 @@ export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
                   key={entry.key}
                   type="button"
                   className="review-gallery__item"
-                  style={{ "--slot-width": `${shelfSlots[index]}px`, "--stack-order": entries.length - index } as React.CSSProperties}
+                  style={{ "--slot-width": `${shelfSlots[index]}px`, "--stack-order": index + 1 } as React.CSSProperties}
                   onClick={(event) => open(entry, index, event.currentTarget)}
                   aria-label={"Read review of " + displayTitle(entry)}
                 >
-                  <ReviewCase entry={entry} shelfCaseHeight={shelfHeight} shelfTilt={shelfTilt} />
+                  <ReviewCase entry={entry} shelfCaseHeight={caseHeight(entry, shelfHeight)} />
                   <span className="review-gallery__item-meta">
                     <span className="review-gallery__item-number">{String(index + 1).padStart(2, "0")} / {reviewKind(entry)}</span>
                     <span className="review-gallery__item-title">{displayTitle(entry)}</span>
@@ -294,7 +311,6 @@ export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
                 </button>
               ))}
             </div>
-            <div className="review-gallery__shelf-edge" aria-hidden="true" />
           </div>
           <div className="review-gallery__controls">
             <div className="review-gallery__instruction">DRAG / SCROLL TO BROWSE <span>↔</span></div>
