@@ -1,0 +1,33 @@
+name: Validate generative portfolio
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/test-generative.mjs"
+      - "index.html"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/generative-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.34.3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm exec tsc --noEmit
+      - run: node --experimental-strip-types --test scripts/test-generative.mjs
+      - run: pnpm run build
