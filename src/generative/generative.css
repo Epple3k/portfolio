@@ -54,45 +54,39 @@
 }
 .gen-shell.gen-hovering .gen-hover-glow { opacity: .65; }
 
-/* Minimal controls so the artwork remains the portfolio itself. */
-.gen-controls {
+/* One understated, fixed regenerate control, independent of the composition. */
+.gen-reload {
   position: fixed;
-  top: 14px;
-  right: 16px;
   z-index: 45;
-  display: flex;
+  top: max(12px, env(safe-area-inset-top));
+  left: max(12px, env(safe-area-inset-left));
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  justify-content: center;
   align-items: center;
-  gap: 4px;
-  padding: 5px;
-  background: color-mix(in srgb, var(--gen-paper) 76%, white 24%);
-  border: 1px solid color-mix(in srgb, var(--gen-ink) 20%, transparent);
-  border-radius: 99px;
-  box-shadow: 0 4px 25px #0000000c;
-  font: 500 10px/1.2 var(--gen-mono);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-.gen-edition {
-  display: flex;
-  flex-direction: column;
-  padding: 2px 10px;
-  gap: 3px;
-  min-width: 85px;
-}
-.gen-edition span:last-child { opacity: .55; font-size: 9px; }
-.gen-controls button {
-  padding: 9px 11px;
-  font: inherit;
+  padding: 0;
   color: var(--gen-ink);
-  border: 0;
-  border-radius: 99px;
-  background: transparent;
+  background: color-mix(in srgb, var(--gen-paper) 65%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gen-ink) 24%, transparent);
+  border-radius: 999px;
   cursor: pointer;
-  white-space: nowrap;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: background .2s, transform .2s, color .2s;
 }
-.gen-controls button:hover { background: var(--gen-ink); color: var(--gen-paper); }
-.gen-controls button.gen-new { background: var(--gen-ink); color: var(--gen-paper); }
-.gen-controls button.gen-new:hover { background: var(--gen-accent); color: white; }
+.gen-reload:hover {
+  color: var(--gen-paper);
+  background: var(--gen-ink);
+  transform: rotate(36deg);
+}
+.gen-reload:focus-visible {
+  outline: 3px solid var(--gen-ink);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gen-reload:hover { transform: none; }
+}
 
 /* Small changes of proportion within the original split-screen composition. */
 .gen-main { gap: clamp(12px, 1.7vw, 26px); }
