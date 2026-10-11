@@ -46,12 +46,12 @@ test("every generated palette has accessible editorial text contrast", () => {
   }
 })
 
-test("seed space contains four curated families, motifs, and layouts", () => {
+test("seed space contains five bright identities, motifs and ribbon arrangements", () => {
   const editions = Array.from({ length: 1000 }, (_, i) => createDesign(`edition-${i}`))
-  assert.equal(new Set(editions.map((d) => d.family.id)).size, 4)
-  assert.equal(new Set(editions.map((d) => d.family.motif)).size, 4)
+  assert.equal(new Set(editions.map((d) => d.family.id)).size, 5)
+  assert.equal(new Set(editions.map((d) => d.family.motif)).size, 5)
   assert.equal(new Set(editions.map((d) => d.layout)).size, 4)
-  assert.ok(new Set(editions.map((d) => d.palette.paper)).size >= 8)
+  assert.ok(new Set(editions.map((d) => d.palette.paper)).size >= 10)
 })
 
 test("a valid URL seed reproduces an edition", () => {
