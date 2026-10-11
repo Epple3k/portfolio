@@ -451,3 +451,17 @@
     transition: none;
   }
 }
+
+/* Pure white reading surface gives the writing its own crisp editorial panel. */
+.review-reader__body {
+  background: #efffef;
+  border: 2px solid #000;
+  padding: clamp(18px, 2.4vw, 33px);
+  max-width: 760px;
+}
+.review-reader__copy > a:focus-visible,
+.review-reader__footer button:focus-visible,
+.review-reader__header button:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 3px;
+}
