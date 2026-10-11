@@ -381,7 +381,8 @@ export default function App() {
             </div>
           </div>
 
-          <div className="gen-links flex flex-col items-start gap-1 text-xl md:text-2xl tracking-tight mt-auto md:ml-12 lg:ml-24">
+          <nav className="gen-links flex flex-col items-start gap-1 text-xl md:text-2xl tracking-tight mt-auto md:ml-12 lg:ml-24" aria-label="Explore and contact">
+            <span className="gen-links-kicker" aria-hidden="true">explore / connect</span>
             <button
               onClick={() => {
                 setShowBlog(true)
@@ -430,7 +431,8 @@ export default function App() {
                 {label}
               </a>
             ))}
-          </div>
+          </nav>
+
         </div>
 
         {/* Right Column (Ribbon) */}
