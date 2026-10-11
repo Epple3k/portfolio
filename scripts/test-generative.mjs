@@ -50,8 +50,22 @@ test("seed space contains five bright identities, motifs and ribbon arrangements
   const editions = Array.from({ length: 1000 }, (_, i) => createDesign(`edition-${i}`))
   assert.equal(new Set(editions.map((d) => d.family.id)).size, 5)
   assert.equal(new Set(editions.map((d) => d.family.motif)).size, 5)
-  assert.equal(new Set(editions.map((d) => d.layout)).size, 4)
+  assert.equal(new Set(editions.map((d) => d.layout)).size, 5)
   assert.ok(new Set(editions.map((d) => d.palette.paper)).size >= 10)
+})
+
+test("the same content is always present in every composition", () => {
+  const variants = new Set()
+  for (let i = 0; i < 600; i++) {
+    const d = createDesign(`layout-${i}`)
+    variants.add(d.layout)
+    assert.deepEqual([...d.order].sort(), projects)
+    assert.ok(d.headlineScale >= .87 && d.headlineScale <= 1.32)
+    assert.ok(d.descriptionScale >= .90 && d.descriptionScale <= 1.18)
+    assert.ok(d.columnBias >= -40 && d.columnBias <= 40)
+    assert.ok(d.projectTitleScale >= .85 && d.projectTitleScale <= 1.20)
+  }
+  assert.deepEqual([...variants].sort(), ["banner", "flip", "runway", "scatter", "split"])
 })
 
 test("a valid URL seed reproduces an edition", () => {
