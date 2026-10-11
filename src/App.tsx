@@ -4,7 +4,7 @@ import { trackEvent } from "./analytics"
 
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
-import { createDesign, freshSeed, initialSeed, shareableUrl } from "./generative/design"
+import { createDesign, initialSeed, nextEditionSeed, shareableUrl } from "./generative/design"
 import { GenerativeArt } from "./generative/GenerativeArt"
 
 type BlogTab = "reviews" | "socials" | "professional"
@@ -92,8 +92,12 @@ export default function App() {
   const [copyLabel, setCopyLabel] = useState("copy edition")
   const design = useMemo(() => createDesign(seed), [seed])
 
+  useEffect(() => {
+    try { window.sessionStorage.setItem("generative-last-layout", design.layout) } catch { /* storage optional */ }
+  }, [design.layout])
+
   const regenerate = () => {
-    setSeed(freshSeed())
+    setSeed(nextEditionSeed(design.layout))
     setCopyLabel("copy edition")
     setHoveredId(null)
     const url = new URL(window.location.href)
@@ -292,7 +296,7 @@ export default function App() {
 
   return (
     <div
-      className={`gen-shell gen-${design.layout} family-${design.family.id} gen-type-${design.nameTreatment} ${hoveredId ? "gen-hovering" : ""} relative min-h-screen w-full overflow-hidden flex`}
+      className={`gen-shell gen-${design.layout} gen-align-${design.introAlignment} family-${design.family.id} gen-type-${design.nameTreatment} ${hoveredId ? "gen-hovering" : ""} relative min-h-screen w-full overflow-hidden flex`}
       style={{
         "--gen-paper": design.palette.paper,
         "--gen-ink": design.palette.ink,
@@ -313,6 +317,9 @@ export default function App() {
         "--gen-column-bias": `${design.columnBias}px`,
         "--gen-left-width": `${50 + design.columnBias / 20}%`,
         "--gen-link-spread": `${design.linkSpread}px`,
+        "--gen-word-spacing": `${design.wordSpacing}em`,
+        "--gen-panel-weight": design.panelWeight,
+        "--gen-card-gap": `${design.cardGap}px`,
         "--gen-title-tracking": `${design.titleTracking.toFixed(3)}em`,
         "--gen-display": design.family.display,
         "--gen-body": design.family.body,
