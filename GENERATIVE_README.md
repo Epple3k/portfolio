@@ -16,7 +16,7 @@ A page-load seed selects one of five **bold sans-serif font families**, one of t
 
 The gradient editions are deliberately related to the original acid-green home page: **green**, **mint**, **pink**, **blue**, **purple**, **orange**, **lime**, **lavender**, **magenta**, and **aqua**. Each is a light-to-saturated field similar to the production gradient, rather than a graphic collage.
 
-The four composition profiles (`original`, `high`, `low`, and `spread`) adjust the left/right balance, position of the name/intro, and links. They don't replace the project's familiar hover-expanding vertical ribbon.
+Five seeded composition profiles now **rearrange the page**, not merely adjust margins: `split` preserves the original placement; `flip` reverses projects and introduction; `banner` turns the name into a full-width masthead; `runway` moves the expanding project ribbon horizontally across the bottom; and `scatter` places a lower-left ribbon below an oversized headline, with introduction and navigation on the right. The heading, introduction, links, and projects are the same elements and remain functional. Mobile uses a readable stacked arrangement. Typography, project-title sizing, navigation weight and spacing also vary independently within deliberate bounds.
 
 ## Edition controls
 
