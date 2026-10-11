@@ -287,8 +287,8 @@
      The project previews form a cinematic, four-frame horizontal strip. */
   .gen-shell.gen-poster .gen-main {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: minmax(0, 1.15fr) minmax(0, .45fr);
-    grid-template-areas: "name intro" "projects projects";
+    grid-template-rows: minmax(0, .52fr) minmax(0, .20fr) minmax(0, .28fr);
+    grid-template-areas: "name intro" "name links" "projects projects";
     gap: clamp(14px, 2vw, 34px);
   }
   .gen-shell.gen-poster .gen-name {
@@ -307,14 +307,14 @@
   }
   .gen-shell.gen-poster .gen-description p { font-size: clamp(1.8rem, 3.1vw, 3.5rem); }
   .gen-shell.gen-poster .gen-links {
-    grid-area: intro;
-    align-self: end;
+    grid-area: links;
+    align-self: center;
     justify-self: end;
     margin-bottom: 1vh;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    max-width: 42%;
+    max-width: 88%;
     font-size: clamp(.85rem, 1.2vw, 1.25rem);
   }
   .gen-shell.gen-poster .gen-projects { flex-direction: row; height: 100%; }
@@ -358,8 +358,8 @@
   /* SIDEWAYS: a giant letterform wall left, projects stacked below the introductory strip. */
   .gen-shell.gen-sideways .gen-main {
     grid-template-columns: minmax(0, .33fr) minmax(0, .67fr);
-    grid-template-rows: minmax(0, .25fr) minmax(0, .75fr);
-    grid-template-areas: "name intro" "name projects";
+    grid-template-rows: minmax(0, .23fr) minmax(0, .12fr) minmax(0, .65fr);
+    grid-template-areas: "name intro" "name links" "name projects";
   }
   .gen-shell.gen-sideways .gen-name {
     align-self: center;
@@ -376,8 +376,8 @@
   .gen-shell.gen-sideways .gen-description { padding: 35px 0 0 10px; align-self: center; }
   .gen-shell.gen-sideways .gen-description p { font-size: clamp(1.5rem, 2.8vw, 3rem); max-width: 37ch; }
   .gen-shell.gen-sideways .gen-links {
-    grid-area: intro;
-    align-self: end;
+    grid-area: links;
+    align-self: center;
     justify-self: end;
     margin: 0;
     flex-direction: row;
