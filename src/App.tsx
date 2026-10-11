@@ -304,6 +304,8 @@ export default function App() {
         "--gen-mono": design.family.mono,
         "--gen-gap": `${design.spacing}px`,
         "--gen-scale": design.typeScale,
+        "--gen-name-size": `${5.4 * design.typeScale}rem`,
+        "--gen-index-name-size": `${8.4 * design.typeScale}rem`,
       } as React.CSSProperties}
     >
       <GenerativeArt design={design} />
