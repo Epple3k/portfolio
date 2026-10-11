@@ -1,0 +1,63 @@
+import assert from "node:assert/strict"
+import test from "node:test"
+
+import { createDesign, hashSeed, randomFromSeed, initialSeed } from "../src/generative/design.ts"
+
+const projects = ["01", "02", "03", "04"]
+
+test("the same seed always generates the same edition", () => {
+  const first = createDesign("shareable-abc123")
+  assert.deepEqual(first, createDesign("shareable-abc123"))
+  assert.equal(hashSeed("shareable-abc123"), hashSeed("shareable-abc123"))
+})
+
+test("the RNG remains deterministic without depending on Math.random", () => {
+  const sequence = (seed) => {
+    const next = randomFromSeed(seed)
+    return Array.from({ length: 10 }, () => next())
+  }
+  assert.deepEqual(sequence(42), sequence(42))
+  assert.notDeepEqual(sequence(42), sequence(41))
+})
+
+test("every edition preserves all four original projects exactly once", () => {
+  for (let i = 0; i < 500; i++) {
+    const edition = createDesign(`portfolio-${i}`)
+    assert.deepEqual([...edition.order].sort(), projects)
+  }
+})
+
+function luminance(hex) {
+  const rgb = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+  const linear = rgb.map((n) => n <= 0.04045 ? n / 12.92 : ((n + 0.055) / 1.055) ** 2.4)
+  return linear[0] * 0.2126 + linear[1] * 0.7152 + linear[2] * 0.0722
+}
+
+function contrast(a, b) {
+  const levels = [luminance(a), luminance(b)].sort((x, y) => y - x)
+  return (levels[0] + 0.05) / (levels[1] + 0.05)
+}
+
+test("every generated palette has accessible editorial text contrast", () => {
+  for (let i = 0; i < 500; i++) {
+    const { palette } = createDesign(`contrast-${i}`)
+    assert.ok(contrast(palette.paper, palette.ink) >= 7, "paper to ink must meet WCAG AAA")
+    assert.ok(contrast(palette.panel, palette.ink) >= 7, "panel to ink must meet WCAG AAA")
+  }
+})
+
+test("seed space contains four curated families, motifs, and layouts", () => {
+  const editions = Array.from({ length: 1000 }, (_, i) => createDesign(`edition-${i}`))
+  assert.equal(new Set(editions.map((d) => d.family.id)).size, 4)
+  assert.equal(new Set(editions.map((d) => d.family.motif)).size, 4)
+  assert.equal(new Set(editions.map((d) => d.layout)).size, 4)
+  assert.ok(new Set(editions.map((d) => d.palette.paper)).size >= 8)
+})
+
+test("a valid URL seed reproduces an edition", () => {
+  globalThis.window = { location: { search: "?blog=1&seed=shared2026" } }
+  assert.equal(initialSeed(), "shared2026")
+  globalThis.window = { location: { search: "?seed=%3Cinvalid%3E" } }
+  assert.notEqual(initialSeed(), "<invalid>")
+  delete globalThis.window
+})
