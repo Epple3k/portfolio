@@ -93,7 +93,7 @@
 }
 .gen-intro > div:first-child { margin-top: clamp(68px, 8vh, 130px); gap: clamp(18px, 4vh, 56px); }
 .gen-name {
-  font: 500 clamp(4.2rem, calc(5.4rem * var(--gen-scale)), 8.5rem)/.86 var(--gen-display);
+  font: 500 clamp(4.2rem, var(--gen-name-size), 8.5rem)/.86 var(--gen-display);
   letter-spacing: -.065em;
   max-width: 95%;
   overflow-wrap: anywhere;
@@ -156,17 +156,8 @@
 .gen-magazine .gen-projects {
   display: grid;
   grid-template-columns: 1fr 1.15fr;
-  grid-template-rows: 1.3fr 1fr;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
 }
-.gen-magazine .gen-card:first-child { grid-row: span 2; }
-.gen-magazine .gen-card:nth-child(2) { grid-column: 2; }
-.gen-magazine .gen-card:nth-child(3) { grid-column: 2; }
-.gen-magazine .gen-card:nth-child(4) {
-  grid-column: 1 / -1;
-  display: none;
-}
-/* Keep all four projects visible by using a three-row editorial grid. */
-.gen-magazine .gen-projects { grid-template-rows: 1fr 1fr 1fr; }
 .gen-magazine .gen-card:first-child { grid-row: 1 / 3; grid-column: 1; }
 .gen-magazine .gen-card:nth-child(2) { grid-row: 1; grid-column: 2; }
 .gen-magazine .gen-card:nth-child(3) { grid-row: 2; grid-column: 2; }
@@ -197,7 +188,7 @@
   flex: 1;
   gap: 14px;
 }
-.gen-index .gen-name { max-width: 100%; font-size: clamp(4rem, calc(8.4rem * var(--gen-scale)), 11rem); }
+.gen-index .gen-name { max-width: 100%; font-size: clamp(4rem, var(--gen-index-name-size), 11rem); }
 .gen-index .gen-description { max-width: 620px; min-height: 85px; }
 .gen-index .gen-description p { font-size: clamp(1rem, 1.4vw, 1.65rem); }
 .gen-index .gen-links { margin: auto 4px 7px 0; flex: 0 0 155px; }
