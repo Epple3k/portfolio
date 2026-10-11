@@ -305,6 +305,8 @@ export default function App() {
         "--gen-display-weight": design.displayWeight,
         "--gen-title-size": `${3.7 * design.typeScale}rem`,
         "--gen-headline-size": `${(4.8 * design.headlineScale).toFixed(2)}rem`,
+        "--gen-banner-headline-size": `${(4.8 * design.headlineScale * 1.55).toFixed(2)}rem`,
+        "--gen-scatter-headline-size": `${(4.8 * design.headlineScale * 1.65).toFixed(2)}rem`,
         "--gen-description-size": `${(1.75 * design.descriptionScale).toFixed(2)}rem`,
         "--gen-project-title-size": `${(2.2 * design.projectTitleScale).toFixed(2)}rem`,
         "--gen-headline-shift": `${design.headlineShift}px`,
