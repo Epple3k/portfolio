@@ -116,7 +116,7 @@
   /* 01: familiar arrangement, but a proper typographic grid. */
   .gen-shell.gen-split .gen-main {
     grid-template-columns:
-      minmax(0, calc(50% + var(--gen-column-bias) / 2))
+      minmax(0, var(--gen-left-width))
       minmax(0, 1fr);
   }
 
