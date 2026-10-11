@@ -1,5 +1,6 @@
 import assert from "node:assert/strict"
 import test from "node:test"
+import { readFileSync } from "node:fs"
 
 import { createDesign, hashSeed, randomFromSeed, initialSeed, nextEditionSeed } from "../src/generative/design.ts"
 
@@ -73,6 +74,24 @@ test("next edition avoids repeating its last layout", () => {
     for (let i = 0; i < 12; i++) {
       assert.notEqual(createDesign(nextEditionSeed(previous)).layout, previous)
     }
+  }
+})
+
+test("all eight layouts preserve a dedicated, visible navigation module", () => {
+  const css = readFileSync(new URL("../src/generative/navigation.css", import.meta.url), "utf8")
+  const app = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8")
+  const base = readFileSync(new URL("../src/main.tsx", import.meta.url), "utf8")
+  assert.match(base, /navigation\\.css/)
+  assert.match(app, /<nav className="gen-links/)
+  assert.match(app, /aria-label="Explore and contact"/)
+  assert.match(css, /\\.gen-shell \\.gen-links > a/)
+  assert.match(css, /border-top: 2px solid var\\(--gen-ink\\)/)
+  for (const layout of ["split", "flip", "banner", "runway", "scatter", "poster", "mosaic", "sideways"]) {
+    assert.ok(layout === "split" || css.includes(`.gen-shell.gen-${layout} .gen-links`),
+      `Missing curated navigation layout for ${layout}`)
+  }
+  for (const name of ["blog", "linkedin", "github", "email", "resume"]) {
+    assert.match(app, new RegExp(name))
   }
 })
 
