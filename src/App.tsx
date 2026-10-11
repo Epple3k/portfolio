@@ -31,6 +31,8 @@ type SocialPost = {
   releaseYear?: string
   gamePlatform?: string
   coverUrl?: string
+  spineColor?: string
+  spineTextColor?: string
 }
 
 const PROJECTS = [
@@ -261,6 +263,8 @@ export default function App() {
       releaseYear: post.releaseYear,
       gamePlatform: post.gamePlatform,
       coverUrl: post.coverUrl,
+      spineColor: post.spineColor,
+      spineTextColor: post.spineTextColor,
     })),
   ].sort((a, b) => (b.date || "").localeCompare(a.date || ""))
 
