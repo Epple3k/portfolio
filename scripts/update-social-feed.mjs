@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { enrichReviews } from "./enrich-review-art.mjs";
 
 const LETTERBOXD = "https://letterboxd.com/epple_3k/rss/";
 const GOODREADS_READ = "https://www.goodreads.com/review/list_rss/204755541?shelf=read";
@@ -221,7 +222,8 @@ async function main() {
     )
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
-  await writeFile("public/social-feed.json", JSON.stringify(merged, null, 2) + "\n");
+  const enriched = await enrichReviews(merged, previousFeed);
+  await writeFile("public/social-feed.json", JSON.stringify(enriched, null, 2) + "\n");
   console.log(`Wrote ${merged.length} portfolio entries to public/social-feed.json`);
 }
 
