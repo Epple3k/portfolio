@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { flushSync } from "react-dom"
 import { trackEvent } from "./analytics"
+import ReviewShelf from "./ReviewShelf"
 
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
@@ -24,6 +25,12 @@ type SocialPost = {
   url: string
   date?: string
   tabs?: BlogTab[]
+  mediaType?: string
+  mediaTitle?: string
+  creator?: string
+  releaseYear?: string
+  gamePlatform?: string
+  coverUrl?: string
 }
 
 const PROJECTS = [
@@ -248,6 +255,12 @@ export default function App() {
             ? ["reviews" as BlogTab]
             : ["socials" as BlogTab],
       url: post.url,
+      mediaType: post.mediaType,
+      mediaTitle: post.mediaTitle,
+      creator: post.creator,
+      releaseYear: post.releaseYear,
+      gamePlatform: post.gamePlatform,
+      coverUrl: post.coverUrl,
     })),
   ].sort((a, b) => (b.date || "").localeCompare(a.date || ""))
 
@@ -588,6 +601,11 @@ export default function App() {
             </div>
           </div>
 
+          {activeBlogTab === "reviews" ? (
+            <div className="relative z-10 flex-1 min-h-0 px-4 md:px-8 pb-4 md:pb-8">
+              <ReviewShelf entries={visibleBlogEntries} />
+            </div>
+          ) : (
           <div className="relative z-10 flex-1 min-h-0 px-4 md:px-8 pb-4 md:pb-8">
             <div className="h-full grid grid-cols-1 md:grid-cols-[minmax(220px,0.7fr)_minmax(0,1.3fr)] gap-4 md:gap-8">
               <div className="hidden md:flex flex-col justify-end pb-2">
@@ -701,6 +719,7 @@ export default function App() {
               </div>
             </div>
           </div>
+          )}
         </div>
       )}
 
