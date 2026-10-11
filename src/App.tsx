@@ -292,13 +292,17 @@ export default function App() {
 
   return (
     <div
-      className={`gen-shell gen-${design.layout} family-${design.family.id} relative min-h-screen w-full overflow-hidden flex`}
+      className={`gen-shell gen-${design.layout} family-${design.family.id} gen-type-${design.nameTreatment} relative min-h-screen w-full overflow-hidden flex`}
       style={{
         "--gen-paper": design.palette.paper,
         "--gen-ink": design.palette.ink,
         "--gen-panel": design.palette.panel,
         "--gen-accent": design.palette.accent,
         "--gen-secondary": design.palette.secondary,
+        "--gen-middle": design.palette.middle,
+        "--gen-edge": design.palette.edge,
+        "--gen-bloom": design.palette.bloom,
+        "--gen-display-weight": design.displayWeight,
         "--gen-display": design.family.display,
         "--gen-body": design.family.body,
         "--gen-mono": design.family.mono,
@@ -314,7 +318,7 @@ export default function App() {
           <span>{design.family.name}</span>
           <span>edition {seed.slice(0, 9)} · {design.layout}</span>
         </div>
-        <button type="button" onClick={regenerate} title="Generate a new design">
+        <button type="button" className="gen-new" onClick={regenerate} title="Generate a new design">
           new edition ↻
         </button>
         <button type="button" className="gen-link" onClick={copyEdition} title="Copy a link to this exact design">
@@ -327,7 +331,8 @@ export default function App() {
         {/* Left Column */}
         <div className="gen-intro w-full md:w-1/2 h-full flex flex-col justify-between max-w-[720px] pb-8 md:pb-0">
           <div className="flex flex-col gap-6 lg:gap-12 mt-4 md:mt-8">
-            <h1 className="gen-name text-4xl md:text-5xl lg:text-6xl tracking-tight font-medium">
+            <h1 className="gen-name text-4xl md:text-5xl lg:text-6xl tracking-tight font-medium"
+              data-text="emit rice">
               emit rice
             </h1>
 
@@ -513,7 +518,7 @@ export default function App() {
 
                 {/* Overlay */}
                 <div
-                  className={`absolute inset-0 bg-[#d1d1d1] mix-blend-multiply transition-opacity duration-500 ${
+                  className={`gen-card-overlay absolute inset-0 bg-[#d1d1d1] mix-blend-multiply transition-opacity duration-500 ${
                     isHovered ? "opacity-0" : "opacity-60"
                   }`}
                 />
