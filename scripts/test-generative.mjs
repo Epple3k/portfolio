@@ -1,7 +1,7 @@
 import assert from "node:assert/strict"
 import test from "node:test"
 
-import { createDesign, hashSeed, randomFromSeed, initialSeed } from "../src/generative/design.ts"
+import { createDesign, hashSeed, randomFromSeed, initialSeed, nextEditionSeed } from "../src/generative/design.ts"
 
 const projects = ["01", "02", "03", "04"]
 
@@ -50,7 +50,7 @@ test("seed space contains five bright identities, motifs and ribbon arrangements
   const editions = Array.from({ length: 1000 }, (_, i) => createDesign(`edition-${i}`))
   assert.equal(new Set(editions.map((d) => d.family.id)).size, 5)
   assert.equal(new Set(editions.map((d) => d.family.motif)).size, 5)
-  assert.equal(new Set(editions.map((d) => d.layout)).size, 5)
+  assert.equal(new Set(editions.map((d) => d.layout)).size, 8)
   assert.ok(new Set(editions.map((d) => d.palette.paper)).size >= 10)
 })
 
@@ -65,7 +65,15 @@ test("the same content is always present in every composition", () => {
     assert.ok(d.columnBias >= -40 && d.columnBias <= 40)
     assert.ok(d.projectTitleScale >= .85 && d.projectTitleScale <= 1.20)
   }
-  assert.deepEqual([...variants].sort(), ["banner", "flip", "runway", "scatter", "split"])
+  assert.deepEqual([...variants].sort(), ["banner", "flip", "mosaic", "poster", "runway", "scatter", "sideways", "split"])
+})
+
+test("next edition avoids repeating its last layout", () => {
+  for (const previous of ["split", "flip", "banner", "runway", "scatter", "poster", "mosaic", "sideways"]) {
+    for (let i = 0; i < 12; i++) {
+      assert.notEqual(createDesign(nextEditionSeed(previous)).layout, previous)
+    }
+  }
 })
 
 test("a valid URL seed reproduces an edition", () => {
