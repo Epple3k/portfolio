@@ -671,7 +671,7 @@ export default function App() {
                 <p className="text-xl lg:text-2xl leading-tight max-w-sm opacity-75">
                   {activeBlogTab === "professional"
                     ? "projects, research, experiments, and the work i want people to actually hire me for."
-                    : activeBlogTab === "reviews"
+                    : String(activeBlogTab) === "reviews"
                       ? "books, films, music, and the things worth thinking about for more than a sentence."
                       : "posts from elsewhere, collected here without turning the whole site into a feed."}
                 </p>
