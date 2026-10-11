@@ -71,12 +71,19 @@ async function lookup(post) {
   return next
 }
 export async function enrichReviews(posts, previous = []) {
-  const old = new Map(previous.filter((p) => p.url && p.coverUrl).map((p) => [p.url, p.coverUrl]))
+  const old = new Map(previous.filter((p) => p.url).map((p) => [p.url, p]))
   // Avoid excessive requests and preserve artwork even during intermittent API outages.
   const result = []
   for (const post of posts) {
     if (!post.tabs?.includes("reviews") && !KINDS[post.platform] && post.mediaType !== "game") { result.push(post); continue }
-    const original = { ...post, coverUrl: post.coverUrl || old.get(post.url) || "" }
+    const last = old.get(post.url)
+    const coverUrl = post.coverUrl || last?.coverUrl || ""
+    const original = { ...post, coverUrl }
+    if (coverUrl && last?.coverUrl === coverUrl && last?.spineColor) {
+      original.spineColor = last.spineColor
+      original.spineTextColor = last.spineTextColor
+      original.spineColorCoverUrl = last.spineColorCoverUrl
+    }
     result.push(await lookup(original))
   }
   return result
