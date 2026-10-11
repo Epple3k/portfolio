@@ -4,7 +4,7 @@ import { trackEvent } from "./analytics"
 
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
-import { createDesign, initialSeed, nextEditionSeed, shareableUrl } from "./generative/design"
+import { createDesign, initialSeed } from "./generative/design"
 import { GenerativeArt } from "./generative/GenerativeArt"
 
 type BlogTab = "reviews" | "socials" | "professional"
@@ -88,32 +88,22 @@ const HERO_SUBHEADINGS = [
 const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL ?? "https://api.emitrice.com"
 
 export default function App() {
-  const [seed, setSeed] = useState(initialSeed)
-  const [copyLabel, setCopyLabel] = useState("copy edition")
+  const [seed] = useState(initialSeed)
   const design = useMemo(() => createDesign(seed), [seed])
 
   useEffect(() => {
     try { window.sessionStorage.setItem("generative-last-layout", design.layout) } catch { /* storage optional */ }
   }, [design.layout])
 
-  const regenerate = () => {
-    setSeed(nextEditionSeed(design.layout))
-    setCopyLabel("copy edition")
-    setHoveredId(null)
+  const reloadEdition = () => {
+    // A copied ?seed= permalink normally pins its design. When this
+    // control is clicked we deliberately unpin it for a fresh edition.
     const url = new URL(window.location.href)
-    url.searchParams.delete("seed")
-    window.history.replaceState(window.history.state, "", url.toString())
-  }
-
-  const copyEdition = () => {
-    const url = shareableUrl(seed)
-    if (!navigator.clipboard?.writeText) {
-      window.prompt("Copy this edition URL", url)
-      return
+    if (url.searchParams.has("seed")) {
+      url.searchParams.delete("seed")
+      window.history.replaceState(window.history.state, "", url.toString())
     }
-    navigator.clipboard.writeText(url)
-      .then(() => setCopyLabel("copied!"))
-      .catch(() => window.prompt("Copy this edition URL", url))
+    window.location.reload()
   }
 
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -330,18 +320,28 @@ export default function App() {
       } as React.CSSProperties}
     >
       <GenerativeArt design={design} />
-      <div className="gen-controls" aria-label="Generative design controls">
-        <div className="gen-edition">
-          <span>{design.family.name}</span>
-          <span>edition {seed.slice(0, 9)} · {design.layout}</span>
-        </div>
-        <button type="button" className="gen-new" onClick={regenerate} title="Generate a new design">
-          new edition ↻
-        </button>
-        <button type="button" className="gen-link" onClick={copyEdition} title="Copy a link to this exact design">
-          {copyLabel}
-        </button>
-      </div>
+      <button
+        type="button"
+        className="gen-reload"
+        onClick={reloadEdition}
+        aria-label="Reload site and generate a new design"
+        title="Regenerate"
+      >
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 24"
+          width="21"
+          height="21"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20 11a8 8 0 1 1-2.3-5.65" />
+          <path d="M20 4v6h-6" />
+        </svg>
+      </button>
 
       {/* Main Content Layout */}
       <main className="gen-main relative z-10 w-full h-screen flex flex-col md:flex-row p-4 md:p-8 md:gap-4">
