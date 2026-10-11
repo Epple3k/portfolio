@@ -149,7 +149,7 @@
     align-self: end;
     max-width: calc(100% - 330px);
     padding-top: clamp(35px, 6vh, 70px);
-    font-size: clamp(4rem, min(9.2vw, calc(var(--gen-headline-size) * 1.55)), 10.5rem);
+    font-size: clamp(4rem, min(9.2vw, var(--gen-banner-headline-size)), 10.5rem);
   }
   .gen-shell.gen-banner .gen-description { padding-top: clamp(10px, 3vh, 35px); }
   .gen-shell.gen-banner .gen-links {
@@ -220,7 +220,7 @@
   .gen-shell.gen-scatter .gen-name {
     max-width: calc(100% - 250px);
     padding-top: 40px;
-    font-size: clamp(4.3rem, min(9vw, calc(var(--gen-headline-size) * 1.65)), 11rem);
+    font-size: clamp(4.3rem, min(9vw, var(--gen-scatter-headline-size)), 11rem);
   }
   .gen-shell.gen-scatter .gen-description { padding-top: clamp(12px, 5vh, 70px); }
   .gen-shell.gen-scatter .gen-links {
