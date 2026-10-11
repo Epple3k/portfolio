@@ -121,7 +121,7 @@
   max-width: 100%;
   font-family: var(--gen-display);
   font-weight: var(--gen-display-weight, 500);
-  font-size: clamp(4rem, calc(5.6vw * var(--gen-scale)), 10rem);
+  font-size: clamp(4rem, var(--gen-name-fluid), 10rem);
   letter-spacing: -.075em;
   line-height: .86;
   overflow-wrap: anywhere;
@@ -144,8 +144,8 @@
 .gen-type-1 .gen-name::after { transform: translate(.105em, .12em); opacity: .5; }
 .gen-type-2 .gen-name { letter-spacing: -.11em; text-shadow: 3px 4px 0 color-mix(in srgb, var(--gen-secondary) 38%, transparent); }
 .gen-type-2 .gen-name::after { transform: translate(-.055em, .13em); opacity: .6; }
-.family-echo .gen-name { text-transform: uppercase; letter-spacing: -.12em; font-size: clamp(3rem, calc(4.7vw * var(--gen-scale)), 7.5rem); }
-.family-bloom .gen-name { font-style: italic; font-size: clamp(5rem, calc(6vw * var(--gen-scale)), 11rem); }
+.family-echo .gen-name { text-transform: uppercase; letter-spacing: -.12em; font-size: clamp(3rem, var(--gen-echo-fluid), 7.5rem); }
+.family-bloom .gen-name { font-style: italic; font-size: clamp(5rem, var(--gen-bloom-fluid), 11rem); }
 .family-liquid .gen-name { font-weight: 700; }
 .gen-description { height: clamp(160px, 21vh, 260px); min-height: 160px; max-width: min(92%, 650px); }
 .gen-description p {
@@ -240,7 +240,7 @@
 .gen-card:focus-visible { outline-offset: -3px; }
 .gen-ribbon .gen-main { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .gen-wide .gen-main { grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr); }
-.gen-wide .gen-name { font-size: clamp(4.5rem, calc(6.5vw * var(--gen-scale)), 11rem); }
+.gen-wide .gen-name { font-size: clamp(4.5rem, var(--gen-wide-fluid), 11rem); }
 .gen-wide .gen-description { max-width: 710px; }
 .gen-offset .gen-main { grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr); }
 .gen-offset .gen-intro > div:first-child { margin-top: clamp(105px, 17vh, 195px); }
