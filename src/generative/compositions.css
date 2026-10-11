@@ -1,0 +1,276 @@
+/*
+ * Composition engine, layered on top of the original portfolio skin.
+ *
+ * The same four semantic units always exist:
+ *   name / introduction / links / expanding project ribbon.
+ *
+ * Desktop layouts simply place these units into different grid areas.
+ * display:contents exposes the existing React elements without rewriting
+ * the project cards, blog functionality or content.
+ */
+
+.gen-shell {
+  --gen-headline-size: 4.8rem;
+  --gen-description-size: 1.75rem;
+  --gen-project-title-size: 2.2rem;
+  --gen-headline-shift: 0px;
+  --gen-column-bias: 0px;
+  --gen-link-spread: 12px;
+  --gen-title-tracking: -.065em;
+}
+.gen-shell .gen-name {
+  letter-spacing: var(--gen-title-tracking);
+}
+.gen-shell .gen-description p {
+  font-size: clamp(1.12rem, min(2.25vw, var(--gen-description-size)), 2.35rem);
+  line-height: 1.17;
+  letter-spacing: -.037em;
+  overflow-wrap: break-word;
+}
+.gen-shell .gen-card-meta h2 {
+  font-size: clamp(1.35rem, min(2.8vw, var(--gen-project-title-size)), 3rem);
+  letter-spacing: -.05em;
+}
+.gen-shell .gen-links { gap: clamp(3px, .5vw, var(--gen-link-spread)); }
+.gen-type-3 .gen-name { text-transform: uppercase; letter-spacing: -.09em; }
+.gen-type-2 .gen-description p { font-weight: 600; line-height: 1.1; }
+.gen-type-1 .gen-links { font-weight: 700; letter-spacing: -.045em; }
+.gen-type-3 .gen-card-meta h2 { text-transform: uppercase; }
+.gen-type-0 .gen-links { letter-spacing: -.07em; }
+
+@media (min-width: 960px) {
+  .gen-shell .gen-main {
+    display: grid;
+    width: 100%;
+    height: 100svh;
+    min-height: 620px;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: clamp(18px, 2.8vw, 44px);
+    gap: clamp(10px, 1.65vw, 28px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, .27fr) minmax(0, .37fr) minmax(0, .36fr);
+    grid-template-areas:
+      "name projects"
+      "intro projects"
+      "links projects";
+    align-items: stretch;
+  }
+  .gen-shell .gen-intro,
+  .gen-shell .gen-intro > div:first-child {
+    display: contents;
+  }
+  .gen-shell .gen-name {
+    grid-area: name;
+    align-self: end;
+    justify-self: start;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 0 .03em;
+    font-size: clamp(2.7rem, min(5.8vw, var(--gen-headline-size)), 7.5rem);
+    line-height: .9;
+    white-space: normal;
+    text-wrap: balance;
+    transform: translateY(var(--gen-headline-shift));
+  }
+  .gen-shell .gen-description {
+    grid-area: intro;
+    width: 100%;
+    max-width: 650px;
+    height: 100%;
+    min-height: 140px;
+    position: relative;
+    align-self: start;
+    margin: 0;
+    overflow: visible;
+  }
+  .gen-shell .gen-description p {
+    max-width: 33ch;
+    padding-top: .2em;
+  }
+  .gen-shell .gen-links {
+    grid-area: links;
+    align-self: end;
+    justify-self: start;
+    margin: 0;
+    padding-bottom: clamp(4px, .8vh, 15px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(4px, .6vw, var(--gen-link-spread));
+    font-size: clamp(1rem, 1.75vw, 1.75rem);
+  }
+  .gen-shell .gen-projects {
+    grid-area: projects;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    max-width: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gen-gap);
+  }
+  .gen-shell .gen-card { min-width: 0; min-height: 0; flex-basis: 0; }
+
+  /* 01: familiar arrangement, but a proper typographic grid. */
+  .gen-shell.gen-split .gen-main {
+    grid-template-columns:
+      minmax(0, calc(50% + var(--gen-column-bias) / 2))
+      minmax(0, 1fr);
+  }
+
+  /* 02: full inversion. Project ribbon on left, name and links on right. */
+  .gen-shell.gen-flip .gen-main {
+    grid-template-columns: minmax(0, 51%) minmax(0, 1fr);
+    grid-template-areas:
+      "projects name"
+      "projects intro"
+      "projects links";
+  }
+  .gen-shell.gen-flip .gen-name { align-self: center; padding-top: 20px; }
+  .gen-shell.gen-flip .gen-description { align-self: start; padding-top: clamp(3px, 3vh, 36px); }
+  .gen-shell.gen-flip .gen-links {
+    margin-left: clamp(0px, 4vw, 65px);
+    margin-bottom: 3vh;
+  }
+
+  /* 03: the name becomes a full-width masthead.
+     The familiar project ribbon lives below it alongside the intro. */
+  .gen-shell.gen-banner .gen-main {
+    grid-template-rows: minmax(0, .27fr) minmax(0, .38fr) minmax(0, .35fr);
+    grid-template-areas:
+      "name name"
+      "intro projects"
+      "links projects";
+  }
+  .gen-shell.gen-banner .gen-name {
+    justify-self: start;
+    align-self: end;
+    max-width: calc(100% - 330px);
+    padding-top: clamp(35px, 6vh, 70px);
+    font-size: clamp(4rem, min(9.2vw, calc(var(--gen-headline-size) * 1.55)), 10.5rem);
+  }
+  .gen-shell.gen-banner .gen-description { padding-top: clamp(10px, 3vh, 35px); }
+  .gen-shell.gen-banner .gen-links {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 490px;
+    gap: 14px clamp(18px, 2vw, 38px);
+    font-size: clamp(1.1rem, 2vw, 2rem);
+  }
+
+  /* 04: the project ribbon goes horizontal across the entire bottom.
+     Top becomes a strongly typeset three-column cover. */
+  .gen-shell.gen-runway .gen-main {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, .65fr);
+    grid-template-rows: minmax(0, .42fr) minmax(0, .58fr);
+    grid-template-areas:
+      "name intro links"
+      "projects projects projects";
+  }
+  .gen-shell.gen-runway .gen-name {
+    align-self: center;
+    font-size: clamp(2.9rem, min(5.2vw, var(--gen-headline-size)), 7rem);
+    padding-top: 28px;
+  }
+  .gen-shell.gen-runway .gen-description {
+    align-self: center;
+    padding-top: clamp(55px, 10vh, 125px);
+  }
+  .gen-shell.gen-runway .gen-description p {
+    font-size: clamp(1.12rem, min(1.8vw, var(--gen-description-size)), 2rem);
+    max-width: 30ch;
+  }
+  .gen-shell.gen-runway .gen-links {
+    align-self: center;
+    justify-self: end;
+    padding: clamp(55px, 10vh, 125px) 0 0 0;
+    font-size: clamp(1rem, 1.45vw, 1.55rem);
+  }
+  .gen-shell.gen-runway .gen-projects {
+    flex-direction: row;
+    gap: clamp(8px, 1vw, 17px);
+  }
+  .gen-shell.gen-runway .gen-card {
+    flex-basis: 0;
+    min-width: 0;
+    height: 100%;
+  }
+  .gen-shell.gen-runway .gen-card-meta {
+    left: clamp(10px, 1.4vw, 25px);
+    right: clamp(10px, 1.4vw, 25px);
+  }
+  .gen-shell.gen-runway .gen-card-meta h2 {
+    font-size: clamp(1.1rem, min(1.7vw, var(--gen-project-title-size)), 2.6rem);
+    overflow-wrap: anywhere;
+  }
+
+  /* 05: project stack drops to the lower-left; header runs across the top.
+     Introduction and navigation become a right-side text column. */
+  .gen-shell.gen-scatter .gen-main {
+    grid-template-columns: minmax(0, 1.22fr) minmax(0, .78fr);
+    grid-template-rows: minmax(0, .30fr) minmax(0, .39fr) minmax(0, .31fr);
+    grid-template-areas:
+      "name name"
+      "projects intro"
+      "projects links";
+  }
+  .gen-shell.gen-scatter .gen-name {
+    max-width: calc(100% - 250px);
+    padding-top: 40px;
+    font-size: clamp(4.3rem, min(9vw, calc(var(--gen-headline-size) * 1.65)), 11rem);
+  }
+  .gen-shell.gen-scatter .gen-description { padding-top: clamp(12px, 5vh, 70px); }
+  .gen-shell.gen-scatter .gen-links {
+    align-self: center;
+    padding-left: clamp(0px, 5vw, 90px);
+    font-size: clamp(1.25rem, 2.2vw, 2.4rem);
+    font-weight: 600;
+  }
+  .gen-shell.gen-scatter .gen-projects { gap: clamp(6px, .7vw, 12px); }
+}
+
+@media (min-width: 960px) and (max-height: 760px) {
+  .gen-shell .gen-name { font-size: clamp(2.45rem, min(4.65vw, var(--gen-headline-size)), 5.8rem); }
+  .gen-shell .gen-description p { font-size: clamp(1rem, 1.55vw, 1.7rem); }
+  .gen-shell .gen-links { gap: 4px; font-size: clamp(1rem, 1.4vw, 1.4rem); }
+  .gen-shell.gen-banner .gen-name,
+  .gen-shell.gen-scatter .gen-name { font-size: clamp(3.2rem, 7.5vw, 7rem); }
+}
+
+/* Tablet and mobile keep every content block and readable tap targets.
+   Still allow the name and projects to switch order on selected editions. */
+@media (max-width: 959px) {
+  .gen-shell.gen-flip .gen-projects,
+  .gen-shell.gen-runway .gen-projects { order: -1; }
+  .gen-shell.gen-flip .gen-main,
+  .gen-shell.gen-runway .gen-main { padding-top: 68px; }
+  .gen-shell.gen-scatter .gen-name { text-transform: uppercase; }
+  .gen-shell.gen-banner .gen-name { font-size: clamp(3.4rem, 11vw, 6.2rem); }
+  .gen-shell.gen-runway .gen-links {
+    align-self: flex-end;
+    text-align: right;
+    align-items: flex-end;
+  }
+  .gen-shell .gen-description p {
+    font-size: clamp(1.15rem, 4vw, 1.7rem);
+  }
+  .gen-shell .gen-card-meta h2 { font-size: clamp(1.4rem, 4vw, 2.2rem); }
+}
+@media (max-width: 767px) {
+  .gen-shell.gen-flip .gen-projects,
+  .gen-shell.gen-runway .gen-projects { order: 0; }
+  .gen-shell.gen-flip .gen-intro,
+  .gen-shell.gen-runway .gen-intro { order: 0; }
+  .gen-shell .gen-main { padding-top: 78px; }
+  .gen-shell.gen-scatter .gen-links { align-self: flex-end; align-items: flex-end; }
+  .gen-shell.gen-banner .gen-links { flex-direction: row; }
+  .gen-shell .gen-description { min-height: 135px; height: 135px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gen-shell .gen-main, .gen-shell .gen-projects, .gen-shell .gen-intro {
+    animation: none !important;
+  }
+}
