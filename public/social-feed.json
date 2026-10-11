@@ -45,7 +45,10 @@
     "mediaType": "book",
     "mediaTitle": "Catch-22",
     "creator": "Joseph Heller",
-    "releaseYear": ""
+    "releaseYear": "",
+    "spineColor": "#004860",
+    "spineTextColor": "#ffffff",
+    "spineColorCoverUrl": "https://covers.openlibrary.org/b/id/6468653-L.jpg"
   },
   {
     "platform": "goodreads",
@@ -58,7 +61,10 @@
     "mediaType": "book",
     "mediaTitle": "Galápagos",
     "creator": "Kurt Vonnegut Jr.",
-    "releaseYear": ""
+    "releaseYear": "",
+    "spineColor": "#009078",
+    "spineTextColor": "#000000",
+    "spineColorCoverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Publication221/v4/bc/d4/f7/bcd4f774-8d67-899d-1e8b-f72f231a4b6b/1048835043.jpg/600x600bb.jpg"
   },
   {
     "platform": "goodreads",
@@ -71,7 +77,10 @@
     "mediaType": "book",
     "mediaTitle": "Welcome to the Monkey House",
     "creator": "Kurt Vonnegut Jr.",
-    "releaseYear": ""
+    "releaseYear": "",
+    "spineColor": "#60c048",
+    "spineTextColor": "#000000",
+    "spineColorCoverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Publication118/v4/d5/ab/89/d5ab8992-acc9-5303-70b4-2722a730ab08/9780307423443.jpg/600x600bb.jpg"
   },
   {
     "platform": "rateyourmusic",
@@ -87,7 +96,10 @@
     "mediaType": "album",
     "mediaTitle": "Inferno",
     "creator": "Boards of Canada",
-    "releaseYear": ""
+    "releaseYear": "",
+    "spineColor": "#903018",
+    "spineTextColor": "#ffffff",
+    "spineColorCoverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/18/f7/ee/18f7ee40-b891-3d7f-e0b3-e4e2470cbdac/5056818808906.png/600x600bb.jpg"
   },
   {
     "platform": "letterboxd",
@@ -103,7 +115,10 @@
     "mediaType": "movie",
     "mediaTitle": "The Odyssey",
     "creator": "",
-    "releaseYear": "2026"
+    "releaseYear": "2026",
+    "spineColor": "#301818",
+    "spineTextColor": "#ffffff",
+    "spineColorCoverUrl": "https://a.ltrbxd.com/resized/film-poster/1/2/5/5/3/9/4/1255394-the-odyssey-2026-0-600-0-900-crop.jpg?v=1eed046d0c"
   },
   {
     "platform": "letterboxd",
@@ -119,7 +134,10 @@
     "mediaType": "movie",
     "mediaTitle": "Mister Lonely",
     "creator": "",
-    "releaseYear": "2007"
+    "releaseYear": "2007",
+    "spineColor": "#18a8a8",
+    "spineTextColor": "#000000",
+    "spineColorCoverUrl": "https://a.ltrbxd.com/resized/film-poster/4/1/8/0/2/41802-mister-lonely-0-600-0-900-crop.jpg?v=a92e945486"
   },
   {
     "platform": "letterboxd",
@@ -135,6 +153,9 @@
     "mediaType": "movie",
     "mediaTitle": "Lessons of Darkness",
     "creator": "",
-    "releaseYear": "1992"
+    "releaseYear": "1992",
+    "spineColor": "#784830",
+    "spineTextColor": "#ffffff",
+    "spineColorCoverUrl": "https://a.ltrbxd.com/resized/film-poster/1/2/7/3/3/12733-lessons-of-darkness-0-600-0-900-crop.jpg?v=6946318b34"
   }
 ]
