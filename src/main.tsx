@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client"
 import App from "./App"
 import { initAnalytics } from "./analytics"
 import "./index.css"
+import "./generative/generative.css"
 
 initAnalytics()
 
