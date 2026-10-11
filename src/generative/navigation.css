@@ -1,0 +1,216 @@
+
+/*
+ * Navigation is the second hero in every generated edition.
+ * A small label anchors it visually; links themselves stay oversized,
+ * high-contrast, visible without hover and never clipped.
+ */
+.gen-shell .gen-links {
+  position: relative;
+  z-index: 12;
+  box-sizing: border-box;
+  min-width: 0;
+  width: max-content;
+  max-width: 100%;
+  overflow: visible;
+  color: var(--gen-ink);
+  text-align: left;
+  align-items: flex-start;
+  justify-content: flex-start;
+  font-family: var(--gen-body);
+  font-size: clamp(1.35rem, 2.25vw, 2.6rem);
+  font-weight: 650;
+  line-height: 1.06;
+  letter-spacing: -.055em;
+  gap: clamp(5px, 1vh, 12px);
+  padding: 11px 0 8px;
+  border-top: 2px solid var(--gen-ink);
+}
+.gen-shell .gen-links-kicker {
+  display: block;
+  width: 100%;
+  margin-bottom: clamp(8px, 1.1vh, 15px);
+  font: 500 10px/1.2 var(--gen-mono);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  opacity: .72;
+}
+.gen-shell .gen-links > a,
+.gen-shell .gen-links > button {
+  display: inline-block;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 1.13em;
+  flex: 0 0 auto;
+  padding: 1px 0 2px;
+  white-space: nowrap;
+  font: inherit;
+  line-height: 1.08;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: transform .18s ease, border-color .18s ease, color .18s ease;
+}
+.gen-shell .gen-links > a:hover,
+.gen-shell .gen-links > button:hover,
+.gen-shell .gen-links > a:focus-visible,
+.gen-shell .gen-links > button:focus-visible {
+  color: var(--gen-ink);
+  font-style: normal;
+  border-bottom-color: currentColor;
+  transform: translateX(7px);
+}
+
+/* Explicitly override older incidental link positioning.
+ * Each layout gets a designed navigation module, not random placement. */
+@media (min-width: 960px) {
+  .gen-shell .gen-links {
+    grid-area: links;
+    align-self: end;
+    justify-self: start;
+    margin: 0;
+    padding: 10px 0 6px;
+    gap: clamp(4px, .65vh, 9px);
+    font-size: clamp(1.45rem, 2.15vw, 2.6rem);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    max-width: 100%;
+  }
+  .gen-shell.gen-align-1 .gen-links { justify-self: start; text-align: left; align-items: flex-start; }
+  .gen-shell.gen-flip .gen-links { margin: 0 0 2.5vh clamp(0px, 2.5vw, 42px); }
+  .gen-shell.gen-banner .gen-links {
+    max-width: min(100%, 680px);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: end;
+    gap: clamp(6px, 1.25vh, 14px) clamp(20px, 3vw, 55px);
+    font-size: clamp(1.55rem, 2.25vw, 2.85rem);
+  }
+  .gen-shell.gen-banner .gen-links-kicker { grid-column: 1 / -1; }
+
+  .gen-shell.gen-runway .gen-main {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, .86fr) minmax(220px, .89fr);
+    grid-template-rows: minmax(0, .47fr) minmax(0, .53fr);
+  }
+  .gen-shell.gen-runway .gen-links {
+    justify-self: stretch;
+    align-self: center;
+    margin: 50px 0 0;
+    padding-top: 12px;
+    width: 100%;
+    max-width: 370px;
+    font-size: clamp(1.35rem, 1.85vw, 2.4rem);
+    gap: clamp(6px, .7vh, 12px);
+  }
+  .gen-shell.gen-runway .gen-description {
+    padding-top: clamp(40px, 7vh, 96px);
+  }
+
+  .gen-shell.gen-scatter .gen-links {
+    justify-self: stretch;
+    align-self: center;
+    width: calc(100% - clamp(0px, 3vw, 48px));
+    margin-left: clamp(0px, 3vw, 48px);
+    padding: 13px 0 0;
+    font-size: clamp(1.45rem, 2.35vw, 2.8rem);
+    gap: clamp(5px, 1vh, 11px);
+  }
+
+  .gen-shell.gen-poster .gen-main {
+    grid-template-rows: minmax(0, .47fr) minmax(0, .28fr) minmax(0, .25fr);
+  }
+  .gen-shell.gen-poster .gen-description { padding-top: clamp(40px, 6vh, 75px); }
+  .gen-shell.gen-poster .gen-links {
+    grid-area: links;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, max-content));
+    justify-content: start;
+    align-self: center;
+    justify-self: start;
+    gap: clamp(7px, 1.1vh, 15px) clamp(14px, 2vw, 36px);
+    max-width: 100%;
+    padding-top: 13px;
+    margin: 0;
+    font-size: clamp(1.3rem, 1.8vw, 2.25rem);
+  }
+  .gen-shell.gen-poster .gen-links-kicker { grid-column: 1 / -1; }
+  .gen-shell.gen-poster .gen-name { font-size: clamp(5rem, 12vw, 15rem); }
+
+  .gen-shell.gen-mosaic .gen-main {
+    grid-template-columns: minmax(270px, .98fr) minmax(0, 2.02fr);
+    grid-template-rows: minmax(0, .33fr) minmax(0, .31fr) minmax(0, .36fr);
+  }
+  .gen-shell.gen-mosaic .gen-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    align-content: end;
+    justify-content: start;
+    gap: clamp(6px, .9vh, 10px) clamp(12px, 1.3vw, 22px);
+    margin: 0;
+    max-width: 100%;
+    font-size: clamp(1.2rem, 1.65vw, 2rem);
+  }
+  .gen-shell.gen-mosaic .gen-links-kicker { grid-column: 1 / -1; }
+
+  .gen-shell.gen-sideways .gen-main {
+    grid-template-rows: minmax(0, .24fr) minmax(0, .20fr) minmax(0, .56fr);
+  }
+  .gen-shell.gen-sideways .gen-description {
+    padding: clamp(30px, 4vh, 58px) 0 0 10px;
+  }
+  .gen-shell.gen-sideways .gen-links {
+    grid-area: links;
+    justify-self: start;
+    align-self: center;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, max-content));
+    gap: clamp(5px, .75vh, 12px) clamp(12px, 1.5vw, 28px);
+    margin: 0 0 0 10px;
+    padding: 8px 0 0;
+    max-width: 100%;
+    font-size: clamp(1.2rem, 1.65vw, 2rem);
+  }
+  .gen-shell.gen-sideways .gen-links-kicker { grid-column: 1 / -1; }
+  .gen-shell.gen-sideways .gen-name { font-size: clamp(5rem, 9vw, 11rem); }
+}
+@media (min-width: 960px) and (max-height: 780px) {
+  .gen-shell .gen-links {
+    font-size: clamp(1.1rem, 1.6vw, 1.85rem);
+    gap: 3px;
+    padding-top: 6px;
+  }
+  .gen-shell .gen-links-kicker { margin-bottom: 5px; }
+  .gen-shell.gen-runway .gen-links,
+  .gen-shell.gen-poster .gen-links,
+  .gen-shell.gen-mosaic .gen-links,
+  .gen-shell.gen-sideways .gen-links { font-size: clamp(1.05rem, 1.45vw, 1.65rem); }
+  .gen-shell.gen-scatter .gen-links { font-size: clamp(1.05rem, 1.6vw, 1.85rem); }
+}
+@media (max-width: 959px) {
+  .gen-shell .gen-links {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, max-content));
+    justify-content: start;
+    justify-items: start;
+    align-items: center;
+    align-self: stretch !important;
+    text-align: left !important;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 !important;
+    padding: 12px 0 0;
+    gap: 10px clamp(14px, 3.5vw, 28px);
+    font-size: clamp(1.2rem, 3.4vw, 1.65rem);
+  }
+  .gen-shell .gen-links-kicker { grid-column: 1 / -1; margin-bottom: 2px; }
+  .gen-shell .gen-links > a,
+  .gen-shell .gen-links > button { min-height: 26px; }
+}
+@media (max-width: 480px) {
+  .gen-shell .gen-links {
+    grid-template-columns: repeat(2, minmax(0, max-content));
+    font-size: clamp(1.15rem, 5.2vw, 1.35rem);
+    gap: 10px clamp(15px, 6vw, 28px);
+  }
+  .gen-shell .gen-links > a,
+  .gen-shell .gen-links > button { min-height: 30px; }
+}
