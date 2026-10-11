@@ -16,6 +16,8 @@ export type ReviewEntry = {
   releaseYear?: string
   gamePlatform?: string
   coverUrl?: string
+  spineColor?: string
+  spineTextColor?: string
 }
 
 type MediaKind = "movie" | "album" | "game" | "book"
@@ -99,11 +101,10 @@ function ReviewCase({
     >
       <div
         className="review-case__spine"
-        style={!enlarged && type === "book" && hasCover ? {
-          backgroundImage: `linear-gradient(90deg, rgba(0,0,0,.67), rgba(0,0,0,.4)), url(${JSON.stringify(entry.coverUrl)})`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-        } : undefined}
+        style={entry.spineColor && /^#[0-9a-fA-F]{6}$/.test(entry.spineColor) ? ({
+          "--spine-accent": entry.spineColor,
+          "--spine-ink": entry.spineTextColor === "#000000" ? "#000000" : "#ffffff",
+        } as React.CSSProperties) : undefined}
       >
         <span className="review-case__spine-mark">
           {type === "game" ? game.name : type === "movie" ? "DVD" : type === "album" ? "COMPACT DISC" : "BOOK"}
@@ -150,8 +151,10 @@ export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [progress, setProgress] = useState(0)
   const [canScroll, setCanScroll] = useState(false)
+  const [hoveredReviewKey, setHoveredReviewKey] = useState<string | null>(null)
 
   const active = activeIndex === null ? null : entries[activeIndex] ?? null
+  const hoveredReview = entries.find((entry) => entry.key === hoveredReviewKey) ?? null
 
   // Each object keeps its real front-cover aspect ratio and an independently
   // readable spine. The next object sits in front, hiding part of the previous
@@ -252,10 +255,29 @@ export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
   return (
     <section className="review-gallery" aria-label="Media reviews">
       <div className="review-gallery__masthead">
-        <div>
-          <span className="review-gallery__eyebrow">AN ONGOING COLLECTION / REVIEWS & MEDIA</span>
-          <h1>things on <em>my shelf.</em></h1>
-          <p>an inventory of things i watched, played, read, and listened to. pick something up.</p>
+        <div className="review-gallery__headline-stage">
+          <span className="review-gallery__eyebrow">
+            {hoveredReview ? `${reviewKind(hoveredReview).toUpperCase()} / ${hoveredReview.label.toUpperCase()}` : "AN ONGOING COLLECTION / REVIEWS & MEDIA"}
+          </span>
+          <div className="review-gallery__headline-window" aria-live="off">
+            <div className={`review-gallery__headline-default ${hoveredReview ? "review-gallery__headline--hidden" : ""}`} aria-hidden={Boolean(hoveredReview)}>
+              <h1>things on <em>my shelf.</em></h1>
+              <p>an inventory of things i watched, played, read, and listened to. pick something up.</p>
+            </div>
+            <div className={`review-gallery__headline-review ${hoveredReview ? "review-gallery__headline--visible" : ""}`} aria-hidden={!hoveredReview}>
+              {hoveredReview && (
+                <>
+                  <h1>{displayTitle(hoveredReview)}</h1>
+                  <p className="review-gallery__headline-byline">
+                    {hoveredReview.creator && <span>{hoveredReview.creator} / </span>}
+                    {hoveredReview.date && <span>{hoveredReview.date} / </span>}
+                    <span>{hoveredReview.title.match(/[★½☆]+/g)?.pop() ?? reviewKind(hoveredReview)}</span>
+                  </p>
+                  <p className="review-gallery__headline-teaser">{hoveredReview.body}</p>
+                </>
+              )}
+            </div>
+          </div>
         </div>
         <div className="review-gallery__tally">
           <strong>{String(entries.length).padStart(2, "0")}</strong>
@@ -299,15 +321,15 @@ export default function ReviewShelf({ entries }: { entries: ReviewEntry[] }) {
                   type="button"
                   className="review-gallery__item"
                   style={{ "--slot-width": `${shelfSlots[index]}px`, "--stack-order": index + 1 } as React.CSSProperties}
+                  onMouseEnter={() => setHoveredReviewKey(entry.key)}
+                  onMouseLeave={() => setHoveredReviewKey((previous) => previous === entry.key ? null : previous)}
+                  onFocus={() => setHoveredReviewKey(entry.key)}
+                  onBlur={() => setHoveredReviewKey((previous) => previous === entry.key ? null : previous)}
                   onClick={(event) => open(entry, index, event.currentTarget)}
                   aria-label={"Read review of " + displayTitle(entry)}
                 >
                   <ReviewCase entry={entry} shelfCaseHeight={caseHeight(entry, shelfHeight)} />
-                  <span className="review-gallery__item-meta">
-                    <span className="review-gallery__item-number">{String(index + 1).padStart(2, "0")} / {reviewKind(entry)}</span>
-                    <span className="review-gallery__item-title">{displayTitle(entry)}</span>
-                    <span className="review-gallery__item-date">{entry.date || entry.label}</span>
-                  </span>
+
                 </button>
               ))}
             </div>
