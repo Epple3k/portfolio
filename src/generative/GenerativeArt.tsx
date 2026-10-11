@@ -2,124 +2,154 @@ import React, { useMemo } from "react"
 import { randomFromSeed, type GeneratedDesign } from "./design"
 
 /**
- * Vector decorations generated from the same seed as the layout.
- * Deliberately decorative: never a replacement for project titles or content.
- * SVG keeps artwork crisp on retina/mobile without external graphics requests.
+ * Every edition has its own color field and procedurally drawn vector objects.
+ * No image lookup or pre-rendered backgrounds: the seed determines every mark.
  */
 export function GenerativeArt({ design }: { design: GeneratedDesign }) {
   const marks = useMemo(() => {
-    const random = randomFromSeed(design.artSeed)
-    const ink = design.palette.ink
-    const accent = design.palette.accent
-    const secondary = design.palette.secondary
-    const shapes: React.ReactNode[] = []
+    const rnd = randomFromSeed(design.artSeed)
+    const art: React.ReactNode[] = []
+    const colors = [design.palette.accent, design.palette.secondary, design.palette.edge, design.palette.bloom]
 
-    if (design.family.motif === "orbits") {
-      for (let i = 0; i < 22; i++) {
-        const radius = 68 + i * (18 + random() * 3)
-        shapes.push(
-          <ellipse key={`orbit-${i}`} cx="1150" cy="470" rx={radius * 1.25} ry={radius * 0.8}
-            transform={`rotate(${-24 + i * 1.8} 1150 470)`}
-            fill="none" stroke={i % 5 === 0 ? accent : ink} strokeWidth={i % 5 === 0 ? 4 : 1.1}
-            opacity={i % 5 === 0 ? 0.7 : 0.18} />,
+    if (design.family.motif === "orbit") {
+      const cx = 1080 + rnd() * 210
+      const cy = 450 + rnd() * 160
+      for (let i = 0; i < 24; i++) {
+        const rx = 105 + i * (16 + rnd() * 6)
+        const ry = 53 + i * (12 + rnd() * 3)
+        art.push(
+          <ellipse key={`ring-${i}`} cx={cx} cy={cy} rx={rx} ry={ry}
+            transform={`rotate(${-40 + i * 3.5 + design.artTilt / 3} ${cx} ${cy})`}
+            stroke={colors[i % colors.length]} strokeWidth={i % 5 === 0 ? 8 : 1.8}
+            opacity={i % 5 === 0 ? 0.62 : 0.35} fill="none" />,
         )
       }
+      for (let i = 0; i < 20; i++) {
+        const angle = rnd() * Math.PI * 2
+        const r = 80 + rnd() * 475
+        art.push(<circle key={`sat-${i}`} cx={cx + Math.cos(angle) * r} cy={cy + Math.sin(angle) * r * 0.8}
+          r={4 + rnd() * 20} fill={colors[i % colors.length]} opacity={0.25 + rnd() * 0.52} />)
+      }
+      art.push(<circle key="sun" cx={cx} cy={cy} r="130" fill="url(#gen-orb)" opacity=".65" />)
+    }
+
+    if (design.family.motif === "liquid") {
+      for (let i = 0; i < 31; i++) {
+        const y = 30 + i * 28
+        let d = `M 555 ${y}`
+        for (let x = 555; x <= 1780; x += 22) {
+          const v = Math.sin(x / (118 + i * 2) + design.wavePhase + i * .22) * (60 + i * 1.4)
+          const v2 = Math.sin(x / 61 + i * .11) * 16
+          d += ` L ${x} ${(y + v + v2).toFixed(1)}`
+        }
+        art.push(<path key={`wave-${i}`} d={d} fill="none"
+          stroke={i % 7 === 0 ? design.palette.accent : i % 3 === 0 ? design.palette.secondary : "#ffffff"}
+          strokeWidth={i % 7 === 0 ? 11 : 3.1} opacity={i % 7 === 0 ? .35 : .30} />)
+      }
+      for (let i = 0; i < 9; i++) {
+        art.push(<ellipse key={`bubble-${i}`} cx={660 + rnd() * 920} cy={70 + rnd() * 850}
+          rx={30 + rnd() * 185} ry={20 + rnd() * 105}
+          transform={`rotate(${design.artTilt} ${700 + i * 100} 440)`}
+          stroke={colors[i % 4]} strokeWidth={2 + rnd() * 10} opacity=".35" fill="none" />)
+      }
+    }
+
+    if (design.family.motif === "prism") {
       for (let i = 0; i < 16; i++) {
-        const angle = random() * Math.PI * 2
-        const radius = 130 + random() * 500
-        shapes.push(
-          <circle key={`dot-${i}`} cx={1150 + Math.cos(angle) * radius}
-            cy={470 + Math.sin(angle) * radius * 0.65}
-            r={4 + random() * 24} fill={i % 3 ? secondary : accent} opacity="0.55" />,
-        )
+        const x = 650 + i * 66
+        const lift = rnd() * 150
+        art.push(<path key={`prism-${i}`}
+          d={`M ${x} ${-100 + lift} L ${x + 250} ${-100 + lift} L ${x - 180} 1130 L ${x - 395} 1130 Z`}
+          fill={colors[i % 4]} opacity={i % 4 === 0 ? .19 : .10}
+          stroke="#fff" strokeOpacity=".26" strokeWidth="2" />)
+      }
+      for (let i = 0; i < 13; i++) {
+        const x = 670 + rnd() * 960
+        const y = rnd() * 960
+        art.push(<circle key={`caustic-${i}`} cx={x} cy={y} r={18 + rnd() * 90}
+          stroke="#ffffff" fill="none" strokeWidth={1 + rnd() * 4} opacity=".39" />)
       }
     }
 
-    if (design.family.motif === "contours") {
-      for (let i = 0; i < 38; i++) {
-        const y = 100 + i * 25
-        let d = `M -100 ${y}`
-        for (let x = -100; x <= 1800; x += 26) {
-          const wave = Math.sin(x / (90 + i * 2.4) + i * 0.16) * (52 + i * 1.8)
-          const secondaryWave = Math.sin(x / 190 + i * 0.36) * 33
-          d += ` L ${x} ${(y + wave + secondaryWave).toFixed(1)}`
-        }
-        shapes.push(
-          <path key={`contour-${i}`} d={d} fill="none"
-            stroke={i % 8 === 0 ? accent : i % 3 === 0 ? secondary : ink}
-            strokeWidth={i % 8 === 0 ? 4 : 1}
-            opacity={i % 8 === 0 ? 0.58 : 0.17} />,
-        )
+    if (design.family.motif === "echo") {
+      const glyphs = ["e", "r", "✳", "↗", "0", "8", "∞"]
+      for (let i = 0; i < 17; i++) {
+        const x = 540 + rnd() * 1030
+        const y = -40 + rnd() * 1150
+        const size = 110 + rnd() * 270
+        art.push(<text key={`echo-${i}`} x={x} y={y}
+          fontSize={size} fontFamily={design.family.display} fontWeight="700"
+          transform={`rotate(${-42 + rnd() * 84} ${x} ${y})`}
+          fill="none" stroke={colors[i % 4]} strokeWidth={1.3 + rnd() * 3}
+          opacity={i % 3 === 0 ? .48 : .24}>{glyphs[Math.floor(rnd() * glyphs.length)]}</text>)
       }
     }
 
-    if (design.family.motif === "stripes") {
-      for (let i = 0; i < 34; i++) {
-        const x = -100 + i * 57
-        const y = -180 + random() * 200
-        const width = 8 + random() * 39
-        const height = 750 + random() * 690
-        shapes.push(
-          <rect key={`strip-${i}`} x={x} y={y} width={width} height={height}
-            rx={i % 6 === 0 ? 80 : 1}
-            transform={`rotate(${-31 + design.artTilt * 0.25} ${x + width / 2} ${y + height / 2})`}
-            fill={i % 5 === 0 ? accent : i % 3 === 0 ? secondary : ink}
-            opacity={i % 5 === 0 ? 0.48 : 0.12 + random() * 0.12} />,
-        )
+    if (design.family.motif === "bloom") {
+      const cx = 1080 + rnd() * 210
+      const cy = 420 + rnd() * 120
+      for (let i = 0; i < 46; i++) {
+        const theta = i * 137.50776 + design.artTilt
+        const radial = 65 + i * 12.5
+        const px = cx + Math.cos(theta * Math.PI / 180) * radial * 0.78
+        const py = cy + Math.sin(theta * Math.PI / 180) * radial * 0.62
+        art.push(<ellipse key={`petal-${i}`} cx={px} cy={py}
+          rx={35 + rnd() * 110} ry={12 + rnd() * 55}
+          transform={`rotate(${theta} ${px} ${py})`}
+          fill={colors[i % colors.length]} opacity={.10 + rnd() * .21}
+          stroke="#fff" strokeOpacity=".30" strokeWidth="2" />)
       }
-      for (let i = 0; i < 7; i++) {
-        shapes.push(
-          <circle key={`cutout-${i}`} cx={240 + i * 195} cy={120 + (i % 3) * 270}
-            r={30 + random() * 105} fill="none" stroke={accent}
-            strokeWidth={1 + random() * 9} opacity="0.28" />,
-        )
-      }
+      art.push(<circle key="heart" cx={cx} cy={cy} r="180" fill="url(#gen-orb)" opacity=".52" />)
     }
-
-    if (design.family.motif === "symbols") {
-      for (let i = 0; i < 26; i++) {
-        const x = (i % 7) * 230 + 45
-        const y = Math.floor(i / 7) * 250 + 60
-        const size = 25 + random() * 92
-        const type = Math.floor(random() * 4)
-        const color = i % 4 === 0 ? accent : i % 3 === 0 ? secondary : ink
-        if (type === 0) {
-          shapes.push(<circle key={i} cx={x} cy={y} r={size} fill="none"
-            stroke={color} strokeWidth="3" opacity="0.32" />)
-        } else if (type === 1) {
-          shapes.push(<path key={i} d={`M ${x - size} ${y} H ${x + size} M ${x} ${y - size} V ${y + size}`}
-            fill="none" stroke={color} strokeWidth="5" opacity="0.34" />)
-        } else if (type === 2) {
-          shapes.push(<rect key={i} x={x - size / 2} y={y - size / 2}
-            width={size} height={size} transform={`rotate(45 ${x} ${y})`}
-            fill="none" stroke={color} strokeWidth="3" opacity="0.3" />)
-        } else {
-          shapes.push(<path key={i}
-            d={`M ${x - size} ${y + size / 2} L ${x} ${y - size} L ${x + size} ${y + size / 2} Z`}
-            stroke={color} strokeWidth="2" fill="none" opacity="0.3" />)
-        }
-      }
-    }
-    return shapes
+    return art
   }, [design])
 
   return (
-    <svg className="gen-art" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice"
-      aria-hidden="true" focusable="false">
-      <defs>
-        <pattern id="generative-grid" width="50" height="50" patternUnits="userSpaceOnUse">
-          <path d="M 50 0 L 0 0 0 50" fill="none"
-            stroke={design.palette.ink} strokeWidth="0.8" opacity="0.17" />
-        </pattern>
-      </defs>
-      {design.family.motif === "symbols" && (
-        <rect width="1600" height="1000" fill="url(#generative-grid)" />
-      )}
-      <g transform={`translate(${design.artOffset - 42} 0) scale(${design.artScale})`}>
-        {marks}
-      </g>
-      <path d="M 30 35 h 70 M 30 35 v 70 M 1570 965 h -70 M 1570 965 v -70"
-        stroke={design.palette.accent} strokeWidth="3" fill="none" opacity="0.7" />
-    </svg>
+    <div className="gen-atmosphere" aria-hidden="true">
+      <svg className="gen-art" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" focusable="false">
+        <defs>
+          <linearGradient id="gen-field" x1="0" y1="0" x2="1" y2=".36">
+            <stop offset="0%" stopColor={design.palette.paper} />
+            <stop offset="39%" stopColor={design.palette.bloom} />
+            <stop offset="72%" stopColor={design.palette.middle} />
+            <stop offset="100%" stopColor={design.palette.edge} />
+          </linearGradient>
+          <radialGradient id="gen-orb">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity=".95" />
+            <stop offset="25%" stopColor={design.palette.bloom} stopOpacity=".9" />
+            <stop offset="65%" stopColor={design.palette.secondary} stopOpacity=".68" />
+            <stop offset="100%" stopColor={design.palette.accent} stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id="gen-glow">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity=".86" />
+            <stop offset="43%" stopColor={design.palette.bloom} stopOpacity=".55" />
+            <stop offset="100%" stopColor={design.palette.secondary} stopOpacity="0" />
+          </radialGradient>
+          <filter id="gen-blur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="60" />
+          </filter>
+          <filter id="gen-soft-blur" x="-35%" y="-35%" width="170%" height="170%">
+            <feGaussianBlur stdDeviation="18" />
+          </filter>
+        </defs>
+        <rect width="1600" height="1000" fill="url(#gen-field)" />
+        <g className="gen-drift" filter="url(#gen-blur)" opacity=".75">
+          <ellipse cx={design.glowX * 16} cy={design.glowY * 10} rx="560" ry="350"
+            fill={design.palette.secondary} />
+          <ellipse cx={design.bloomX * 16} cy={design.bloomY * 10} rx="330" ry="440"
+            fill={design.palette.bloom} />
+          <ellipse cx="1450" cy="950" rx="530" ry="260" fill={design.palette.edge} />
+        </g>
+        <ellipse cx={design.bloomX * 16} cy={design.bloomY * 10} rx="580" ry="400"
+          fill="url(#gen-glow)" opacity=".38" />
+        <g className="gen-motif" transform={`translate(${design.artOffset - 38} 0) scale(${design.artScale})`}>
+          {marks}
+        </g>
+        <g opacity=".42" filter="url(#gen-soft-blur)">
+          <path d="M 450 150 C 770 -40 970 50 1250 -30" stroke="#ffffff" strokeWidth="70" fill="none" />
+        </g>
+      </svg>
+      <div className="gen-vignette" />
+    </div>
   )
 }
