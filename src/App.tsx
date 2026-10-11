@@ -310,6 +310,10 @@ export default function App() {
         "--gen-scale": design.typeScale,
         "--gen-name-size": `${5.4 * design.typeScale}rem`,
         "--gen-index-name-size": `${8.4 * design.typeScale}rem`,
+        "--gen-name-fluid": `${5.6 * design.typeScale}vw`,
+        "--gen-echo-fluid": `${4.7 * design.typeScale}vw`,
+        "--gen-bloom-fluid": `${6 * design.typeScale}vw`,
+        "--gen-wide-fluid": `${6.5 * design.typeScale}vw`,
       } as React.CSSProperties}
     >
       <GenerativeArt design={design} />
