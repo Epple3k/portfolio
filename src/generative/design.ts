@@ -4,8 +4,8 @@
  * same. A seed controls only bold type, luminous gradients, and small shifts
  * in the layout's composition.
  */
-export type Layout = "split" | "flip" | "banner" | "runway" | "scatter"
-export const LAYOUTS: readonly Layout[] = ["split", "flip", "banner", "runway", "scatter"]
+export type Layout = "split" | "flip" | "banner" | "runway" | "scatter" | "poster" | "mosaic" | "sideways"
+export const LAYOUTS: readonly Layout[] = ["split", "flip", "banner", "runway", "scatter", "poster", "mosaic", "sideways"]
 export type Motif = "gradient" | "gradient-soft" | "gradient-bright" | "gradient-deep" | "gradient-warm"
 
 type Palette = {
@@ -119,7 +119,26 @@ export function freshSeed(): string {
 
 export function initialSeed(): string {
   const provided = new URLSearchParams(window.location.search).get("seed")
-  return provided && /^[a-zA-Z0-9_-]{3,40}$/.test(provided) ? provided : freshSeed()
+  if (provided && /^[a-zA-Z0-9_-]{3,40}$/.test(provided)) return provided
+
+  // On refresh, avoid presenting the same layout twice in a row.
+  // This applies only to unseeded visits: permalink editions remain exact.
+  let previous: Layout | null = null
+  try {
+    previous = window.sessionStorage.getItem("generative-last-layout") as Layout | null
+  } catch {
+    // Private-browsing storage may be unavailable.
+  }
+  return nextEditionSeed(previous)
+}
+
+/** Pick a fresh seed that changes the actual composition, not just its hue. */
+export function nextEditionSeed(previous: Layout | null): string {
+  for (let attempt = 0; attempt < 40; attempt++) {
+    const seed = freshSeed()
+    if (previous === null || createDesign(seed).layout !== previous) return seed
+  }
+  return freshSeed()
 }
 
 export function createDesign(seed: string) {
@@ -151,6 +170,10 @@ export function createDesign(seed: string) {
     linkSpread: 7 + Math.round(rnd() * 12),
     titleTracking: -0.09 + rnd() * .045,
     projectTitleScale: 0.85 + rnd() * .35,
+    panelWeight: 0.75 + rnd() * 0.65,
+    wordSpacing: -0.08 + rnd() * 0.095,
+    cardGap: 6 + Math.round(rnd() * 12),
+    introAlignment: Math.floor(rnd() * 3),
   }
 }
 
