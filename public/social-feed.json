@@ -93,13 +93,13 @@
       "reviews"
     ],
     "coverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/18/f7/ee/18f7ee40-b891-3d7f-e0b3-e4e2470cbdac/5056818808906.png/600x600bb.jpg",
+    "spineColor": "#903018",
+    "spineTextColor": "#ffffff",
+    "spineColorCoverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/18/f7/ee/18f7ee40-b891-3d7f-e0b3-e4e2470cbdac/5056818808906.png/600x600bb.jpg",
     "mediaType": "album",
     "mediaTitle": "Inferno",
     "creator": "Boards of Canada",
-    "releaseYear": "",
-    "spineColor": "#903018",
-    "spineTextColor": "#ffffff",
-    "spineColorCoverUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/18/f7/ee/18f7ee40-b891-3d7f-e0b3-e4e2470cbdac/5056818808906.png/600x600bb.jpg"
+    "releaseYear": ""
   },
   {
     "platform": "letterboxd",
@@ -112,13 +112,13 @@
     "tabs": [
       "reviews"
     ],
+    "spineColor": "#301818",
+    "spineTextColor": "#ffffff",
+    "spineColorCoverUrl": "https://a.ltrbxd.com/resized/film-poster/1/2/5/5/3/9/4/1255394-the-odyssey-2026-0-600-0-900-crop.jpg?v=1eed046d0c",
     "mediaType": "movie",
     "mediaTitle": "The Odyssey",
     "creator": "",
-    "releaseYear": "2026",
-    "spineColor": "#301818",
-    "spineTextColor": "#ffffff",
-    "spineColorCoverUrl": "https://a.ltrbxd.com/resized/film-poster/1/2/5/5/3/9/4/1255394-the-odyssey-2026-0-600-0-900-crop.jpg?v=1eed046d0c"
+    "releaseYear": "2026"
   },
   {
     "platform": "letterboxd",
@@ -131,13 +131,13 @@
     "tabs": [
       "reviews"
     ],
+    "spineColor": "#18a8a8",
+    "spineTextColor": "#000000",
+    "spineColorCoverUrl": "https://a.ltrbxd.com/resized/film-poster/4/1/8/0/2/41802-mister-lonely-0-600-0-900-crop.jpg?v=a92e945486",
     "mediaType": "movie",
     "mediaTitle": "Mister Lonely",
     "creator": "",
-    "releaseYear": "2007",
-    "spineColor": "#18a8a8",
-    "spineTextColor": "#000000",
-    "spineColorCoverUrl": "https://a.ltrbxd.com/resized/film-poster/4/1/8/0/2/41802-mister-lonely-0-600-0-900-crop.jpg?v=a92e945486"
+    "releaseYear": "2007"
   },
   {
     "platform": "letterboxd",
@@ -150,12 +150,12 @@
     "tabs": [
       "reviews"
     ],
+    "spineColor": "#784830",
+    "spineTextColor": "#ffffff",
+    "spineColorCoverUrl": "https://a.ltrbxd.com/resized/film-poster/1/2/7/3/3/12733-lessons-of-darkness-0-600-0-900-crop.jpg?v=6946318b34",
     "mediaType": "movie",
     "mediaTitle": "Lessons of Darkness",
     "creator": "",
-    "releaseYear": "1992",
-    "spineColor": "#784830",
-    "spineTextColor": "#ffffff",
-    "spineColorCoverUrl": "https://a.ltrbxd.com/resized/film-poster/1/2/7/3/3/12733-lessons-of-darkness-0-600-0-900-crop.jpg?v=6946318b34"
+    "releaseYear": "1992"
   }
 ]
