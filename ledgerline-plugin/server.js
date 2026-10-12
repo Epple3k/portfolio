@@ -840,6 +840,53 @@ const httpServer = createHttpServer(async (req, res) => {
     return;
   }
 
+  // Diagnose the MCP protocol independently of the process health check.
+  // Never log request arguments or user content.
+  if (req.method === "GET" && url.pathname === "/health/mcp") {
+    const call = async (method, params, id) => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10000);
+      try {
+        const response = await fetch(`http://127.0.0.1:${PORT}${MCP_PATH}`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            accept: "application/json, text/event-stream",
+            "mcp-protocol-version": "2025-03-26",
+          },
+          body: JSON.stringify({ jsonrpc: "2.0", id, method, params }),
+          signal: controller.signal,
+        });
+        const body = await response.text();
+        let result;
+        try { result = JSON.parse(body); }
+        catch { result = { unexpectedResponse: body.slice(0, 200) }; }
+        return { httpStatus: response.status, result };
+      } finally {
+        clearTimeout(timeout);
+      }
+    };
+    try {
+      const init = await call("initialize", {
+        protocolVersion: "2025-03-26",
+        capabilities: {},
+        clientInfo: { name: "ledgerline-selfcheck", version: "0.1" },
+      }, 1);
+      const tools = await call("tools/list", {}, 2);
+      const count = tools.result?.result?.tools?.length;
+      const ok = init.httpStatus === 200 && Boolean(init.result?.result?.serverInfo)
+        && tools.httpStatus === 200 && Number.isInteger(count);
+      jsonResponse(res, ok ? 200 : 503, {
+        status: ok ? "ok" : "error",
+        initialize: { httpStatus: init.httpStatus, error: init.result?.error ?? null },
+        tools: { httpStatus: tools.httpStatus, count: count ?? null, error: tools.result?.error ?? null },
+      });
+    } catch (error) {
+      jsonResponse(res, 503, { status: "error", stage: "mcp-selfcheck", message: String(error) });
+    }
+    return;
+  }
+
   if (req.method === "OPTIONS" && url.pathname === "/api/blog/subscribe") {
     res.writeHead(204, {
       "Access-Control-Allow-Origin": "*",
@@ -1091,7 +1138,7 @@ const httpServer = createHttpServer(async (req, res) => {
     res.writeHead(204, {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, GET, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "content-type, mcp-session-id",
+      "Access-Control-Allow-Headers": "content-type, mcp-session-id, mcp-protocol-version, authorization, last-event-id",
       "Access-Control-Expose-Headers": "Mcp-Session-Id",
     });
     res.end();
@@ -1099,6 +1146,10 @@ const httpServer = createHttpServer(async (req, res) => {
   }
 
   if (url.pathname === MCP_PATH && ["POST", "GET", "DELETE"].includes(req.method ?? "")) {
+    const started = Date.now();
+    res.once("finish", () => {
+      console.log(`[MCP] ${req.method} ${res.statusCode} ${Date.now() - started}ms`);
+    });
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Expose-Headers", "Mcp-Session-Id");
     const server = createLedgerlineServer();
