@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { flushSync } from "react-dom"
 import { trackEvent } from "./analytics"
 import ReviewShelf from "./ReviewShelf"
+import CaseStudy from "./CaseStudy"
 
 import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
@@ -38,6 +39,7 @@ type SocialPost = {
 const PROJECTS = [
   {
     id: "01",
+    slug: "attention-field",
     title: "attention field",
     category: "Web Application",
     year: "2026",
@@ -49,6 +51,7 @@ const PROJECTS = [
   },
   {
     id: "02",
+    slug: "research-atlas",
     title: "research atlas",
     category: "Prototyping",
     year: "2026",
@@ -60,6 +63,7 @@ const PROJECTS = [
   },
   {
     id: "03",
+    slug: "aural-field",
     title: "aural field",
     category: "Generative Audio",
     year: "2026",
@@ -71,6 +75,7 @@ const PROJECTS = [
   },
   {
     id: "04",
+    slug: "ledgerline",
     title: "ledgerline",
     category: "Finance / MCP",
     year: "2026",
@@ -96,7 +101,10 @@ const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL ?? "https://api.emitrice.
 
 export default function App() {
   const [hoveredId, setHoveredId] = useState<string | null>(null)
-  const [activeId, setActiveId] = useState<string | null>(null)
+  const [activeId, setActiveId] = useState<string | null>(() => {
+    const slug = new URLSearchParams(window.location.search).get("project")
+    return PROJECTS.find((project) => project.slug === slug)?.id ?? null
+  })
   const [showBlog, setShowBlog] = useState(false)
   const [activeBlogKey, setActiveBlogKey] = useState<string | null>(null)
   const [activeBlogTab, setActiveBlogTab] = useState<BlogTab>("professional")
@@ -111,7 +119,7 @@ export default function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
 
-    if (params.get("blog") === "1") {
+    if (params.get("blog") === "1" && !params.get("project")) {
       setShowBlog(true)
     }
 
@@ -186,44 +194,72 @@ export default function App() {
       setSubscribeMessage(error instanceof Error ? error.message : "Could not subscribe right now.")
     }
   }
-  const handleProjectClick = (id: string) => {
-    const project = PROJECTS.find((p) => p.id === id)
-
-    if (project) {
-      trackEvent("project_open", {
-        project_id: project.id,
-        project_title: project.title,
-        project_category: project.category,
-      })
-    }
-    // @ts-ignore - startViewTransition is relatively new
+  const transitionProject = (id: string | null) => {
+    // @ts-ignore - startViewTransition has only recently entered the DOM typings
     if (!document.startViewTransition) {
       setActiveId(id)
       return
     }
-
     // @ts-ignore
     document.startViewTransition(() => {
-      flushSync(() => {
-        setActiveId(id)
-      })
+      flushSync(() => setActiveId(id))
     })
+  }
+
+  const handleProjectClick = (id: string) => {
+    const project = PROJECTS.find((item) => item.id === id)
+    if (!project) return
+
+    trackEvent("project_open", {
+      project_id: project.id,
+      project_title: project.title,
+      project_category: project.category,
+    })
+
+    // Shareable links, without losing the ability to use Back to return to the index.
+    const nextUrl = new URL(window.location.href)
+    nextUrl.searchParams.set("project", project.slug)
+    nextUrl.searchParams.delete("blog")
+    if (activeId === null) {
+      window.history.pushState({ ...(window.history.state ?? {}), portfolioCaseStudy: true }, "", nextUrl)
+    } else {
+      window.history.replaceState(window.history.state, "", nextUrl)
+    }
+    setShowBlog(false)
+    transitionProject(id)
   }
 
   const handleBack = () => {
-    // @ts-ignore
-    if (!document.startViewTransition) {
-      setActiveId(null)
+    if (window.history.state?.portfolioCaseStudy) {
+      window.history.back()
       return
     }
-
-    // @ts-ignore
-    document.startViewTransition(() => {
-      flushSync(() => {
-        setActiveId(null)
-      })
-    })
+    const nextUrl = new URL(window.location.href)
+    nextUrl.searchParams.delete("project")
+    window.history.replaceState(window.history.state, "", nextUrl)
+    transitionProject(null)
   }
+
+  useEffect(() => {
+    const syncFromUrl = () => {
+      const params = new URLSearchParams(window.location.search)
+      const slug = params.get("project")
+      const match = PROJECTS.find((project) => project.slug === slug)
+      transitionProject(match?.id ?? null)
+      setShowBlog(params.get("blog") === "1" && !match)
+    }
+    window.addEventListener("popstate", syncFromUrl)
+    return () => window.removeEventListener("popstate", syncFromUrl)
+  }, [])
+
+  useEffect(() => {
+    if (!activeId) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") handleBack()
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [activeId])
 
   const activeProject = PROJECTS.find((p) => p.id === activeId)
   const hoveredProject = PROJECTS.find((p) => p.id === hoveredId)
@@ -404,7 +440,18 @@ export default function App() {
                 key={p.id}
                 onMouseEnter={() => setHoveredId(p.id)}
                 onClick={() => handleProjectClick(p.id)}
-                className="relative overflow-hidden cursor-pointer group will-change-transform"
+                role="button"
+                tabIndex={0}
+                aria-label={"Read the " + p.title + " case study"}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault()
+                    handleProjectClick(p.id)
+                  }
+                }}
+                onFocus={() => setHoveredId(p.id)}
+                onBlur={() => setHoveredId(null)}
+                className="relative overflow-hidden cursor-pointer group will-change-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
                 style={
                   {
                     flex: isHovered
@@ -512,6 +559,7 @@ export default function App() {
                     <div className="text-sm opacity-80">
                       {p.category}
                     </div>
+                    <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.1em]">Read case study ↗</div>
                   </div>
 
                   <div className="text-white mix-blend-exclusion font-mono text-sm opacity-80">
@@ -727,87 +775,18 @@ export default function App() {
         </div>
       )}
 
-      {/* Fullscreen Case Study Overlay */}
+      {/* One shared editorial case-study template for every thumbnail. */}
       {activeProject && (
-        <div
-          className="fixed inset-0 z-50 flex flex-col bg-[#00ff00] overflow-hidden"
-          style={
-            {
-              viewTransitionName: `project-${activeProject.id}`,
-            } as React.CSSProperties
-          }
-        >
-          {"previewUrl" in activeProject && activeProject.previewUrl ? (
-            <iframe
-              src={activeProject.previewUrl}
-              title={`${activeProject.title} preview`}
-              tabIndex={-1}
-              aria-hidden="true"
-              className="absolute inset-0 w-full h-full border-0 pointer-events-none opacity-30"
-            />
-          ) : (
-            <img
-              src={activeProject.image}
-              alt={activeProject.title}
-              className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-multiply"
-            />
-          )}
-
-          <div className="relative z-10 p-8 flex justify-between items-center w-full">
-            <button
-              onClick={handleBack}
-              className="text-black text-xl hover:italic transition-all uppercase tracking-widest font-mono"
-            >
-              [ Close ]
-            </button>
-
-            <div className="font-mono text-xl">
-              {activeProject.id}
-            </div>
-          </div>
-
-          <div className="relative z-10 mt-auto p-8 md:p-16 max-w-4xl">
-            <h1 className="text-6xl md:text-8xl tracking-tighter mb-4">
-              {activeProject.title}
-            </h1>
-
-            <p className="text-2xl md:text-3xl leading-tight opacity-80 mb-8 max-w-2xl">
-              {activeProject.description}
-            </p>
-
-            <a
-              href={activeProject.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() =>
-                trackEvent("project_visit", {
-                  project_id: activeProject.id,
-                  project_title: activeProject.title,
-                  destination: activeProject.url,
-                })
-              }
-              className="inline-flex items-center gap-2 mb-8 font-mono uppercase tracking-wider text-sm border border-black px-4 py-3 hover:bg-black hover:text-[#00ff00] transition-colors"
-            >
-              Open Project ↗
-            </a>
-
-            <div className="flex gap-8 font-mono uppercase tracking-wider text-sm border-t border-black/20 pt-8">
-              <div>
-                <span className="opacity-50 block mb-1">
-                  Category
-                </span>
-                {activeProject.category}
-              </div>
-
-              <div>
-                <span className="opacity-50 block mb-1">
-                  Year
-                </span>
-                {activeProject.year}
-              </div>
-            </div>
-          </div>
-        </div>
+        <CaseStudy
+          key={activeProject.id}
+          project={activeProject}
+          onClose={handleBack}
+          onNext={() => {
+            const nextIndex = (PROJECTS.findIndex((item) => item.id === activeProject.id) + 1) % PROJECTS.length
+            handleProjectClick(PROJECTS[nextIndex].id)
+          }}
+          nextTitle={PROJECTS[(PROJECTS.findIndex((item) => item.id === activeProject.id) + 1) % PROJECTS.length].title}
+        />
       )}
     </div>
   )
