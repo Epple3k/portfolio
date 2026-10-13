@@ -29,22 +29,22 @@ type Project = {
 
 const CASE_STUDIES: Record<string, CaseStudyContent> = {
   "01": {
-    question: "What does collective attention look like when it behaves like a physical system, rather than a leaderboard?",
-    significance: "Most views of live information reduce public activity to what is trending. Attention Field explores relationships, momentum, and decay instead. Its guiding rule is simple: every visual signal should correspond to something in the data, not merely look interesting.",
+    question: "What if live data could be felt and understood at a glance, instead of read one update at a time?",
+    significance: "A conventional feed gives every update its own line and asks the viewer to assemble the larger picture. Attention Field approaches that problem spatially: busy articles carry more visual weight, related topics gather, and movement suggests shifting activity. The goal is an immediate, intuitive impression of the data, something you can sense before deciding what deserves a closer look.",
     context: "A live editorial-activity instrument built from English Wikipedia's public recent-change stream. It is an exploration of Wikipedia editing behavior, not a claim to measure public opinion.",
     role: "Independent concept, interaction design & engineering",
     stage: "Working public experiment",
     disciplines: "Data visualization / interaction / engineering",
     steps: [
       { title: "Follow the signal", detail: "Stream recent edits through Wikimedia EventStreams, with activity, topic classification, and edit history driving the display." },
-      { title: "Give relationships physics", detail: "Connect articles through actual shared Wikipedia categories, then use springs, repulsion, and collision to create a responsive field instead of scripted movement." },
+      { title: "Make relationships perceptible", detail: "Use real shared Wikipedia categories to draw articles together with springs, repulsion, and collision. Proximity and motion make clusters readable without asking someone to compare rows in a table." },
       { title: "Interrogate the patterns", detail: "Analyze edit summaries with a lightweight pattern engine that looks for repeated language across distinct editors, and expose a second, index-based view of the same data." },
     ],
     decisions: [
-      { title: "Data before decoration", detail: "Size, color, connections, and motion are tied to actual data or simulation behavior. An attractive but ungrounded visual effect was deliberately removed." },
+      { title: "Intuition must mean something", detail: "Activity determines size, topics determine color, and genuine connections shape movement. An attractive but ungrounded glow was removed: visual immediacy is only useful if it expresses the underlying data." },
       { title: "Verification without guesswork", detail: "Standalone tests exercised the simulation against real data, catching physics errors before release; the topic palette was checked for accessibility." },
     ],
-    outcome: "A live, framework-free browser instrument with two complementary ways to read changing Wikipedia activity: FIELD and INDEX. The engineering and interaction decisions are documented in the project repository.",
+    outcome: "A live browser instrument that offers two complementary encounters with the same activity: FIELD for sensing emerging patterns quickly, and INDEX for inspecting the individual records behind them. It is a design experiment in making complex information approachable before making it analytical.",
     boundary: "An expressive view of a particular public editing stream, not a statistically representative account of what everyone is paying attention to.",
     sourceUrl: "https://github.com/Epple3k/attention-field",
   },
