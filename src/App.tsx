@@ -46,7 +46,7 @@ const PROJECTS = [
     idlePreviewUrl: "https://epple3k.github.io/attention-field/?portfolioPreview=1&portfolioStatic=1&previewVersion=field-20261013",
     url: "https://epple3k.github.io/attention-field/",
     description:
-      "An interactive visualization that explores how attention shifts, clusters, and responds across a dynamic field.",
+      "A live Wikipedia edit stream translated into motion, weight, and proximity, so emerging patterns can be felt at a glance instead of disappearing into a list.",
   },
   {
     id: "02",
