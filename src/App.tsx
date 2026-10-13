@@ -4,7 +4,6 @@ import { trackEvent } from "./analytics"
 import ReviewShelf from "./ReviewShelf"
 import CaseStudy from "./CaseStudy"
 
-import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
 
 type BlogTab = "reviews" | "socials" | "professional"
@@ -43,8 +42,8 @@ const PROJECTS = [
     title: "attention field",
     category: "Web Application",
     year: "2026",
-    image: image2,
-    previewUrl: "https://epple3k.github.io/attention-field/?portfolioPreview=1",
+    previewUrl: "https://epple3k.github.io/attention-field/?portfolioPreview=1&previewVersion=field-20261013",
+    idlePreviewUrl: "https://epple3k.github.io/attention-field/?portfolioPreview=1&portfolioStatic=1&previewVersion=field-20261013",
     url: "https://epple3k.github.io/attention-field/",
     description:
       "An interactive visualization that explores how attention shifts, clusters, and responds across a dynamic field.",
