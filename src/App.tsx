@@ -226,6 +226,7 @@ export default function App() {
       window.history.replaceState(window.history.state, "", nextUrl)
     }
     setShowBlog(false)
+    setHoveredId(null)
     transitionProject(id)
   }
 
@@ -237,6 +238,7 @@ export default function App() {
     const nextUrl = new URL(window.location.href)
     nextUrl.searchParams.delete("project")
     window.history.replaceState(window.history.state, "", nextUrl)
+    setHoveredId(null)
     transitionProject(null)
   }
 
@@ -245,6 +247,7 @@ export default function App() {
       const params = new URLSearchParams(window.location.search)
       const slug = params.get("project")
       const match = PROJECTS.find((project) => project.slug === slug)
+      setHoveredId(null)
       transitionProject(match?.id ?? null)
       setShowBlog(params.get("blog") === "1" && !match)
     }
@@ -462,7 +465,7 @@ export default function App() {
                     transition:
                       "flex 400ms cubic-bezier(0.25, 1, 0.5, 1)",
                     backgroundColor: "#e5e5e5",
-                    viewTransitionName: `project-${p.id}`,
+                    viewTransitionName: activeId === p.id ? "none" : `project-${p.id}`,
                   } as React.CSSProperties
                 }
               >
