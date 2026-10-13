@@ -4,7 +4,6 @@ import { trackEvent } from "./analytics"
 import ReviewShelf from "./ReviewShelf"
 import CaseStudy from "./CaseStudy"
 
-import image3 from "./imports/image-1.png"
 
 type BlogTab = "reviews" | "socials" | "professional"
 
@@ -52,13 +51,13 @@ const PROJECTS = [
     id: "02",
     slug: "research-atlas",
     title: "research atlas",
-    category: "Prototyping",
+    category: "Research Intelligence / HCI",
     year: "2026",
-    image: image3,
-    previewUrl: "https://epple3k.github.io/fsu-research-atlas-2/?portfolioPreview=1",
+    previewUrl: "https://epple3k.github.io/fsu-research-atlas-2/?portfolioPreview=1&previewVersion=crossings-20261013",
+    idlePreviewUrl: "https://epple3k.github.io/fsu-research-atlas-2/?portfolioPreview=1&previewVersion=crossings-20261013",
     url: "https://epple3k.github.io/fsu-research-atlas-2/",
     description:
-      "An interactive tool for mapping ideas, sources, and connections to make complex research easier to explore.",
+      "A searchable atlas of FSU research that makes hidden intersections between disciplines visible, comparable, and traceable to real papers.",
   },
   {
     id: "03",
