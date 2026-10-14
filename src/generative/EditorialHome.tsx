@@ -14,19 +14,18 @@ export type EditorialProject = {
   image?: string
 }
 
-type Axis = "horizontal" | "vertical" | "static"
+type Axis = "horizontal" | "vertical"
 
-/* The large hero tiles are deliberately navigable in two directions.
- * Their axis belongs to the composition, so it is reproducible by seed. */
-export const TILE_AXES: Record<Layout, readonly [Axis, Axis, Axis, Axis]> = {
-  split: ["vertical", "static", "static", "static"],
-  flip: ["horizontal", "static", "static", "static"],
-  banner: ["static", "static", "static", "horizontal"],
-  runway: ["horizontal", "vertical", "static", "static"],
-  scatter: ["vertical", "static", "static", "static"],
-  poster: ["horizontal", "vertical", "static", "static"],
-  mosaic: ["vertical", "static", "static", "horizontal"],
-  sideways: ["vertical", "horizontal", "static", "static"],
+/** One featured canvas per composition. Only its scroll direction changes. */
+export const TILE_AXES: Record<Layout, Axis> = {
+  split: "vertical",
+  flip: "horizontal",
+  banner: "horizontal",
+  runway: "horizontal",
+  scatter: "vertical",
+  poster: "vertical",
+  mosaic: "horizontal",
+  sideways: "vertical",
 }
 
 type Props = {
@@ -47,151 +46,147 @@ const LINKS = [
   { label: "resume", href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing" },
 ]
 
-function TileSlide({
-  project,
-  stage,
-  hovered,
-  onOpen,
-}: {
-  project: EditorialProject
-  stage: "cover" | "detail" | "preview"
-  hovered: boolean
-  onOpen: () => void
-}) {
-  if (stage === "cover") {
+/* The real project is the visual. No replacement imagery, tinted covers,
+   graphics or editorial filler is used for these cards. */
+function ProjectImage({ project, hovered }: { project: EditorialProject; hovered: boolean }) {
+  const url = hovered ? project.previewUrl : project.idlePreviewUrl ?? project.previewUrl
+  if (url) {
     return (
-      <div className="editorial-slide editorial-slide-cover" role="group" aria-label={project.title + " cover"}>
-        <span className="editorial-slide-index">{project.id} / {project.category} / {project.year}</span>
-        <div className="editorial-slide-bottom">
-          <strong className="editorial-slide-title">{project.title}</strong>
-          <span className="editorial-slide-symbol" aria-hidden="true">↗</span>
-        </div>
-      </div>
+      <iframe
+        key={url}
+        src={url}
+        title={project.title + " project preview"}
+        aria-hidden="true"
+        tabIndex={-1}
+        loading="lazy"
+        className={"tile-preview-frame" + (hovered ? " tile-preview-active" : "")}
+      />
     )
   }
-
-  if (stage === "detail") {
-    return (
-      <div className="editorial-slide editorial-slide-detail" role="group" aria-label={project.title + " description"}>
-        <span className="editorial-slide-index">FIELD NOTE / {project.id}</span>
-        <p>{project.description}</p>
-        <button className="editorial-slide-action" type="button" onClick={onOpen}>
-          view project <span aria-hidden="true">↗</span>
-        </button>
-      </div>
-    )
+  if (project.image) {
+    return <img className="tile-preview-image" src={project.image} alt="" loading="lazy" />
   }
+  return <div className="tile-preview-fallback">{project.title}</div>
+}
 
-  const liveUrl = project.idlePreviewUrl || project.previewUrl
+function ProjectMeta({ project }: { project: EditorialProject }) {
   return (
-    <div className="editorial-slide editorial-slide-live" role="group" aria-label={project.title + " live preview"}>
-      <span className="editorial-slide-index">LIVE WINDOW / {project.id}</span>
-      {hovered && liveUrl ? (
-        <iframe
-          src={liveUrl}
-          title={project.title + " noninteractive live preview"}
-          loading="lazy"
-          tabIndex={-1}
-          aria-hidden="true"
-          className="editorial-live-frame"
-        />
-      ) : (
-        <div className="editorial-preview-placeholder">
-          <span>{project.category}</span>
-          <strong>{project.title}</strong>
-          <span>hover to preview / open to explore</span>
-        </div>
-      )}
-      <button className="editorial-slide-action editorial-live-action" type="button" onClick={onOpen}>
-        open project <span aria-hidden="true">↗</span>
-      </button>
+    <div className="tile-meta">
+      <span className="tile-meta-index">{project.id} / {project.year}</span>
+      <strong className="tile-meta-title">{project.title}</strong>
+      <span className="tile-meta-category">{project.category}</span>
     </div>
   )
 }
 
-function ProjectTile({
+function ProjectCard({
   project,
-  axis,
+  index,
   hovered,
   onHover,
   onOpen,
-  index,
 }: {
   project: EditorialProject
-  axis: Axis
+  index: number
   hovered: boolean
   onHover: (id: string | null) => void
   onOpen: (id: string) => void
-  index: number
 }) {
-  const open = () => onOpen(project.id)
-  const scrollable = axis !== "static"
-
-  const viewportRef = React.useRef<HTMLDivElement>(null)
-
-  React.useEffect(() => {
-    if (axis !== "horizontal") return
-    const node = viewportRef.current
-    if (!node) return
-
-    // React's wheel listeners may be passive. Use a native non-passive
-    // listener to turn an ordinary mouse wheel into horizontal tile browsing.
-    const onWheel = (event: WheelEvent) => {
-      if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return
-      const max = node.scrollWidth - node.clientWidth
-      const next = Math.max(0, Math.min(max, node.scrollLeft + event.deltaY))
-      if (Math.abs(next - node.scrollLeft) > 0.5) {
-        event.preventDefault()
-        node.scrollLeft = next
-      }
-    }
-    node.addEventListener("wheel", onWheel, { passive: false })
-    return () => node.removeEventListener("wheel", onWheel)
-  }, [axis])
-
   return (
     <article
-      className={"editorial-item editorial-item-" + (index + 1) + " editorial-axis-" + axis}
+      className={"tile-card tile-item-" + (index + 1)}
       onMouseEnter={() => onHover(project.id)}
       onMouseLeave={() => onHover(null)}
       onFocus={() => onHover(project.id)}
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node)) onHover(null)
-      }}
+      onBlur={() => onHover(null)}
     >
-      <div className="editorial-media" style={{ viewTransitionName: "project-" + project.id } as React.CSSProperties}>
-        {scrollable ? (
-          <>
-            <span className="editorial-scroll-cue" aria-hidden="true">
-              {axis === "horizontal" ? "SCROLL ↔" : "SCROLL ↕"}
-            </span>
-            <div
-              className="editorial-scroll-viewport"
-              tabIndex={0}
-              aria-label={project.title + " scrollable " + axis + " project gallery"}
-              aria-roledescription="scrollable gallery"
-              ref={viewportRef}
-            >
-              <TileSlide project={project} stage="cover" hovered={hovered} onOpen={open} />
-              <TileSlide project={project} stage="detail" hovered={hovered} onOpen={open} />
-              <TileSlide project={project} stage="preview" hovered={hovered} onOpen={open} />
-            </div>
-          </>
-        ) : (
-          <button type="button" className="editorial-static-tile" onClick={open} aria-label={"View " + project.title + " project"}>
-            <TileSlide project={project} stage="cover" hovered={hovered} onOpen={open} />
-          </button>
-        )}
-      </div>
-      <div className="editorial-caption">
-        <span className="editorial-caption-number">{project.id} / {project.year}</span>
-        <button type="button" className="editorial-caption-title" onClick={open}>
-          {project.title} <span aria-hidden="true">↗</span>
-        </button>
-        <span className="editorial-caption-type">{project.category}</span>
-        <p>{project.description}</p>
+      <button type="button" className="tile-media" aria-label={"View " + project.title} onClick={() => onOpen(project.id)}>
+        <ProjectImage project={project} hovered={hovered} />
+        <div className={"tile-overlay" + (hovered ? " tile-overlay-active" : "")}>
+          <ProjectMeta project={project} />
+        </div>
+      </button>
+      <div className="tile-caption">
+        <span>{project.id}</span>
+        <button type="button" onClick={() => onOpen(project.id)}>{project.title} ↗</button>
+        <span>{project.category}</span>
       </div>
     </article>
+  )
+}
+
+function FeatureGallery({
+  projects,
+  axis,
+  hoveredId,
+  onHover,
+  onOpen,
+}: {
+  projects: readonly EditorialProject[]
+  axis: Axis
+  hoveredId: string | null
+  onHover: (id: string | null) => void
+  onOpen: (id: string) => void
+}) {
+  const viewportRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    const viewport = viewportRef.current
+    if (!viewport || axis !== "horizontal") return
+
+    // Mouse wheels move wide tiles sideways. Trackpads can scroll natively.
+    const onWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return
+      const max = viewport.scrollWidth - viewport.clientWidth
+      const next = Math.max(0, Math.min(max, viewport.scrollLeft + event.deltaY))
+      if (Math.abs(next - viewport.scrollLeft) > .5) {
+        event.preventDefault()
+        viewport.scrollLeft = next
+      }
+    }
+    viewport.addEventListener("wheel", onWheel, { passive: false })
+    return () => viewport.removeEventListener("wheel", onWheel)
+  }, [axis])
+
+  return (
+    <section className={"tile-feature tile-axis-" + axis} aria-label={"Featured projects, scroll " + axis}>
+      <div className="tile-feature-media">
+        <div className="tile-scroll" ref={viewportRef} tabIndex={0} aria-label={"Scroll " + axis + " to browse projects"}>
+          {projects.map((project) => (
+            <div
+              key={project.id}
+              className="tile-feature-slide"
+              onMouseEnter={() => onHover(project.id)}
+              onMouseLeave={() => onHover(null)}
+              onFocus={() => onHover(project.id)}
+              onBlur={() => onHover(null)}
+            >
+              <ProjectImage project={project} hovered={hoveredId === project.id} />
+              <div className="tile-feature-scrim" aria-hidden="true" />
+              <div className="tile-feature-label">
+                <span>{project.id} / {project.year}</span>
+                <strong>{project.title}</strong>
+                <span>{project.category}</span>
+              </div>
+              <button
+                className="tile-feature-open"
+                type="button"
+                aria-label={"Open " + project.title}
+                onClick={() => onOpen(project.id)}
+              >
+                ↗
+              </button>
+            </div>
+          ))}
+        </div>
+        <span className="tile-scroll-hint" aria-hidden="true">{axis === "horizontal" ? "↔" : "↕"}</span>
+      </div>
+      <div className="tile-caption tile-feature-caption">
+        <span>00</span>
+        <span>selected work</span>
+        <span>scroll {axis === "horizontal" ? "↔" : "↕"}</span>
+      </div>
+    </section>
   )
 }
 
@@ -205,62 +200,53 @@ export function EditorialHome({
   subheading,
   subheadingVisible,
 }: Props) {
+  const hoveredProject = projects.find((project) => project.id === hoveredId)
   return (
-    <main className={"editorial-main editorial-" + layout}>
-      <header className="editorial-intro">
-        <div className="editorial-identity">
-          <div className="editorial-eyebrow">
-            <span>EMIT RICE®</span>
-            <span>SELECTED WORK / 2026</span>
+    <main className={"tile-main tile-layout-" + layout}>
+      <section className="tile-intro" aria-label="Introduction and navigation">
+        <div>
+          <h1 className="tile-name">emit rice</h1>
+          <div className="tile-description" aria-live="off">
+            {hoveredProject ? hoveredProject.description : (
+              <span className={subheadingVisible ? "" : "tile-description-hidden"}>{subheading}</span>
+            )}
           </div>
-          <h1 className="editorial-name">emit rice<span className="editorial-name-period">.</span></h1>
-          <p className={"editorial-description" + (subheadingVisible ? "" : " editorial-description-fade")}>
-            {subheading}
-          </p>
         </div>
+        <nav className="tile-links" aria-label="Explore and contact">
+          <button type="button" onClick={onBlogOpen}>blog</button>
+          {LINKS.map(({ label, href }) => (
+            <a
+              key={label}
+              href={href}
+              target={href.startsWith("mailto:") ? undefined : "_blank"}
+              rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+              onClick={() => trackEvent(label + "_click", { destination: href })}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      </section>
 
-        <div className="editorial-intro-bottom">
-          <div className="editorial-intro-rule" />
-          <p className="editorial-overview">
-            interfaces, research & systems.
-            <span> florida state university</span>
-          </p>
-          <nav className="gen-links editorial-nav" aria-label="Explore and contact">
-            <span className="gen-links-kicker">INDEX / CONNECT</span>
-            <button type="button" onClick={onBlogOpen}>blog <span aria-hidden="true">↗</span></button>
-            {LINKS.map(({ label, href }) => (
-              <a
-                key={label}
-                href={href}
-                target={href.startsWith("mailto:") ? undefined : "_blank"}
-                rel={href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
-                onClick={() => trackEvent(label + "_click", { destination: href })}
-              >
-                {label} <span aria-hidden="true">↗</span>
-              </a>
-            ))}
-          </nav>
-          <div className="editorial-folio">PORTFOLIO / 01–04</div>
-        </div>
-      </header>
-
-      <section className="editorial-gallery" aria-label="Selected project portfolio">
+      <section className="tile-gallery" aria-label="Selected projects">
+        <FeatureGallery
+          projects={projects}
+          axis={TILE_AXES[layout]}
+          hoveredId={hoveredId}
+          onHover={onHover}
+          onOpen={onOpen}
+        />
         {projects.map((project, index) => (
-          <ProjectTile
+          <ProjectCard
             key={project.id}
-            project={project}
             index={index}
-            axis={TILE_AXES[layout][index]}
+            project={project}
             hovered={hoveredId === project.id}
             onHover={onHover}
             onOpen={onOpen}
           />
         ))}
       </section>
-      <div className="editorial-footer" aria-hidden="true">
-        <span>DESIGN / RESEARCH / TECHNOLOGY</span>
-        <span>GENERATED EDITION • {layout.toUpperCase()}</span>
-      </div>
     </main>
   )
 }
