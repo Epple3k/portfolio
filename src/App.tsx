@@ -6,6 +6,7 @@ import image2 from "./imports/image-2.png"
 import image3 from "./imports/image-1.png"
 import { createDesign, initialSeed } from "./generative/design"
 import { GenerativeArt } from "./generative/GenerativeArt"
+import { EditorialHome } from "./generative/EditorialHome"
 
 type BlogTab = "reviews" | "socials" | "professional"
 
@@ -240,7 +241,6 @@ export default function App() {
     (a, b) => design.order.indexOf(a.id) - design.order.indexOf(b.id),
   )
   const activeProject = PROJECTS.find((p) => p.id === activeId)
-  const hoveredProject = PROJECTS.find((p) => p.id === hoveredId)
 
   const blogEntries = [
     ...notes.map((note, index) => ({
@@ -343,242 +343,21 @@ export default function App() {
         </svg>
       </button>
 
-      {/* Main Content Layout */}
-      <main className="gen-main relative z-10 w-full h-screen flex flex-col md:flex-row p-4 md:p-8 md:gap-4">
-        {/* Left Column */}
-        <div className="gen-intro w-full md:w-1/2 h-full flex flex-col justify-between max-w-[720px] pb-8 md:pb-0">
-          <div className="flex flex-col gap-6 lg:gap-12 mt-4 md:mt-8">
-            <h1 className="gen-name text-4xl md:text-5xl lg:text-6xl tracking-tight font-medium">
-              emit rice
-            </h1>
-
-            <div className="gen-description relative h-32 md:h-48">
-              <p
-                className={`absolute inset-0 text-xl md:text-2xl lg:text-3xl leading-snug md:leading-snug transition-all duration-400 ease-out ${
-                  hoveredProject
-                    ? "opacity-0 translate-y-4 pointer-events-none"
-                    : "opacity-100 translate-y-0"
-                }`}
-              >
-                <span
-                  className={`block transition-opacity duration-500 ease-in-out ${
-                    heroSubheadingVisible ? "opacity-100" : "opacity-0"
-                  }`}
-                >
-                  {HERO_SUBHEADINGS[heroSubheadingIndex]}
-                </span>
-              </p>
-
-              <p
-                className={`absolute inset-0 text-xl md:text-2xl lg:text-3xl leading-snug md:leading-snug transition-all duration-400 ease-out ${
-                  hoveredProject
-                    ? "opacity-100 translate-y-0"
-                    : "opacity-0 -translate-y-4 pointer-events-none"
-                }`}
-              >
-                {hoveredProject?.description}
-              </p>
-            </div>
-          </div>
-
-          <nav className="gen-links flex flex-col items-start gap-1 text-xl md:text-2xl tracking-tight mt-auto md:ml-12 lg:ml-24" aria-label="Explore and contact">
-            <span className="gen-links-kicker" aria-hidden="true">explore / connect</span>
-            <button
-              onClick={() => {
-                setShowBlog(true)
-                setActiveBlogKey(null)
-                setActiveBlogTab("professional")
-                trackEvent("blog_open")
-              }}
-              className="hover:italic hover:translate-x-2 transition-all duration-300 text-left"
-            >
-              blog
-            </button>
-            {[
-              {
-                label: "linkedin",
-                href: "https://www.linkedin.com/in/emit-rice/",
-              },
-              {
-                label: "github",
-                href: "https://github.com/Epple3k",
-              },
-              {
-                label: "email",
-                href: "mailto:rice.emit3k@gmail.com",
-              },
-              {
-                label: "resume",
-                href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing",
-              },
-            ].map(({ label, href }) => (
-              <a
-                key={label}
-                href={href}
-                target={href.startsWith("mailto:") ? undefined : "_blank"}
-                rel={
-                  href.startsWith("mailto:")
-                    ? undefined
-                    : "noopener noreferrer"
-                }
-                onClick={() =>
-                  trackEvent(`${label}_click`, {
-                    destination: href,
-                  })
-                }
-                className="hover:italic hover:translate-x-2 transition-all duration-300"
-              >
-                {label}
-              </a>
-            ))}
-          </nav>
-
-        </div>
-
-        {/* Right Column (Ribbon) */}
-        <div
-          className="gen-projects w-full md:w-1/2 lg:w-[54%] h-full flex flex-col gap-2 md:gap-3"
-          onMouseLeave={() => setHoveredId(null)}
-        >
-          {orderedProjects.map((p) => {
-            const isHovered = hoveredId === p.id
-            const isAnyHovered = hoveredId !== null
-
-            return (
-              <div
-                key={p.id}
-                onMouseEnter={() => setHoveredId(p.id)}
-                onClick={() => handleProjectClick(p.id)}
-                onFocus={() => setHoveredId(p.id)}
-                onBlur={() => setHoveredId(null)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault()
-                    handleProjectClick(p.id)
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-label={`View ${p.title} project`}
-                className="gen-card relative overflow-hidden cursor-pointer group will-change-transform"
-                style={
-                  {
-                    flex: isHovered
-                      ? "2.5"
-                      : isAnyHovered
-                        ? "0.75"
-                        : "1",
-                    transition:
-                      "flex 400ms cubic-bezier(0.25, 1, 0.5, 1)",
-                    backgroundColor: design.palette.panel,
-                    viewTransitionName: `project-${p.id}`,
-                  } as React.CSSProperties
-                }
-              >
-                {/* Project Visual
-                    Live sites are mounted only while hovered. Unmounting the
-                    iframe on mouse-leave guarantees off-hover previews stop
-                    running instead of quietly animating in the background. */}
-                {isHovered && "previewUrl" in p && p.previewUrl ? (
-                  <iframe
-                    key={`live-preview-${p.id}`}
-                    src={p.previewUrl}
-                    title={`${p.title} live preview`}
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    loading="eager"
-                    className="absolute top-0 left-0 border-0 pointer-events-none grayscale-0 opacity-100"
-                    style={{
-                      width: "200%",
-                      height: "200%",
-                      transform: "scale(0.5)",
-                      transformOrigin: "top left",
-                    }}
-                  />
-                ) : "idlePreviewUrl" in p && p.idlePreviewUrl ? (
-                  <iframe
-                    key={`idle-preview-${p.id}`}
-                    src={p.idlePreviewUrl}
-                    title={`${p.title} paused preview`}
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    loading="eager"
-                    className="absolute top-0 left-0 border-0 pointer-events-none grayscale opacity-30"
-                    style={{
-                      width: "200%",
-                      height: "200%",
-                      transform: "scale(0.5)",
-                      transformOrigin: "top left",
-                    }}
-                  />
-                ) : "image" in p && p.image ? (
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    className="absolute inset-0 w-full h-full object-cover grayscale opacity-30 scale-105"
-                  />
-                ) : (
-                  <div className="gen-card-preview-fallback absolute inset-0 bg-[#efffef] text-black p-6 flex flex-col justify-between grayscale opacity-40">
-                    <div className="font-mono text-[10px] uppercase tracking-[0.12em]">
-                      {p.category}
-                    </div>
-                    <div>
-                      <div className="text-4xl md:text-5xl tracking-[-0.05em] leading-[0.9]">
-                        {p.title}
-                      </div>
-                      <div className="mt-4 h-px bg-black/50" />
-                      <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.12em]">
-                        live preview on hover
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Overlay */}
-                <div
-                  className={`gen-card-overlay absolute inset-0 bg-[#d1d1d1] mix-blend-multiply transition-opacity duration-500 ${
-                    isHovered ? "opacity-0" : "opacity-60"
-                  }`}
-                />
-
-                {/* Scrim */}
-                <div
-                  className={`gen-card-scrim absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-opacity duration-400 ${
-                    isHovered ? "opacity-100" : "opacity-0"
-                  }`}
-                />
-
-                {/* Metadata */}
-                <div
-                  className={`gen-card-meta absolute bottom-4 left-4 right-4 md:bottom-6 md:left-6 md:right-6 flex justify-between items-end transition-all duration-400 transform ${
-                    isHovered
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-4"
-                  }`}
-                >
-                  <div className="text-white mix-blend-exclusion">
-                    <div className="text-xs md:text-sm font-mono opacity-80 mb-1">
-                      {p.id}
-                    </div>
-
-                    <h2 className="text-2xl md:text-3xl font-medium tracking-tight mb-1">
-                      {p.title}
-                    </h2>
-
-                    <div className="text-sm opacity-80">
-                      {p.category}
-                    </div>
-                  </div>
-
-                  <div className="text-white mix-blend-exclusion font-mono text-sm opacity-80">
-                    {p.year}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </main>
+      <EditorialHome
+        layout={design.layout}
+        projects={orderedProjects}
+        hoveredId={hoveredId}
+        onHover={setHoveredId}
+        onOpen={handleProjectClick}
+        onBlogOpen={() => {
+          setShowBlog(true)
+          setActiveBlogKey(null)
+          setActiveBlogTab("professional")
+          trackEvent("blog_open")
+        }}
+        subheading={HERO_SUBHEADINGS[heroSubheadingIndex]}
+        subheadingVisible={heroSubheadingVisible}
+      />
 
       {showBlog && (
         <div className="gen-modal fixed inset-0 z-50 bg-[#00ff00] text-black overflow-hidden flex flex-col">
