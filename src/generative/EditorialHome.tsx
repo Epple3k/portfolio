@@ -127,16 +127,27 @@ function ProjectTile({
   const open = () => onOpen(project.id)
   const scrollable = axis !== "static"
 
-  const wheelToHorizontal = (event: React.WheelEvent<HTMLDivElement>) => {
-    if (axis !== "horizontal" || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return
-    const el = event.currentTarget
-    const max = el.scrollWidth - el.clientWidth
-    const next = Math.max(0, Math.min(max, el.scrollLeft + event.deltaY))
-    if (Math.abs(next - el.scrollLeft) > 0.5) {
-      event.preventDefault()
-      el.scrollLeft = next
+  const viewportRef = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    if (axis !== "horizontal") return
+    const node = viewportRef.current
+    if (!node) return
+
+    // React's wheel listeners may be passive. Use a native non-passive
+    // listener to turn an ordinary mouse wheel into horizontal tile browsing.
+    const onWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return
+      const max = node.scrollWidth - node.clientWidth
+      const next = Math.max(0, Math.min(max, node.scrollLeft + event.deltaY))
+      if (Math.abs(next - node.scrollLeft) > 0.5) {
+        event.preventDefault()
+        node.scrollLeft = next
+      }
     }
-  }
+    node.addEventListener("wheel", onWheel, { passive: false })
+    return () => node.removeEventListener("wheel", onWheel)
+  }, [axis])
 
   return (
     <article
@@ -159,7 +170,7 @@ function ProjectTile({
               tabIndex={0}
               aria-label={project.title + " scrollable " + axis + " project gallery"}
               aria-roledescription="scrollable gallery"
-              onWheel={wheelToHorizontal}
+              ref={viewportRef}
             >
               <TileSlide project={project} stage="cover" hovered={hovered} onOpen={open} />
               <TileSlide project={project} stage="detail" hovered={hovered} onOpen={open} />
