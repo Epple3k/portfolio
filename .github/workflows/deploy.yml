@@ -2,10 +2,10 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/generative-portfolio]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Update social feed"]
+    workflows: ["Update social feed", "Validate generative portfolio"]
     types: [completed]
 
 permissions:
@@ -22,8 +22,11 @@ jobs:
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
+      # Always build the production homepage from main, even when a
+      # generative feature-branch push triggers this workflow.
       - uses: actions/checkout@v4
         with:
+          ref: main
           lfs: true
 
       - uses: pnpm/action-setup@v4
@@ -39,6 +42,27 @@ jobs:
       - run: pnpm run build
         env:
           VITE_POSTHOG_KEY: ${{ vars.VITE_POSTHOG_KEY }}
+
+      # Publish the experimental edition beside the original production build.
+      # Its source is isolated on a feature branch; the main homepage stays unchanged.
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/generative-portfolio
+          path: generative-source
+          lfs: true
+
+      - run: pnpm install --no-frozen-lockfile
+        working-directory: generative-source
+
+      # Relative asset URLs support GitHub Pages' /portfolio/generative/
+      # as well as custom-domain /generative/ paths.
+      - run: pnpm run build
+        working-directory: generative-source
+        env:
+          VITE_SITE_BASE: "./"
+          VITE_POSTHOG_KEY: ${{ vars.VITE_POSTHOG_KEY }}
+
+      - run: mkdir -p dist/generative && cp -a generative-source/dist/. dist/generative/
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
