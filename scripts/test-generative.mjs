@@ -77,22 +77,41 @@ test("next edition avoids repeating its last layout", () => {
   }
 })
 
-test("all eight layouts preserve a dedicated, visible navigation module", () => {
-  const css = readFileSync(new URL("../src/generative/navigation.css", import.meta.url), "utf8")
+test("all eight formats keep visible navigation and the original projects", () => {
+  const css = readFileSync(new URL("../src/generative/editorial.css", import.meta.url), "utf8")
   const app = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8")
+  const home = readFileSync(new URL("../src/generative/EditorialHome.tsx", import.meta.url), "utf8")
   const base = readFileSync(new URL("../src/main.tsx", import.meta.url), "utf8")
-  assert.ok(base.includes("navigation.css"))
-  assert.match(app, /<nav className="gen-links/)
-  assert.match(app, /aria-label="Explore and contact"/)
-  assert.ok(css.includes(".gen-shell .gen-links > a"))
-  assert.ok(css.includes("border-top: 2px solid var(--gen-ink)"))
+  assert.ok(base.includes('editorial.css'))
+  assert.match(app, /<EditorialHome/)
+  assert.match(home, /<nav className="gen-links editorial-nav"/)
+  assert.match(home, /aria-label="Explore and contact"/)
+  assert.ok(css.includes(".gen-shell .editorial-nav > button"))
+  assert.ok(css.includes("border-top: 1px solid #161616"))
   for (const layout of ["split", "flip", "banner", "runway", "scatter", "poster", "mosaic", "sideways"]) {
-    assert.ok(layout === "split" || css.includes(`.gen-shell.gen-${layout} .gen-links`),
-      `Missing curated navigation layout for ${layout}`)
+    assert.ok(css.includes(".editorial-" + layout), "Missing sheet format " + layout)
+    assert.ok(home.includes(layout + ": ["), "Missing tile-axis mapping " + layout)
   }
   for (const name of ["blog", "linkedin", "github", "email", "resume"]) {
-    assert.match(app, new RegExp(name))
+    assert.match(home, new RegExp(name))
   }
+  for (const id of projects) assert.match(app, new RegExp('id: "' + id + '"'))
+})
+
+test("featured canvases scroll in both directions with accessible controls", () => {
+  const home = readFileSync(new URL("../src/generative/EditorialHome.tsx", import.meta.url), "utf8")
+  const css = readFileSync(new URL("../src/generative/editorial.css", import.meta.url), "utf8")
+  assert.match(home, /split: \["vertical"/)
+  assert.match(home, /flip: \["horizontal"/)
+  assert.match(home, /poster: \["horizontal", "vertical"/)
+  assert.ok(home.includes('aria-roledescription="scrollable gallery"'))
+  assert.ok(home.includes('tabIndex={0}'))
+  assert.ok(home.includes('addEventListener("wheel", onWheel, { passive: false })'))
+  assert.ok(home.includes('onOpen={open}'))
+  assert.ok(css.includes("overflow-x: auto"))
+  assert.ok(css.includes("overflow-y: auto"))
+  assert.ok(css.includes("scroll-snap-type: x mandatory"))
+  assert.ok(css.includes("scroll-snap-type: y mandatory"))
 })
 
 test("reload control replaces the old toolbar and triggers an actual page refresh", () => {
