@@ -159,7 +159,7 @@ function ProjectTile({
         if (!event.currentTarget.contains(event.relatedTarget as Node)) onHover(null)
       }}
     >
-      <div className="editorial-media" style={{ viewTransitionName: "project-" + project.id }}>
+      <div className="editorial-media" style={{ viewTransitionName: "project-" + project.id } as React.CSSProperties}>
         {scrollable ? (
           <>
             <span className="editorial-scroll-cue" aria-hidden="true">
