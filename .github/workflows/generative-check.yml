@@ -1,6 +1,8 @@
 name: Validate generative portfolio
 
 on:
+  push:
+    branches: [feature/generative-portfolio]
   pull_request:
     branches: [main]
     paths:
