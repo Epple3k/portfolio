@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, feature/generative-portfolio]
+    branches: [main]
   workflow_dispatch:
   workflow_run:
     workflows: ["Update social feed", "Validate generative portfolio"]
@@ -22,8 +22,7 @@ jobs:
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      # Always build the production homepage from main, even when a
-      # generative feature-branch push triggers this workflow.
+      # Only the default-branch workflow deploys Pages, after validation.
       - uses: actions/checkout@v4
         with:
           ref: main
