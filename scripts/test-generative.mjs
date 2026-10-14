@@ -77,20 +77,25 @@ test("next edition avoids repeating its last layout", () => {
   }
 })
 
-test("all eight formats keep visible navigation and the original projects", () => {
+test("every composition retains the original content, navigation, and real previews", () => {
   const css = readFileSync(new URL("../src/generative/editorial.css", import.meta.url), "utf8")
   const app = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8")
   const home = readFileSync(new URL("../src/generative/EditorialHome.tsx", import.meta.url), "utf8")
   const base = readFileSync(new URL("../src/main.tsx", import.meta.url), "utf8")
   assert.ok(base.includes('editorial.css'))
   assert.match(app, /<EditorialHome/)
-  assert.match(home, /<nav className="gen-links editorial-nav"/)
+  assert.match(home, /<nav className="tile-links"/)
   assert.match(home, /aria-label="Explore and contact"/)
-  assert.ok(css.includes(".gen-shell .editorial-nav > button"))
-  assert.ok(css.includes("border-top: 1px solid #161616"))
+  assert.ok(home.includes("subheading"))
+  assert.ok(home.includes("ProjectImage"))
+  assert.ok(css.includes(".tile-links a:hover"))
+  assert.ok(css.includes('"Helvetica Neue", Arial, sans-serif'))
+  assert.ok(css.includes("linear-gradient(90deg, #f0fff0 0%, #c2ffc2 45%, #00ff00 100%)"))
+  assert.ok(!css.includes("#faff00"), "Bright yellow placeholder palette must not return")
+  assert.ok(!home.includes("FIELD NOTE"), "No filler editorial panels")
   for (const layout of ["split", "flip", "banner", "runway", "scatter", "poster", "mosaic", "sideways"]) {
-    assert.ok(css.includes(".editorial-" + layout), "Missing sheet format " + layout)
-    assert.ok(home.includes(layout + ": ["), "Missing tile-axis mapping " + layout)
+    assert.ok(css.includes(".tile-layout-" + layout), "Missing tile composition " + layout)
+    assert.ok(home.includes(layout + ': "'), "Missing scroll axis for " + layout)
   }
   for (const name of ["blog", "linkedin", "github", "email", "resume"]) {
     assert.match(home, new RegExp(name))
@@ -98,16 +103,17 @@ test("all eight formats keep visible navigation and the original projects", () =
   for (const id of projects) assert.match(app, new RegExp('id: "' + id + '"'))
 })
 
-test("featured canvases scroll in both directions with accessible controls", () => {
+test("large project canvas scrolls on both axes, using real project previews", () => {
   const home = readFileSync(new URL("../src/generative/EditorialHome.tsx", import.meta.url), "utf8")
   const css = readFileSync(new URL("../src/generative/editorial.css", import.meta.url), "utf8")
-  assert.match(home, /split: \["vertical"/)
-  assert.match(home, /flip: \["horizontal"/)
-  assert.match(home, /poster: \["horizontal", "vertical"/)
-  assert.ok(home.includes('aria-roledescription="scrollable gallery"'))
+  assert.match(home, /split: "vertical"/)
+  assert.match(home, /flip: "horizontal"/)
+  assert.match(home, /poster: "vertical"/)
   assert.ok(home.includes('tabIndex={0}'))
   assert.ok(home.includes('addEventListener("wheel", onWheel, { passive: false })'))
-  assert.ok(home.includes('onOpen={open}'))
+  assert.ok(home.includes("project.previewUrl"))
+  assert.ok(home.includes("project.idlePreviewUrl"))
+  assert.ok(home.includes("onClick={() => onOpen(project.id)}"))
   assert.ok(css.includes("overflow-x: auto"))
   assert.ok(css.includes("overflow-y: auto"))
   assert.ok(css.includes("scroll-snap-type: x mandatory"))
