@@ -1,37 +1,46 @@
-# Generative edition of the original portfolio
+# Generative portfolio: editorial sheets
 
-This is the **same portfolio**, not a competing visual identity.
+The \`feature/generative-portfolio\` branch presents the existing portfolio projects in a changing collection of **minimal editorial page layouts**, based on landscape graphic-design portfolio spreads.
 
-The live portfolio's proportions and interactive vocabulary stay recognizable:
+## Visual direction
 
-- Left-hand name, rotating subheading, and the familiar links
-- Right-hand stack of four expanding project panels
-- Grayscale project previews that come alive on hover
-- Original project overlays, blog tabs, subscriptions, links, and analytics
-- A clean, continuous directional gradient instead of decorative illustrations
+- White paper, black typography, acid-yellow picture fields.
+- Wide margins, small project indices, thin rules, measured captions.
+- Dramatic shifts in relative tile size: one-picture covers, mirrored covers, three-up strips, dual panels, narrow text rails, asymmetrical mosaics and stacked image spreads.
+- Eight reproducible compositions: \`split\`, \`flip\`, \`banner\`, \`runway\`, \`scatter\`, \`poster\`, \`mosaic\`, and \`sideways\`.
+- Every seeded edition preserves **all four real projects**, but changes their order and page geometry.
 
-## What changes?
+The same homepage, blog, case-study overlays, analytics, subscriber form and external project destinations remain connected. A corner reload control generates a new page composition. Permalinks with \`?seed=...\` retain an edition.
 
-A page-load seed selects one of five **bold sans-serif font families**, one of ten rich palettes, a subtle gradient angle/stop/glow, typographic weight/spacing, and minor shifts to the location and proportion of **existing** elements. The four project cards can appear in a different order, but their content never changes.
+## Scrollable project canvases
 
-The gradient editions are deliberately related to the original acid-green home page: **green**, **mint**, **pink**, **blue**, **purple**, **orange**, **lime**, **lavender**, **magenta**, and **aqua**. Each is a light-to-saturated field similar to the production gradient, rather than a graphic collage.
+The oversized yellow tiles are not static placeholders. They contain scrollable covers, project descriptions, and live-preview windows. Different compositions assign scrolling directions:
 
-Five seeded composition profiles now **rearrange the page**, not merely adjust margins: `split` preserves the original placement; `flip` reverses projects and introduction; `banner` turns the name into a full-width masthead; `runway` moves the expanding project ribbon horizontally across the bottom; and `scatter` places a lower-left ribbon below an oversized headline, with introduction and navigation on the right. The heading, introduction, links, and projects are the same elements and remain functional. Mobile uses a readable stacked arrangement. Typography, project-title sizing, navigation weight and spacing also vary independently within deliberate bounds.
+- **Vertical:** for tall feature tiles, drag/scroll down inside the image area.
+- **Horizontal:** for wide panoramas, swipe sideways or use an ordinary mouse wheel while hovering inside the canvas.
+- Small secondary tiles are direct project-opening targets, with a separate text link to open the corresponding project.
 
-## Edition controls
+Scroll regions are keyboard-focusable, carry accessible labels and use scroll snapping; reduced-motion settings are respected. Project previews only mount while the associated tile is active to avoid loading multiple interactive websites unnecessarily.
 
-- Every ordinary page load generates a new edition.
-- **new edition** immediately regenerates.
-- **copy edition** provides a `?seed=` permalink that reproduces the exact version.
-- No external procedural graphics libraries or stock illustrations are loaded.
+## Responsiveness
+
+On phones and smaller tablets, the designs become legible one- or two-column stacks, with the media and captions for **every project** still present and no horizontal page overflow.
+
+## Source
+
+- \`src/generative/EditorialHome.tsx\`: editorial layout and interactive scroll areas.
+- \`src/generative/editorial.css\`: white-paper visual styling, eight desktop formats and responsive rules.
+- \`src/generative/design.ts\`: seeded edition and project-order selection.
+- \`src/App.tsx\`: original data, blog, actions and overlays.
+- \`scripts/test-generative.mjs\`: deterministic generation and editorial interaction assertions.
 
 ## QA
 
-```bash
+\`\`\`bash
 pnpm install
 pnpm exec tsc --noEmit
 node --experimental-strip-types --test scripts/test-generative.mjs
 pnpm build
-```
+\`\`\`
 
-The original homepage remains built from `main`. The alternate branch builds separately into the `/generative/` path by the existing GitHub Pages workflow.
+Only the generative feature branch is changed here. The production homepage continues to build from \`main\` until these changes are deliberately merged.
