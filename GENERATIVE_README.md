@@ -4,7 +4,7 @@ The `feature/generative-portfolio` branch presents the existing portfolio projec
 
 ## Visual direction
 
-- White paper, black typography, acid-yellow picture fields.
+- The original portfolio’s green gradient (`#f0fff0` → `#c2ffc2` → `#00ff00`) and Helvetica Neue / Arial typography, with black editorial captions and acid-yellow picture fields.
 - Wide margins, small project indices, thin rules, measured captions.
 - Dramatic shifts in relative tile size: one-picture covers, mirrored covers, three-up strips, dual panels, narrow text rails, asymmetrical mosaics and stacked image spreads.
 - Eight reproducible compositions: `split`, `flip`, `banner`, `runway`, `scatter`, `poster`, `mosaic`, and `sideways`.
@@ -29,7 +29,7 @@ On phones and smaller tablets, the designs become legible one- or two-column sta
 ## Source
 
 - `src/generative/EditorialHome.tsx`: editorial layout and interactive scroll areas.
-- `src/generative/editorial.css`: white-paper visual styling, eight desktop formats and responsive rules.
+- `src/generative/editorial.css`: original green-gradient styling, eight desktop formats and responsive rules.
 - `src/generative/design.ts`: seeded edition and project-order selection.
 - `src/App.tsx`: original data, blog, actions and overlays.
 - `scripts/test-generative.mjs`: deterministic generation and editorial interaction assertions.
