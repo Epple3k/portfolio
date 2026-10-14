@@ -410,14 +410,14 @@
 .editorial-flip .editorial-item:nth-child(n+2) .editorial-media { display: none; }
 .editorial-split .editorial-item:nth-child(n+2) .editorial-caption p,
 .editorial-flip .editorial-item:nth-child(n+2) .editorial-caption p { display: none; }
-.editorial-flip .editorial-main {
+.editorial-flip.editorial-main {
   grid-template-areas: "intro gallery" "footer footer";
   grid-template-columns: minmax(300px, .85fr) minmax(0, 1.15fr);
 }
 
 /* Three-up spread with a long panorama below. */
-.editorial-banner .editorial-main,
-.editorial-runway .editorial-main {
+.editorial-banner.editorial-main,
+.editorial-runway.editorial-main {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas: "intro" "gallery" "footer";
   grid-template-rows: auto minmax(0, 1fr) auto;
@@ -468,9 +468,9 @@
 }
 
 /* Narrow description column beside an asymmetrical 3-picture magazine page. */
-.editorial-scatter .editorial-main,
-.editorial-mosaic .editorial-main,
-.editorial-poster .editorial-main {
+.editorial-scatter.editorial-main,
+.editorial-mosaic.editorial-main,
+.editorial-poster.editorial-main {
   grid-template-areas: "intro gallery" "footer footer";
   grid-template-columns: minmax(265px, .38fr) minmax(0, 1fr);
 }
@@ -525,7 +525,7 @@
 }
 
 /* Two long adjacent canvases, one vertical and one horizontal. */
-.editorial-sideways .editorial-main {
+.editorial-sideways.editorial-main {
   grid-template-columns: minmax(270px, .32fr) minmax(0, 1fr);
   grid-template-areas: "intro gallery" "footer footer";
 }
@@ -551,13 +551,13 @@
 
 @media (max-width: 959px) {
   .gen-shell .editorial-main,
-  .editorial-flip .editorial-main,
-  .editorial-banner .editorial-main,
-  .editorial-runway .editorial-main,
-  .editorial-scatter .editorial-main,
-  .editorial-poster .editorial-main,
-  .editorial-mosaic .editorial-main,
-  .editorial-sideways .editorial-main {
+  .editorial-flip.editorial-main,
+  .editorial-banner.editorial-main,
+  .editorial-runway.editorial-main,
+  .editorial-scatter.editorial-main,
+  .editorial-poster.editorial-main,
+  .editorial-mosaic.editorial-main,
+  .editorial-sideways.editorial-main {
     display: flex;
     flex-direction: column;
     min-height: 100svh;
