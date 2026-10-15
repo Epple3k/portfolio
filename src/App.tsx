@@ -82,6 +82,18 @@ const PROJECTS = [
     description:
       "A finance-native ChatGPT plugin for exploring company fundamentals, filings, macro data, and source-linked financial analysis directly in the conversation.",
   },
+  {
+    id: "05",
+    slug: "little-mind",
+    title: "a little mind",
+    category: "Human–AI Interaction / Creative Tooling",
+    year: "2026",
+    previewUrl: "https://little-mind.onrender.com/?portfolioPreview=1",
+    idlePreviewUrl: "https://little-mind.onrender.com/?portfolioPreview=1&portfolioStatic=1",
+    url: "https://little-mind.onrender.com/",
+    description:
+      "A small expressive sampling instrument that turns temperature, token filters, and repetition settings into visual interactions with a curious little face.",
+  },
 ]
 
 const HERO_SUBHEADINGS = [
