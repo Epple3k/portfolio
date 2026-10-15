@@ -108,6 +108,26 @@ const CASE_STUDIES: Record<string, CaseStudyContent> = {
     boundary: "An early-stage financial research tool, not a full market-data terminal. Issuer XBRL conventions vary, and important figures still require primary-source verification.",
     sourceUrl: "https://github.com/Epple3k/portfolio/tree/main/ledgerline-plugin",
   },
+  "05": {
+    question: "How can we make the statistical controls behind humanlike language feel understandable, without pretending they work like a human mind?",
+    significance: "Temperature, Top-K, Top-P, and repetition penalties shape what a language model says, but their numeric controls reveal almost nothing about the process. A Little Mind asks whether a compact expressive instrument can make these abstract mechanisms more approachable through movement, visual consequence, and experimentation. A small face provides a recognizable point of attention while the surrounding controls remain explicitly mathematical.",
+    context: "An independent interaction-design experiment for local language model sampling. The public prototype is a browser-based instrument with simulated token probabilities and a small demonstration vocabulary, plus exploratory adapters for local inference backends.",
+    role: "Independent concept, interaction design & front-end prototyping",
+    stage: "Public interactive demo / local integrations experimental",
+    disciplines: "Human–AI interaction / creative coding / information design",
+    steps: [
+      { title: "Find a human entry point", detail: "Use a minimal illustrated face as a temporary response to interaction, rather than depicting sampling controls as human emotions. It blinks at rest, reacts while parameters move, and settles back when released." },
+      { title: "Make each control explain itself", detail: "Represent temperature as an energetic dial, Top-K and Top-P as paired candidate/mass arcs, and token filtering and repetition as a shared constraint display. Keep precise numeric inputs beside the playful forms." },
+      { title: "Connect gestures to consequences", detail: "Animate facial features and a labeled demonstration token distribution from shared parameter state. Provide a test bench, presets, and a clearly identified simulated generation mode." },
+    ],
+    decisions: [
+      { title: "A face is a metaphor, not a model of cognition", detail: "The character responds to the act of adjusting a sampler, then returns to a neutral blink. The interface avoids treating randomness, probability mass, or penalties as literal psychological traits." },
+      { title: "Clarity over visual novelty", detail: "Several iterations pared back decorative nodes and over-sculpted housing, preserving the compact object-like composition while introducing more legible controls and clearer drag behavior." },
+    ],
+    outcome: "A publicly accessible interactive prototype for exploring model sampling as a physical-feeling instrument. It demonstrates the relationship between parameter values, a simulated token distribution, and expressive feedback, with further work planned on robust local-model connectivity and packaging.",
+    boundary: "The public demo uses illustrative probabilities and simulated text, not a remote language model. Native LM Studio plugin integration and cross-backend support remain experimental; no user testing yet demonstrates improved conceptual understanding.",
+    sourceUrl: "https://github.com/Epple3k/little_mind",
+  },
 }
 
 const SectionKicker = ({ number, children }: { number: string; children: React.ReactNode }) => (
@@ -154,7 +174,7 @@ export default function CaseStudy({
           ← Close / all projects
         </button>
         <span className="font-mono text-[10px] md:text-xs uppercase tracking-[0.1em]">
-          Case study / {project.id} of 04
+          Case study / {project.id} of 05
         </span>
       </div>
 
