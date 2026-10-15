@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "emit-rice-mail",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-05",
+  "routes": [
+    {
+      "pattern": "api.emitrice.com",
+      "custom_domain": true
+    }
+  ],
+  "vars": {
+    "RESEND_SEGMENT_NAME": "Emit Rice Blog Updates",
+    "BLOG_FROM_EMAIL": "Emit Rice <updates@contact.emitrice.com>",
+    "BLOG_REPLY_TO": "rice.emit3k@gmail.com",
+    "BLOG_PUBLIC_URL": "https://emitrice.com/#writing",
+    "ALLOWED_ORIGINS": "https://emitrice.com,https://www.emitrice.com,http://localhost:5173"
+  }
+}
