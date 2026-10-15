@@ -12,6 +12,7 @@ type Note = {
   date: string
   summary: string
   body?: string
+  url?: string
   tags?: string[]
   tabs?: BlogTab[]
 }
@@ -288,7 +289,7 @@ export default function App() {
       body: note.body ?? note.summary,
       tags: note.tags ?? [],
       tabs: note.tabs?.length ? note.tabs : ["professional" as BlogTab],
-      url: undefined as string | undefined,
+      url: note.url,
     })),
     ...socialPosts.map((post, index) => ({
       key: `social-${post.platform}-${index}`,
@@ -760,7 +761,7 @@ export default function App() {
                                       rel="noopener noreferrer"
                                       className="inline-flex items-center gap-2 mt-8 font-mono uppercase tracking-wider text-sm underline underline-offset-4 hover:italic"
                                     >
-                                      Open source ↗
+                                      {entry.type === "blog" ? "Open project ↗" : "Open source ↗"}
                                     </a>
                                   )}
 
