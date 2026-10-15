@@ -1,5 +1,22 @@
 [
   {
+    "title": "A Little Mind: Giving Language Model Parameters a Face",
+    "date": "2026-10-14",
+    "summary": "I built a small, slightly strange instrument for playing with the statistical controls behind language models. It's a design experiment in making abstract systems feel understandable.",
+    "body": "I've been experimenting with local language models lately, and something about their controls has always seemed funny to me. Temperature, Top-P, Top-K, repetition penalties: a handful of little numbers can completely change how a model behaves, but they're presented as if their meaning is self-evident.\n\nThey're not really human qualities, either. A model might seem more exploratory or more rigid when you adjust them, but there isn't a clean psychological equivalent for any of these statistical mechanisms. I wanted to design around that disconnect rather than explain it away.\n\nSo I built A Little Mind. It's a compact sampling instrument with a tiny illustrated face at its center. When you turn a dial or drag a probability control, the face reacts. Let go, and it settles right back into its vacant little blinking routine. The surrounding graphics give each parameter its own visual logic, while the numeric readouts keep the instrument useful.\n\nThe public version is an interactive React prototype. Its probability distribution and generated words are simulated, explicitly, so you can play with the concepts without needing a model running. Connecting it reliably to LM Studio and other local backends is the next engineering step, along with figuring out how to package it as a proper add-on.\n\nI like building interfaces that make complicated systems a little less opaque. This one also gets to have a face.",
+    "url": "https://little-mind.onrender.com/",
+    "tags": [
+      "project launch",
+      "human–AI interaction",
+      "interface design",
+      "local AI",
+      "creative coding"
+    ],
+    "tabs": [
+      "professional"
+    ]
+  },
+  {
     "title": "Blog Publisher Gets Smarter",
     "date": "2026-10-06",
     "summary": "I just finished a small but useful upgrade to the blog publisher behind emitrice.com. The publisher now has a post history view, so I can see previously published posts and delete old ones directly from the tool. More importantly, email upd",
