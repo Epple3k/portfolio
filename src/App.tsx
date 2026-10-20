@@ -415,7 +415,7 @@ export default function App() {
               },
               {
                 label: "resume",
-                href: "https://drive.google.com/file/d/1T0kGhrBbBjQcRAYVWHMlaBru_YGmZLZA/view?usp=sharing",
+                href: "https://emitrice.com/Emit_Rice_Resume.pdf",
               },
             ].map(({ label, href }) => (
               <a
