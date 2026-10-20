@@ -9,11 +9,11 @@ import html
 import json
 import re
 import sys
-from datetime import timezone
+from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import quote, urlparse, urlunparse
 from urllib.request import Request, urlopen
 from xml.etree import ElementTree as ET
 
@@ -103,6 +103,31 @@ def items_from_rss(payload):
     return items
 
 
+def rss2json_to_xml(response):
+    """Convert a public RSS2JSON mirror to the same RSS shape as the source."""
+    payload = json.loads(response)
+    if payload.get("status") != "ok":
+        raise ValueError(f"RSS2JSON failed: {payload.get('message', payload.get('status'))}")
+    root = ET.Element("rss")
+    channel = ET.SubElement(root, "channel")
+    for article in payload.get("items", []):
+        item = ET.SubElement(channel, "item")
+        for name, value in (
+            ("title", article.get("title", "")),
+            ("link", article.get("link", "")),
+            ("description", article.get("description", "")),
+            (CONTENT, article.get("content", "") or article.get("description", "")),
+        ):
+            ET.SubElement(item, name).text = value
+        pub = article.get("pubDate", "")
+        if pub:
+            parsed = datetime.fromisoformat(pub.replace("Z", "+00:00"))
+            if parsed.tzinfo is None:
+                parsed = parsed.replace(tzinfo=timezone.utc)
+            ET.SubElement(item, "pubDate").text = parsed.strftime("%a, %d %b %Y %H:%M:%S %z")
+    return ET.tostring(root, encoding="utf-8")
+
+
 def main():
     args = argparse.ArgumentParser()
     args.add_argument("--feed-file", help="Use local RSS fixture instead of network")
@@ -115,8 +140,14 @@ def main():
             "Accept": "application/rss+xml, application/xml, text/xml, */*",
             "Accept-Language": "en-US,en;q=0.9"
         })
-        with urlopen(request, timeout=30) as response:
-            feed_data = response.read(8_000_000)
+        try:
+            with urlopen(request, timeout=30) as response:
+                feed_data = response.read(8_000_000)
+        except Exception as direct_error:
+            print(f"Substack direct RSS unavailable ({direct_error}); trying RSS2JSON mirror")
+            mirror = "https://api.rss2json.com/v1/api.json?rss_url=" + quote(FEED, safe="")
+            with urlopen(Request(mirror, headers={"User-Agent": "Mozilla/5.0"}), timeout=30) as response:
+                feed_data = rss2json_to_xml(response.read(8_000_000))
 
     incoming = items_from_rss(feed_data)
     existing = json.loads(NOTES.read_text(encoding="utf-8"))
