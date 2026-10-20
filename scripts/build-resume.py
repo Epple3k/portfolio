@@ -115,7 +115,7 @@ project("Accessible Computing Interface", "Accessibility / HCI",
         "Interviewed users with accessibility needs and prototyped a hands-free Arduino/Python input system achieving <b>95% accuracy</b>.")
 
 section("Leadership")
-paragraph("<b>Vice President of Finance, Collegiate DECA</b>  |  Managed a <b>$4,500</b> chapter budget and expense reporting.  <b>Eagle Scout</b>  |  Directed a <b>120-hour</b> project with 25 volunteers and $1,800 raised.",
+paragraph("<b>Collegiate DECA | VP of Finance (2024-25):</b> Managed a <b>$4,500</b> chapter budget.  <b>Student Government | Senator (2024-25):</b> Co-sponsored a campus study-space expansion.  <b>Eagle Scout (2023):</b> Led a <b>120-hour</b> community project with 25 volunteers and $1,800 raised.",
           size=8.85, lead=12.8)
 section("Skills")
 paragraph("<b>Product & Design:</b> Figma, UX research, interviews, human-centered design, prototyping, data visualization, Adobe Photoshop/Illustrator<br/><b>Technical & Analytics:</b> React, TypeScript, Python, SQL, Git/GitHub, HTML/CSS, Excel, Google Sheets, Power BI, Tableau",
