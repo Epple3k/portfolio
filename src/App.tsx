@@ -761,7 +761,7 @@ export default function App() {
                                       rel="noopener noreferrer"
                                       className="inline-flex items-center gap-2 mt-8 font-mono uppercase tracking-wider text-sm underline underline-offset-4 hover:italic"
                                     >
-                                      {entry.type === "blog" ? "Open project ↗" : "Open source ↗"}
+                                      {entry.url?.includes("paperantenna.substack.com") ? "Read on Paper Antenna ↗" : entry.type === "blog" ? "Open project ↗" : "Open source ↗"}
                                     </a>
                                   )}
 
