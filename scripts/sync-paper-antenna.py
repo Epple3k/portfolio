@@ -111,8 +111,9 @@ def main():
         feed_data = Path(options.feed_file).read_bytes()
     else:
         request = Request(FEED, headers={
-            "User-Agent": "PaperAntennaPortfolioSync/1.0",
-            "Accept": "application/rss+xml, application/xml"
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            "Accept": "application/rss+xml, application/xml, text/xml, */*",
+            "Accept-Language": "en-US,en;q=0.9"
         })
         with urlopen(request, timeout=30) as response:
             feed_data = response.read(8_000_000)
