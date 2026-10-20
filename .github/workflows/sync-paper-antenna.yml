@@ -1,0 +1,53 @@
+name: Update Paper Antenna blog
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/sync-paper-antenna.py"
+      - ".github/workflows/sync-paper-antenna.yml"
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-antenna-blog-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Import newly published Paper Antenna articles
+        run: python scripts/sync-paper-antenna.py
+
+      - name: Commit new portfolio blog entries
+        run: |
+          if git diff --quiet -- public/notes.json; then
+            echo "No newly published articles."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/notes.json
+          git commit -m "Cross-post new Paper Antenna articles"
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "Could not push updated blog after three attempts" >&2
+          exit 1
