@@ -1,5 +1,19 @@
 [
   {
+    "title": "products are promises",
+    "date": "2026-10-19",
+    "summary": "How software transformed companies from sellers of products into architects of the future.",
+    "body": "Technology has become the infrastructure of nearly every industry, and companies are increasingly selling something more ambitious than products: participation in a future of their own design.\n\nIn this Paper Antenna essay, I examine how technology companies construct narratives around the problems they're promising to solve.\n\nOriginally published on Paper Antenna. Read the full essay at the link below.",
+    "url": "https://paperantenna.substack.com/p/products-are-promises",
+    "tags": [
+      "paper antenna",
+      "essay"
+    ],
+    "tabs": [
+      "professional"
+    ]
+  },
+  {
     "title": "A Little Mind: Giving Language Model Parameters a Face",
     "date": "2026-10-14",
     "summary": "I built a small, slightly strange instrument for playing with the statistical controls behind language models. It's a design experiment in making abstract systems feel understandable.",
