@@ -2,13 +2,6 @@ name: Update Paper Antenna blog
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "scripts/sync-paper-antenna.py"
-      - ".github/workflows/sync-paper-antenna.yml"
-  schedule:
-    - cron: "7,22,37,52 * * * *"
 
 permissions:
   contents: write
