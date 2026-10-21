@@ -18,6 +18,7 @@ type CaseStudyContent = {
 }
 type Project = {
   id: string
+  slug: string
   title: string
   category: string
   year: string
@@ -310,6 +311,10 @@ export default function CaseStudy({
                 onClick={() => trackOutbound(study.sourceUrl, "source_code")}
                 className="border-2 border-black px-6 py-4 font-mono text-xs uppercase tracking-[0.08em] transition-colors hover:bg-black hover:text-[#00ff00]"
               >Source & documentation ↗</a>
+              <a
+                href={`/projects/${project.slug}/`}
+                className="border-2 border-black px-6 py-4 font-mono text-xs uppercase tracking-[0.08em] transition-colors hover:bg-black hover:text-[#00ff00]"
+              >Shareable case study ↗</a>
             </div>
           </div>
         </section>
