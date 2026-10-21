@@ -1,7 +1,7 @@
 {
   "description": "Showcase your projects in an interactive portfolio with a sleek, minimal design that highlights your work through smooth thumbnail expansions and contextual information.",
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,
