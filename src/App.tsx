@@ -464,19 +464,17 @@ export default function App() {
             const isAnyHovered = hoveredId !== null
 
             return (
-              <div
+              <a
                 key={p.id}
+                href={`/projects/${p.slug}/`}
                 onMouseEnter={() => setHoveredId(p.id)}
-                onClick={() => handleProjectClick(p.id)}
-                role="button"
-                tabIndex={0}
-                aria-label={"Read the " + p.title + " case study"}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault()
-                    handleProjectClick(p.id)
-                  }
+                onClick={(event) => {
+                  if (event.defaultPrevented || event.button !== 0 ||
+                      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+                  event.preventDefault()
+                  handleProjectClick(p.id)
                 }}
+                aria-label={"Read the " + p.title + " case study"}
                 onFocus={() => setHoveredId(p.id)}
                 onBlur={() => setHoveredId(null)}
                 className="relative overflow-hidden cursor-pointer group will-change-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
@@ -594,7 +592,7 @@ export default function App() {
                     {p.year}
                   </div>
                 </div>
-              </div>
+              </a>
             )
           })}
         </div>
