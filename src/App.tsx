@@ -15,6 +15,13 @@ type Note = {
   url?: string
   tags?: string[]
   tabs?: BlogTab[]
+  mediaType?: string
+  mediaTitle?: string
+  creator?: string
+  releaseYear?: string
+  coverUrl?: string
+  spineColor?: string
+  spineTextColor?: string
 }
 
 type SocialPost = {
@@ -290,6 +297,13 @@ export default function App() {
       tags: note.tags ?? [],
       tabs: note.tabs?.length ? note.tabs : ["professional" as BlogTab],
       url: note.url,
+      mediaType: note.mediaType,
+      mediaTitle: note.mediaTitle,
+      creator: note.creator,
+      releaseYear: note.releaseYear,
+      coverUrl: note.coverUrl,
+      spineColor: note.spineColor,
+      spineTextColor: note.spineTextColor,
     })),
     ...socialPosts.map((post, index) => ({
       key: `social-${post.platform}-${index}`,
