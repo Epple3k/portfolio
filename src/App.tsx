@@ -96,6 +96,8 @@ const PROJECTS = [
     title: "2030canvas",
     category: "Civic AI / Research R&D",
     year: "2026",
+    previewUrl: "https://2030canvas.emitrice.com/",
+    idlePreviewUrl: "https://2030canvas.emitrice.com/",
     url: "https://2030canvas.emitrice.com/",
     description:
       "An interviewer-guided causal canvas for translating residents' planning priorities into factors and relationships they can inspect, question, and revise.",
@@ -526,25 +528,6 @@ export default function App() {
                       transformOrigin: "top left",
                     }}
                   />
-                ) : p.id === "05" ? (
-                  <div className="absolute inset-0 flex flex-col justify-between overflow-hidden bg-[#c9e8cf] p-5 text-black md:p-6">
-                    <div className="flex justify-between gap-3 font-mono text-[10px] uppercase tracking-[0.12em]">
-                      <span>Research instrument / Civic AI</span><span>2030 / Canvas</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 md:gap-3">
-                      {["Resident vision", "Factors", "Diagram", "Revision"].map((label, index) => (
-                        <React.Fragment key={label}>
-                          {index > 0 && <span className="shrink-0 font-mono text-sm">→</span>}
-                          <div className="min-w-0 flex-1 border border-black/70 bg-[#efffef] px-1 py-3 text-center font-mono text-[9px] uppercase leading-tight tracking-[-0.02em] md:px-2 md:py-5 md:text-xs">
-                            {label}
-                          </div>
-                        </React.Fragment>
-                      ))}
-                    </div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.08em]">
-                      Interviews → working representation → participant critique
-                    </div>
-                  </div>
                 ) : "image" in p && p.image ? (
                   <img
                     src={p.image}

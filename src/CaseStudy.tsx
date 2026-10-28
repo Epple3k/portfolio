@@ -231,23 +231,7 @@ export default function CaseStudy({
               <span>Project window</span><span>Live artifact ↗</span>
             </div>
             <div className="relative min-h-[280px] flex-1 overflow-hidden bg-[#dbefdb]">
-              {project.id === "05" ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-[#dcefe0] p-6 md:p-10">
-                  <div className="w-full max-w-[520px] border-2 border-black bg-[#efffef] shadow-[10px_10px_0_0_#111]">
-                    <div className="flex justify-between border-b border-black px-4 py-3 font-mono text-[10px] uppercase tracking-[0.1em]">
-                      <span>2030canvas / Research workflow</span><span>Illustrative</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 p-5 text-center font-mono text-[11px] uppercase leading-tight md:gap-5 md:p-8">
-                      <div className="border border-black p-4">Resident vision</div>
-                      <div className="border border-black p-4">Factor bank</div>
-                      <div className="col-span-2 text-xl">↘ &nbsp; ↙</div>
-                      <div className="col-span-2 border-2 border-black bg-[#b9e0c0] p-4 text-sm">Editable causal representation</div>
-                      <div className="col-span-2 text-xl">↓</div>
-                      <div className="col-span-2 border border-black p-4">Participant critique and revision</div>
-                    </div>
-                  </div>
-                </div>
-              ) : project.previewUrl ? (
+              {project.previewUrl ? (
                 <iframe
                   key={project.id}
                   src={project.previewUrl}
