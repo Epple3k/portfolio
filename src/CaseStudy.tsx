@@ -15,6 +15,13 @@ type CaseStudyContent = {
   outcome: string
   boundary: string
   sourceUrl: string
+  research?: {
+    headline: string
+    note: string
+    themes: Step[]
+    pipeline: Step[]
+    next: string
+  }
 }
 type Project = {
   id: string
@@ -110,24 +117,41 @@ const CASE_STUDIES: Record<string, CaseStudyContent> = {
     sourceUrl: "https://github.com/Epple3k/portfolio/tree/main/ledgerline-plugin",
   },
   "05": {
-    question: "How can we make the statistical controls behind humanlike language feel understandable, without pretending they work like a human mind?",
-    significance: "Temperature, Top-K, Top-P, and repetition penalties shape what a language model says, but their numeric controls reveal almost nothing about the process. A Little Mind asks whether a compact expressive instrument can make these abstract mechanisms more approachable through movement, visual consequence, and experimentation. A small face provides a recognizable point of attention while the surrounding controls remain explicitly mathematical.",
-    context: "An independent interaction-design experiment for local language model sampling. The public prototype is a browser-based instrument with simulated token probabilities and a small demonstration vocabulary, plus exploratory adapters for local inference backends.",
-    role: "Independent concept, interaction design & front-end prototyping",
-    stage: "Public interactive demo / local integrations experimental",
-    disciplines: "Human–AI interaction / creative coding / information design",
+    question: "What if the people behind a planning model could change the model themselves?",
+    significance: "Public planning works in two languages. Residents describe the futures they want; analysts need factors, constraints, and relationships they can reason about. The translation between those languages is where assumptions can become invisible. 2030canvas makes that translation a shared, editable object. The AI can propose an interpretation, but participants and researchers must be able to challenge it.",
+    context: "Part of ongoing human-centered AI and civic-participation research at Florida State University's School of Information, in the context of Leon County's long-range planning. The research explores how scenario-based conversations and inspectable representations might make planning trade-offs easier to discuss. This is a lab prototype, not an official county planning service.",
+    role: "Undergraduate research assistant / interface and product prototyping within a research team",
+    stage: "Working research prototypes / further interviews planned",
+    disciplines: "Human-centered AI / civic technology / information design",
     steps: [
-      { title: "Find a human entry point", detail: "Use a minimal illustrated face as a temporary response to interaction, rather than depicting sampling controls as human emotions. It blinks at rest, reacts while parameters move, and settles back when released." },
-      { title: "Make each control explain itself", detail: "Represent temperature as an energetic dial, Top-K and Top-P as paired candidate/mass arcs, and token filtering and repetition as a shared constraint display. Keep precise numeric inputs beside the playful forms." },
-      { title: "Connect gestures to consequences", detail: "Animate facial features and a labeled demonstration token distribution from shared parameter state. Provide a test bench, presets, and a clearly identified simulated generation mode." },
+      { title: "Listen before modeling", detail: "The research began with 15 exploratory stakeholder interviews. Those conversations inform the questions and interaction requirements; they are not treated as a representative survey or evidence that the prototype works." },
+      { title: "Make interpretation inspectable", detail: "Turn a planning scenario into candidate factors, constraints, and proposed causal links. The diagram exposes the research team's and AI's interpretation instead of presenting it as a finished explanation." },
+      { title: "Give people a way to disagree", detail: "A manual interface supports direct edits. A conversational interface converts ordinary-language requests into proposed edits for review. A separate factor bank defines which parts of the representation can change and which must remain constrained." },
     ],
     decisions: [
-      { title: "A face is a metaphor, not a model of cognition", detail: "The character responds to the act of adjusting a sampler, then returns to a neutral blink. The interface avoids treating randomness, probability mass, or penalties as literal psychological traits." },
-      { title: "Clarity over visual novelty", detail: "Several iterations pared back decorative nodes and over-sculpted housing, preserving the compact object-like composition while introducing more legible controls and clearer drag behavior." },
+      { title: "AI suggests; people decide", detail: "Natural-language interpretation is a proposal, not an authoritative reading of resident intent. Participants need to inspect, correct, and reject suggestions before they become part of a working diagram." },
+      { title: "Constraints should be visible", detail: "The factor bank separates inputs and constraints, participant-adjustable factors, and outputs. That distinction makes room for participant agency without letting a demo silently rewrite the research team's assumptions." },
+      { title: "Keep the research layers separate", detail: "The public canvas, factor definitions, manual edits, and conversational edits serve different functions. Their purpose is to support the interview process; downstream numerical modeling and validation are distinct research tasks." },
     ],
-    outcome: "A publicly accessible interactive prototype for exploring model sampling as a physical-feeling instrument. It demonstrates the relationship between parameter values, a simulated token distribution, and expressive feedback, with further work planned on robust local-model connectivity and packaging.",
-    boundary: "The public demo uses illustrative probabilities and simulated text, not a remote language model. Native LM Studio plugin integration and cross-backend support remain experimental; no user testing yet demonstrates improved conceptual understanding.",
-    sourceUrl: "https://github.com/Epple3k/little_mind",
+    outcome: "The current deliverable is a family of working prototypes that can support the next round of interviewer-guided walkthroughs. The interesting output is not a forecast. It is the revisions, disagreements, and explanations that appear when people can inspect the representation of their own priorities. Those observations can inform later design iterations and the modeling questions researchers choose to pursue.",
+    boundary: "The first 15 interviews informed exploration and design; they are not a usability evaluation of these interfaces. Diagram links are hypotheses to discuss, not verified causal effects. The prototypes do not produce validated land-use predictions, and no participant-level interview data are published here.",
+    sourceUrl: "https://github.com/Epple3k/2030canvas",
+    research: {
+      headline: "A planning diagram is most useful when someone can disagree with it.",
+      note: "Research to date: 15 exploratory stakeholder interviews, early thematic analysis, and a shift toward prototype-supported scenario conversations. These are working design directions, not published or validated research findings.",
+      themes: [
+        { title: "Trust and participation", detail: "Early conversations raised questions about who gets heard, what meaningful input looks like, and whether public participation changes decisions." },
+        { title: "Information and access", detail: "Complex planning language and uneven access to context make it hard to reason about trade-offs on equal footing." },
+        { title: "Ambivalence about AI", detail: "AI can make complicated scenarios easier to approach, while raising doubts about whose assumptions the output carries." },
+      ],
+      pipeline: [
+        { title: "01 / Listen", detail: "Scenario interviews surface residents' goals, concerns, and interpretations of local planning choices." },
+        { title: "02 / Structure", detail: "Researchers organize candidate factors, definitions, constraints, and an initial causal representation in the factor bank and baseline canvas." },
+        { title: "03 / Intervene", detail: "Participants review the diagram using direct manipulation or natural-language requests. Proposed changes remain inspectable and revisable." },
+        { title: "04 / Learn", detail: "Researchers study what participants revise, challenge, or leave unclear to inform subsequent interviews, model assumptions, and interface design." },
+      ],
+      next: "Next research step: use the prototypes in guided interviews, examine whether participants can understand and revise the model, and learn where the representations or AI translations fail. Quantitative scenario simulation remains a separate, unvalidated downstream possibility.",
+    },
   },
 }
 
@@ -207,7 +231,23 @@ export default function CaseStudy({
               <span>Project window</span><span>Live artifact ↗</span>
             </div>
             <div className="relative min-h-[280px] flex-1 overflow-hidden bg-[#dbefdb]">
-              {project.previewUrl ? (
+              {project.id === "05" ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-[#dcefe0] p-6 md:p-10">
+                  <div className="w-full max-w-[520px] border-2 border-black bg-[#efffef] shadow-[10px_10px_0_0_#111]">
+                    <div className="flex justify-between border-b border-black px-4 py-3 font-mono text-[10px] uppercase tracking-[0.1em]">
+                      <span>2030canvas / Research workflow</span><span>Illustrative</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 p-5 text-center font-mono text-[11px] uppercase leading-tight md:gap-5 md:p-8">
+                      <div className="border border-black p-4">Resident vision</div>
+                      <div className="border border-black p-4">Factor bank</div>
+                      <div className="col-span-2 text-xl">↘ &nbsp; ↙</div>
+                      <div className="col-span-2 border-2 border-black bg-[#b9e0c0] p-4 text-sm">Editable causal representation</div>
+                      <div className="col-span-2 text-xl">↓</div>
+                      <div className="col-span-2 border border-black p-4">Participant critique and revision</div>
+                    </div>
+                  </div>
+                </div>
+              ) : project.previewUrl ? (
                 <iframe
                   key={project.id}
                   src={project.previewUrl}
@@ -271,6 +311,44 @@ export default function CaseStudy({
             ))}
           </div>
         </section>
+
+        {study.research && (
+          <>
+            <section className="border-b-2 border-black bg-[#efffef] px-5 py-10 md:px-10 md:py-16">
+              <SectionKicker number="03A">Research to date / working themes</SectionKicker>
+              <h2 className="my-8 max-w-5xl text-[clamp(2.5rem,5vw,5.5rem)] leading-[0.98] tracking-[-0.055em]">
+                {study.research.headline}
+              </h2>
+              <p className="mb-10 max-w-4xl text-base leading-relaxed md:text-xl">{study.research.note}</p>
+              <div className="grid gap-0 border-t-2 border-black md:grid-cols-3">
+                {study.research.themes.map((theme, index) => (
+                  <div key={theme.title} className="border-b border-black/40 py-6 md:border-b-0 md:border-r md:px-7 md:py-8 md:first:pl-0 md:last:border-r-0 md:last:pr-0">
+                    <div className="font-mono text-xs opacity-50">{String(index + 1).padStart(2, "0")} / Working theme</div>
+                    <h3 className="mt-5 text-2xl tracking-tight">{theme.title}</h3>
+                    <p className="mt-4 max-w-lg text-base leading-relaxed md:text-lg">{theme.detail}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+            <section className="border-b-2 border-black px-5 py-10 md:px-10 md:py-16">
+              <SectionKicker number="03B">The artifact's place in the R&D system</SectionKicker>
+              <h2 className="my-8 max-w-5xl text-[clamp(2.5rem,5vw,5.5rem)] leading-[0.98] tracking-[-0.055em]">
+                Research in. Revisions out.
+              </h2>
+              <div className="grid gap-px overflow-hidden border-2 border-black bg-black md:grid-cols-4">
+                {study.research.pipeline.map((step) => (
+                  <div key={step.title} className="flex flex-col bg-[#efffef] p-5 md:min-h-[280px] md:p-6">
+                    <span className="font-mono text-xs uppercase tracking-[0.08em]">{step.title}</span>
+                    <p className="mt-6 text-base leading-relaxed md:mt-auto md:pt-10 md:text-lg">{step.detail}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-9 max-w-4xl border-l-2 border-black pl-5 text-base leading-relaxed md:text-xl">
+                {study.research.next}
+              </p>
+            </section>
+          </>
+        )}
 
         <section className="grid border-b-2 border-black bg-[#efffef] md:grid-cols-[minmax(200px,0.34fr)_minmax(0,1fr)]">
           <div className="border-b border-black/30 p-5 md:border-b-0 md:border-r md:p-10">

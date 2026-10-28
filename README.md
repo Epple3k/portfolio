@@ -10,7 +10,7 @@ This is the source code for the personal portfolio of **Emit Rice**, an informat
 - [Research Atlas](https://emitrice.com/projects/research-atlas/) — interdisciplinary research discovery interface
 - [Aural Field](https://emitrice.com/projects/aural-field/) — generative ambient audio
 - [Ledgerline](https://emitrice.com/projects/ledgerline/) — financial research and AI interface
-- [A Little Mind](https://emitrice.com/projects/little-mind/) — human-AI interaction experiment
+- [2030canvas](https://emitrice.com/projects/2030canvas/) — participatory planning research instrument and prototype case study
 
 ## Writing and profiles
 

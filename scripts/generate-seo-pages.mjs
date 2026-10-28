@@ -41,7 +41,7 @@
     "research-atlas": "Interdisciplinary Research Discovery Interface",
     "aural-field": "Generative Ambient Audio Design",
     "ledgerline": "Financial Research and AI Interface",
-    "little-mind": "Human-AI Interaction and Model Sampling",
+    "2030canvas": "Civic AI Research and Participatory Planning",
   };
   const html = (value) => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   const section = (index, title, contents, dark = false) => `<section class="section ${dark ? "wash" : ""}"><div class="section-label">${index} / ${html(title)}</div><div class="section-content">${contents}</div></section>`;
@@ -54,7 +54,7 @@
     if (!/^[a-z0-9-]+$/.test(p.slug)) throw new Error(`Unsafe project slug ${p.slug}`);
     const study = studies[p.id];
     if (!study) throw new Error(`No case study found for ${p.id}`);
-    const name = p.title === "a little mind" ? "A Little Mind" : p.title.split(" ").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
+    const name = p.title === "2030canvas" ? "2030canvas" : p.title.split(" ").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
     const label = labels[p.slug] || p.category;
     const url = projectHref(p);
     const title = `${name} | ${label} | Emit Rice`;
@@ -73,6 +73,10 @@
 
     const steps = study.steps.map((s, j) => `<article class="step"><div class="step-num">${String(j + 1).padStart(2, "0")}</div><div><h3>${html(s.title)}</h3>${paragraph(s.detail)}</div></article>`).join("\n");
     const decisions = study.decisions.map((d) => `<article class="decision"><h3>${html(d.title)}</h3>${paragraph(d.detail)}</article>`).join("\n");
+    const researchSections = study.research
+      ? section("03A", "Research to date / working themes", `${paragraph(study.research.headline)}${paragraph(study.research.note)}${study.research.themes.map((t, j) => `<article class="step"><div class="step-num">${String(j + 1).padStart(2, "0")}</div><div><h3>${html(t.title)}</h3>${paragraph(t.detail)}</div></article>`).join("")}`, true)
+        + section("03B", "The artifact's place in R&D", `<p class="question">Research in. Revisions out.</p>${study.research.pipeline.map((s) => `<article class="step"><div class="step-num">→</div><div><h3>${html(s.title)}</h3>${paragraph(s.detail)}</div></article>`).join("")}${paragraph(study.research.next)}`)
+      : "";
     const related = projects.filter((other) => other.id !== p.id).map((other) => `<a href="/projects/${html(other.slug)}/">${html(other.title)} <span aria-hidden="true">↗</span></a>`).join("");
     const content = `<!doctype html>
 <html lang="en">
@@ -147,6 +151,7 @@ h2,h3{font-weight:500;letter-spacing:-.045em}
 ${section("01", "The question", `<p class="question">${html(study.question)}</p>`)}
 ${section("02", "Why it matters", `${paragraph(study.significance)}${paragraph(study.context)}<dl class="metadata"><div><dt>Role</dt><dd>${html(study.role)}</dd></div><div><dt>Discipline</dt><dd>${html(study.disciplines)}</dd></div><div><dt>Status</dt><dd>${html(study.stage)}</dd></div></dl>`,true)}
 ${section("03", "Approach / how it works", steps)}
+${researchSections}
 ${section("04", "Key decisions", decisions,true)}
 ${section("05", "Outcome / next questions", `${paragraph(study.outcome)}<div class="boundary"><div class="mini">What this does not claim</div>${paragraph(study.boundary)}</div>`)}
 ${section("06", "More selected work", `<nav class="related" aria-label="Other case studies">${related}</nav>`,true)}
