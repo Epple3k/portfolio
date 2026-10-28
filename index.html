@@ -13,19 +13,21 @@
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Emit Rice | Product Design &amp; Human-Computer Interaction</title>
+    <title>Emit Rice | Product Design, Research &amp; Creative Technology</title>
     <link rel="canonical" href="https://emitrice.com/" />
+    <meta name="author" content="Emit Rice" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/png" href="%BASE_URL%favicon.png" />
 
     <meta
       name="description"
-      content="Explore Emit Rice's work in product design, human-computer interaction, and creative technology, including interactive prototypes, data visualizations, and research-driven interfaces."
+      content="Emit Rice is an information systems student and human-centered AI research assistant at Florida State University, creating projects in product design, research, and creative technology."
     />
 
-    <meta property="og:title" content="Emit Rice" />
+    <meta property="og:title" content="Emit Rice | Product Design, Research &amp; Creative Technology" />
     <meta
       property="og:description"
-      content="Explore Emit Rice's work in product design, human-computer interaction, and creative technology, including interactive prototypes, data visualizations, and research-driven interfaces."
+      content="Emit Rice is an information systems student and human-centered AI research assistant at Florida State University, creating projects in product design, research, and creative technology."
     />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="https://emitrice.com/og-preview.jpg" />
@@ -38,10 +40,38 @@
       property="og:url"
       content="https://emitrice.com/"
     />
+    <meta property="og:site_name" content="Emit Rice" />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://emitrice.com/#website","url":"https://emitrice.com/","name":"Emit Rice | Portfolio","description":"Emit Rice is an information systems student and human-centered AI research assistant at Florida State University, creating projects in product design, research, and creative technology.","inLanguage":"en","publisher":{"@id":"https://emitrice.com/#person"}},{"@type":"WebPage","@id":"https://emitrice.com/#webpage","url":"https://emitrice.com/","name":"Emit Rice | Product Design, Research & Creative Technology","description":"Emit Rice is an information systems student and human-centered AI research assistant at Florida State University, creating projects in product design, research, and creative technology.","isPartOf":{"@id":"https://emitrice.com/#website"},"mainEntity":{"@id":"https://emitrice.com/#person"},"inLanguage":"en"},{"@type":"Person","@id":"https://emitrice.com/#person","name":"Emit Rice","url":"https://emitrice.com/","description":"Information systems student, research assistant, and builder working across product design, human-centered AI, and creative technology.","affiliation":{"@type":"CollegeOrUniversity","name":"Florida State University","url":"https://www.fsu.edu/"},"sameAs":["https://www.linkedin.com/in/emit-rice/","https://github.com/Epple3k"]}]}</script>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Readable first-load content for search engines and visitors without JavaScript.
+           React replaces this fallback when the interactive portfolio starts. -->
+      <main style="min-height:100vh;background:#00ff00;color:#101010;padding:clamp(24px,5vw,72px);font-family:Arial,Helvetica,sans-serif">
+        <header>
+          <h1 style="font-size:clamp(3rem,8vw,7rem);font-weight:500;letter-spacing:-.06em;margin:0 0 24px">Emit Rice</h1>
+          <p style="font-size:clamp(1.25rem,3vw,2.3rem);max-width:850px;line-height:1.25">Product design, research, and creative technology.</p>
+        </header>
+        <section aria-label="About Emit Rice">
+          <h2>About</h2>
+          <p>I'm an information systems student and human-centered AI research assistant at Florida State University. I design and build interactive tools that make complex information easier to understand, from research interfaces to data visualization and experimental software.</p>
+        </section>
+        <nav aria-label="Selected portfolio projects">
+          <h2>Selected projects</h2>
+          <ul>
+            <li><a href="/projects/attention-field/">Attention Field: Wikipedia data visualization</a></li>
+            <li><a href="/projects/research-atlas/">Research Atlas: interdisciplinary research discovery</a></li>
+            <li><a href="/projects/aural-field/">Aural Field: generative audio experience</a></li>
+            <li><a href="/projects/ledgerline/">Ledgerline: financial research interface</a></li>
+            <li><a href="/projects/little-mind/">A Little Mind: human-AI interaction tool</a></li>
+          </ul>
+        </nav>
+        <footer>
+          <p>Find more of my work and writing on <a href="https://www.linkedin.com/in/emit-rice/" rel="me">LinkedIn</a>, <a href="https://github.com/Epple3k" rel="me">GitHub</a>, and <a href="https://paperantenna.substack.com/">Paper Antenna</a>.</p>
+        </footer>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
