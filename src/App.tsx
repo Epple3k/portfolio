@@ -96,11 +96,11 @@ const PROJECTS = [
     title: "2030canvas",
     category: "Civic AI / Research R&D",
     year: "2026",
-    previewUrl: "https://2030canvas.emitrice.com/",
-    idlePreviewUrl: "https://2030canvas.emitrice.com/",
+    previewUrl: "https://2030canvas.emitrice.com/?portfolioPreview=1",
+    idlePreviewUrl: "https://2030canvas.emitrice.com/?portfolioPreview=1",
     url: "https://2030canvas.emitrice.com/",
     description:
-      "An interviewer-guided causal canvas for translating residents' planning priorities into factors and relationships they can inspect, question, and revise.",
+      "A canvas-first civic research tool where residents can reshape the assumptions behind a planning scenario, factor by factor.",
   },
 ]
 
