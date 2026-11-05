@@ -5,12 +5,19 @@
   "description": "Finance-native analysis, primary-source market data, and interactive financial visualization inside ChatGPT.",
   "author": {
     "name": "Emit Rice",
-    "url": "https://epple3k.github.io/portfolio/"
+    "url": "https://emitrice.com/"
   },
-  "homepage": "https://github.com/Epple3k/portfolio/tree/main/ledgerline-plugin",
+  "homepage": "https://ledgerline-finance.onrender.com/",
   "repository": "https://github.com/Epple3k/portfolio",
   "license": "MIT",
-  "keywords": ["finance", "sec", "xbrl", "fred", "charts", "financial-analysis"],
+  "keywords": [
+    "finance",
+    "sec",
+    "xbrl",
+    "fred",
+    "charts",
+    "financial-analysis"
+  ],
   "extensions": {
     "com.openai": {
       "interface": {
@@ -27,7 +34,7 @@
           "Source and provenance inspection",
           "Financial transformations and comparisons"
         ],
-        "websiteURL": "https://github.com/Epple3k/portfolio/tree/main/ledgerline-plugin",
+        "websiteURL": "https://ledgerline-finance.onrender.com/",
         "supportURL": "https://github.com/Epple3k/portfolio/blob/main/ledgerline-plugin/SUPPORT.md",
         "privacyPolicyURL": "https://github.com/Epple3k/portfolio/blob/main/ledgerline-plugin/PRIVACY.md",
         "termsOfServiceURL": "https://github.com/Epple3k/portfolio/blob/main/ledgerline-plugin/TERMS.md",
@@ -93,7 +100,7 @@
         "commerce": false
       },
       "publication": {
-        "release_notes": "Initial Ledgerline release: SEC/XBRL company financials, FRED macro charts, dilution analysis, filing search, value tracing, common financial transforms, and an interactive MCP Apps finance canvas rendered directly inside ChatGPT."
+        "release_notes": "Ledgerline v0.1: SEC/XBRL quarterly financials and source tracing, FRED macro comparisons, dilution analysis, filing search and interactive, unit-safe charts with source inspection, waterfall views and mobile layout."
       }
     }
   }
