@@ -8,10 +8,11 @@ import {
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { z } from "zod";
+import { selectReportedPeriods, filingIndexUrl, isInstantMetric } from "./financial-periods.js";
 
 const PORT = Number(process.env.PORT ?? 8787);
 const MCP_PATH = "/mcp";
-const WIDGET_URI = "ui://ledgerline/finance-canvas.html";
+const WIDGET_URI = "ui://ledgerline/finance-canvas-v2.html";
 const widgetHtml = readFileSync(new URL("./public/finance-canvas.html", import.meta.url), "utf8");
 const siteHtml = readFileSync(new URL("./public/index.html", import.meta.url), "utf8");
 const blogAdminHtml = readFileSync(new URL("./public/blog-admin.html", import.meta.url), "utf8");
@@ -202,14 +203,6 @@ function chooseUnit(units, preferred) {
   const first = Object.entries(units ?? {})[0];
   return first ?? null;
 }
-function factScore(f) {
-  let score = 0;
-  if (f.frame) score += 5;
-  if (/Q[1-4]$/.test(f.frame ?? "")) score += 8;
-  if (f.form === "10-Q") score += 4;
-  if (f.form === "10-K") score += 2;
-  return score;
-}
 async function metricHistory(companyQuery, metric, periods = 8) {
   const c = await company(companyQuery);
   const facts = await companyFacts(c.cik);
@@ -225,33 +218,43 @@ async function metricHistory(companyQuery, metric, periods = 8) {
   }
   if (!selected) return { company: c, metric, label: def.label, points: [] };
 
-  const byEnd = new Map();
-  for (const f of selected.facts) {
-    if (!["10-Q", "10-K", "20-F", "40-F"].includes(f.form)) continue;
-    if (!Number.isFinite(f.val)) continue;
-    const prev = byEnd.get(f.end);
-    if (!prev || factScore(f) > factScore(prev) || f.filed > prev.filed) byEnd.set(f.end, f);
-  }
-
-  const points = [...byEnd.values()]
-    .sort((a, b) => a.end.localeCompare(b.end))
+  // Period selection must distinguish point-in-time balances from quarterly flows.
+  // The SEC also publishes YTD and annual duration facts, which cannot simply be
+  // plotted next to three-month revenue as though they were all quarters.
+  const records = selectReportedPeriods(selected.facts, {
+    instant: isInstantMetric(metric),
+    deriveQuarter4: !["diluted_shares", "diluted_eps"].includes(metric),
+  });
+  const points = records
     .slice(-Math.min(Math.max(periods, 1), 24))
-    .map((f) => ({
-      x: f.end,
-      y: f.val,
-      source: `${f.form} · ${f.accn}`,
-      sourceUrl: `${SEC_WWW}/edgar/browse/?CIK=${c.cik}`,
-      note: `${selected.concept} · ${selected.unit}`,
-      meta: {
-        concept: selected.concept,
-        unit: selected.unit,
-        accession: f.accn,
-        form: f.form,
-        filed: f.filed,
-        fiscalYear: f.fy ?? null,
-        fiscalPeriod: f.fp ?? null,
-      },
-    }));
+    .map((f) => {
+      const sourceUrl = filingIndexUrl(c.cik, f.accn);
+      const derived = f.derived === true;
+      const secondSourceUrl = f.derivation?.nineMonthAccession
+        ? filingIndexUrl(c.cik, f.derivation.nineMonthAccession)
+        : null;
+      return {
+        x: f.end,
+        y: f.val,
+        source: derived ? "Derived Q4 · SEC filings" : f.form + " · " + f.accn,
+        sourceUrl,
+        note: selected.concept + " · " + selected.unit +
+          (derived ? " · Annual total minus nine-month cumulative total" : ""),
+        meta: {
+          concept: selected.concept,
+          unit: selected.unit,
+          accession: f.accn,
+          form: f.form,
+          filed: f.filed,
+          periodStart: f.start ?? null,
+          fiscalYear: f.fy ?? null,
+          fiscalPeriod: f.fp ?? null,
+          derived,
+          secondSourceUrl,
+          secondAccession: f.derivation?.nineMonthAccession ?? null,
+        },
+      };
+    });
   return { company: c, metric, label: def.label, unit: selected.unit, points };
 }
 async function recentFilings(companyQuery, form, limit = 10) {
@@ -523,6 +526,7 @@ function createLedgerlineServer() {
           mimeType: RESOURCE_MIME_TYPE,
           text: widgetHtml,
           _meta: {
+            "openai/ui": { availableDisplayModes: ["inline", "fullscreen"] },
             ui: {
               prefersBorder: true,
               csp: {
@@ -571,13 +575,7 @@ function createLedgerlineServer() {
       const series = histories.map((h) => ({
         name: h.label,
         unit: h.unit,
-        points: h.points.map((p) => ({
-          x: p.x,
-          y: p.y,
-          source: p.source,
-          sourceUrl: p.sourceUrl,
-          note: p.note,
-        })),
+        points: h.points,
       }));
       const view = {
         kind: "financial-view",

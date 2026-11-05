@@ -29,6 +29,10 @@ jobs:
         working-directory: ledgerline-plugin
         run: npm run check
 
+      - name: Financial period regression tests
+        working-directory: ledgerline-plugin
+        run: npm test
+
       - name: Boot server and health-check
         working-directory: ledgerline-plugin
         env:
