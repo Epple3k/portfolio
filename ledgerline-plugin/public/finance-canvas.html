@@ -27,21 +27,21 @@
     .subtitle{margin-top:5px;color:var(--ll-muted);font-size:12px}
     .actions{display:flex;gap:7px;align-items:flex-start}
     .tinybtn,.tab{border:1px solid var(--ll-line);background:transparent;border-radius:999px;padding:6px 9px;font:650 10px/1 var(--ll-mono);cursor:pointer}
-    .tinybtn:hover,.tab:hover,.tab.active{background:var(--ll-ink);color:var(--ll-acid)}
+    .tinybtn:hover,.tinybtn.active,.tab:hover,.tab.active{background:var(--ll-ink);color:var(--ll-acid)}
     .tabs{display:flex;gap:7px;padding:10px 14px;border-bottom:1px solid var(--ll-line);background:var(--ll-panel)}
     .view{display:none}.view.active{display:block}
-    .chart-wrap{position:relative;padding:18px 16px 10px;min-height:260px}
-    svg{width:100%;height:250px;overflow:visible}
+    .chart-wrap{position:relative;padding:14px 13px 10px;min-height:230px;overflow-x:auto;overscroll-behavior-x:contain}
+    svg{display:block;width:100%;min-width:610px;height:250px;overflow:visible}
     .axis{stroke:var(--ll-line);stroke-width:1}
     .grid{stroke:var(--ll-line);stroke-width:1;stroke-dasharray:3 5}
     .line{fill:none;stroke-width:2.25;vector-effect:non-scaling-stroke}
-    .point{stroke:var(--ll-bg);stroke-width:2;cursor:pointer}
+    .point{stroke:var(--ll-bg);stroke-width:2;cursor:pointer}.point:focus-visible,.bar:focus-visible{stroke:var(--ll-ink);stroke-width:3;outline:none}
     .bar{cursor:pointer}
     .tick{fill:var(--ll-muted);font:9px var(--ll-mono)}
     .legend{display:flex;flex-wrap:wrap;gap:11px;padding:0 18px 14px}
     .legend-item{display:flex;align-items:center;gap:6px;font:600 10px/1 var(--ll-mono)}
     .swatch{width:9px;height:9px;border-radius:3px}
-    .inspect{display:grid;grid-template-columns:1fr auto;gap:12px;padding:12px 16px;border-top:1px solid var(--ll-line);background:var(--ll-panel)}
+    .inspect{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:12px 16px;border-top:1px solid var(--ll-line);background:var(--ll-panel)}.inspect .links{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.inspect strong,.inspect span{overflow-wrap:anywhere}
     .inspect strong{display:block;font-size:13px}
     .inspect span{display:block;margin-top:4px;color:var(--ll-muted);font:10px/1.35 var(--ll-mono)}
     .inspect a{align-self:center;color:inherit;text-decoration:none;border-bottom:1px solid currentColor;font:700 9px/1 var(--ll-mono)}
@@ -62,7 +62,7 @@
     .metric small{display:block;margin-top:4px;color:var(--ll-muted);font:600 9px/1 var(--ll-mono)}
     body.fullscreen .card{border-radius:0;min-height:100vh}
     body.fullscreen svg{height:min(55vh,520px)}
-    @media(max-width:560px){.top{padding:14px}.actions{display:none}.title{font-size:17px}.chart-wrap{padding-left:8px;padding-right:8px}svg{height:220px}}
+    @media(max-width:560px){.top{padding:12px;gap:8px}.actions{display:flex;flex-wrap:wrap;justify-content:flex-end}.tinybtn{font-size:9px;padding:6px}.title{font-size:16px}.subtitle{font-size:11px}.chart-wrap{padding-left:7px;padding-right:7px}.inspect{grid-template-columns:1fr;gap:8px}.metricbar{gap:5px}.metric{flex:1;min-width:100px}}
   </style>
 </head>
 <body>
@@ -86,7 +86,7 @@
       <button class="tab" data-tab="sources">SOURCES</button>
     </div>
     <section class="view active" id="chart">
-      <div class="chart-wrap"><svg id="svg" viewBox="0 0 900 250" preserveAspectRatio="none"></svg></div>
+      <div class="chart-wrap"><svg id="svg" viewBox="0 0 900 250" role="img" aria-label="Interactive financial chart. Select plotted values to inspect their sources."></svg></div>
       <div class="metricbar" id="metricbar"></div>
       <div class="legend" id="legend"></div>
       <div class="inspect" id="inspect">
@@ -133,8 +133,12 @@
       return payload.series.map(s=>{
         if(!indexed) return s;
         const base=s.points.find(p=>Number.isFinite(p.y))?.y;
-        return {...s,unit:"index",points:s.points.map(p=>({...p,y:base ? p.y/base*100 : p.y}))};
+        if(!Number.isFinite(base)||base===0) return s;
+        return {...s,unit:"index",points:s.points.map(p=>({...p,originalY:p.y,originalUnit:s.unit,y:p.y/base*100}))};
       });
+    }
+    function safeUrl(value){
+      try{const u=new URL(String(value));return ["https:","http:"].includes(u.protocol)?u.href:""}catch{return ""}
     }
     function allX(series){
       const seen=new Set(), out=[];
@@ -146,62 +150,124 @@
       for(const [k,v] of Object.entries(attrs)) el.setAttribute(k,String(v));
       return el;
     }
-    function renderChart(){
-      const svg=$("#svg"); svg.innerHTML="";
-      const series=normalizedSeries();
-      if(!series.length){svg.replaceWith(document.createTextNode("No data"));return}
-      const xs=allX(series);
-      const values=series.flatMap(s=>s.points.map(p=>p.y)).filter(Number.isFinite);
-      let min=Math.min(...values), max=Math.max(...values);
-      if(min===max){min-=1;max+=1}
-      if(payload.chartType==="bar" || payload.chartType==="waterfall") min=Math.min(0,min);
-      const W=900,H=250,L=58,R=18,T=15,B=35, iw=W-L-R, ih=H-T-B;
-      const xPos=(x)=>L+(xs.indexOf(String(x))/Math.max(1,xs.length-1))*iw;
-      const yPos=(y)=>T+(max-y)/(max-min)*ih;
-
-      for(let i=0;i<5;i++){
-        const y=T+i*(ih/4);
-        svg.appendChild(svgEl("line",{x1:L,y1:y,x2:W-R,y2:y,class:"grid"}));
-        const val=max-(i/4)*(max-min);
-        const t=svgEl("text",{x:L-8,y:y+3,"text-anchor":"end",class:"tick"});t.textContent=compact(val);svg.appendChild(t);
-      }
-      svg.appendChild(svgEl("line",{x1:L,y1:T+ih,x2:W-R,y2:T+ih,class:"axis"}));
-      const tickEvery=Math.max(1,Math.ceil(xs.length/7));
-      xs.forEach((x,i)=>{
-        if(i%tickEvery!==0 && i!==xs.length-1)return;
-        const t=svgEl("text",{x:xPos(x),y:H-10,"text-anchor":"middle",class:"tick"});t.textContent=x.length>10?x.slice(0,7):x;svg.appendChild(t);
+    function interactiveMark(el,s,p,total){
+      el.setAttribute("tabindex","0");el.setAttribute("role","button");
+      el.setAttribute("aria-label",s.name+" "+p.x+" "+displayValue(p.y,s.unit));
+      const title=svgEl("title");title.textContent=s.name+" · "+p.x+" · "+displayValue(p.y,s.unit);el.appendChild(title);
+      const activate=()=>inspectPoint(s,p,total);
+      el.addEventListener("click",activate);
+      el.addEventListener("keydown",event=>{
+        if(event.key==="Enter"||event.key===" "){event.preventDefault();activate()}
       });
-
-      if(payload.chartType==="bar" || payload.chartType==="waterfall"){
-        const groupW=iw/Math.max(xs.length,1), barW=Math.max(4,Math.min(28,groupW/(series.length+1)));
-        series.forEach((s,si)=>s.points.forEach(p=>{
-          const x=xPos(p.x)+(si-(series.length-1)/2)*(barW+2);
-          const y=yPos(Math.max(p.y,0)), y0=yPos(0);
-          const rect=svgEl("rect",{x:x-barW/2,y:Math.min(y,y0),width:barW,height:Math.max(1,Math.abs(y0-y)),rx:2,fill:palette[si%palette.length],class:"bar"});
-          rect.addEventListener("click",()=>inspectPoint(s,p));svg.appendChild(rect);
-        }));
-      }else{
-        series.forEach((s,si)=>{
-          const pts=s.points.filter(p=>Number.isFinite(p.y)).sort((a,b)=>String(a.x).localeCompare(String(b.x)));
-          const d=pts.map((p,i)=>(i?"L":"M")+xPos(p.x)+","+yPos(p.y)).join(" ");
-          svg.appendChild(svgEl("path",{d,class:"line",stroke:palette[si%palette.length]}));
-          pts.forEach(p=>{
-            const c=svgEl("circle",{cx:xPos(p.x),cy:yPos(p.y),r:4.5,fill:palette[si%palette.length],class:"point"});
-            c.addEventListener("click",()=>inspectPoint(s,p));svg.appendChild(c);
-          });
-        });
+    }
+    function renderChart(){
+      const svg=$("#svg");svg.innerHTML="";
+      const series=normalizedSeries(),xs=allX(series);
+      if(!series.length||!series.some(s=>s.points.some(p=>Number.isFinite(p.y)))){
+        const empty=svgEl("text",{x:450,y:125,"text-anchor":"middle",class:"tick"});
+        empty.textContent="No chartable observations";
+        svg.appendChild(empty);$("#legend").textContent="";$("#metricbar").textContent="";return;
       }
-
-      $("#legend").innerHTML=series.map((s,i)=>`<div class="legend-item"><span class="swatch" style="background:${palette[i%palette.length]}"></span>${esc(s.name)}${s.unit?` · ${esc(indexed?"index":s.unit)}`:""}</div>`).join("");
+      const waterfall=payload.chartType==="waterfall",grouped=new Map();
+      series.forEach((item,i)=>{
+        const key=waterfall?item.name:(item.unit||"value");
+        if(!grouped.has(key))grouped.set(key,[]);
+        grouped.get(key).push({item,i});
+      });
+      const width=900,part=230,fullHeight=grouped.size*part,left=70,right=25;
+      svg.setAttribute("viewBox","0 0 "+width+" "+fullHeight);
+      svg.style.height=fullHeight+"px";
+      const xPos=x=>left+xs.indexOf(String(x))/Math.max(1,xs.length-1)*(width-left-right);
+      [...grouped.entries()].forEach(([unit,records],groupIndex)=>{
+        const offset=groupIndex*part,top=offset+35,bottom=offset+part-38,range=bottom-top;
+        const heading=svgEl("text",{x:left,y:offset+17,class:"tick"});
+        heading.textContent=unit+(grouped.size>1?" · SEPARATE SCALE":"");
+        svg.appendChild(heading);
+        const values=[];
+        for(const {item} of records){
+          if(waterfall){
+            let sum=0;values.push(sum);
+            for(const p of item.points.filter(p=>Number.isFinite(p.y))){sum+=p.y;values.push(sum)}
+          }else values.push(...item.points.map(p=>p.y).filter(Number.isFinite));
+        }
+        if(!values.length)return;
+        if(waterfall||payload.chartType==="bar")values.push(0);
+        let lo=Math.min(...values),hi=Math.max(...values);
+        if(lo===hi){lo-=1;hi+=1}
+        if(payload.chartType==="line"){const pad=(hi-lo)*.07;lo-=pad;hi+=pad}
+        const yPos=y=>top+(hi-y)/(hi-lo)*range;
+        for(let t=0;t<5;t++){
+          const y=top+t*range/4,v=hi-t*(hi-lo)/4;
+          svg.appendChild(svgEl("line",{x1:left,x2:width-right,y1:y,y2:y,class:"grid"}));
+          const txt=svgEl("text",{x:left-9,y:y+3,"text-anchor":"end",class:"tick"});txt.textContent=compact(v);svg.appendChild(txt);
+        }
+        if(lo<=0&&hi>=0)svg.appendChild(svgEl("line",{x1:left,x2:width-right,y1:yPos(0),y2:yPos(0),class:"axis"}));
+        const tickEvery=Math.max(1,Math.ceil(xs.length/7));
+        xs.forEach((x,i)=>{
+          if(i%tickEvery!==0&&i!==xs.length-1)return;
+          const t=svgEl("text",{x:xPos(x),y:offset+part-13,"text-anchor":"middle",class:"tick"});
+          t.textContent=x.length>10?x.slice(0,10):x;svg.appendChild(t);
+        });
+        records.forEach(({item,i},slot)=>{
+          const pts=item.points.filter(p=>Number.isFinite(p.y)).sort((a,b)=>String(a.x).localeCompare(String(b.x)));
+          const paint=palette[i%palette.length];
+          if(waterfall){
+            let running=0,prevX=null;
+            const barW=Math.max(10,Math.min(36,(width-left-right)/Math.max(2,xs.length*1.7)));
+            pts.forEach(p=>{
+              const next=running+p.y,x=xPos(p.x),a=yPos(running),b=yPos(next);
+              if(prevX!==null)svg.appendChild(svgEl("line",{x1:prevX+barW/2,x2:x-barW/2,y1:a,y2:a,class:"axis"}));
+              const rect=svgEl("rect",{x:x-barW/2,y:Math.min(a,b),width:barW,height:Math.max(1,Math.abs(a-b)),rx:2,fill:paint,class:"bar"});
+              interactiveMark(rect,item,p,next);svg.appendChild(rect);running=next;prevX=x;
+            });
+          }else if(payload.chartType==="bar"){
+            const barW=Math.max(4,Math.min(30,(width-left-right)/Math.max(2,xs.length*(records.length+1))));
+            pts.forEach(p=>{
+              const x=xPos(p.x)+(slot-(records.length-1)/2)*(barW+3),a=yPos(p.y),b=yPos(0);
+              const rect=svgEl("rect",{x:x-barW/2,y:Math.min(a,b),width:barW,height:Math.max(1,Math.abs(a-b)),rx:2,fill:paint,class:"bar"});
+              interactiveMark(rect,item,p);svg.appendChild(rect);
+            });
+          }else{
+            const d=pts.map((p,i)=>(i?"L":"M")+xPos(p.x)+","+yPos(p.y)).join(" ");
+            svg.appendChild(svgEl("path",{d,class:"line",stroke:paint}));
+            pts.forEach(p=>{
+              const dot=svgEl("circle",{cx:xPos(p.x),cy:yPos(p.y),r:5.5,fill:paint,class:"point"});
+              interactiveMark(dot,item,p);svg.appendChild(dot);
+            });
+          }
+        });
+      });
+      $("#legend").innerHTML=series.map((s,i)=>'<div class="legend-item"><span class="swatch" style="background:'+palette[i%palette.length]+'"></span>'+esc(s.name)+' · '+esc(s.unit||"value")+'</div>').join("");
       $("#metricbar").innerHTML=series.map(s=>{
-        const pts=s.points.filter(p=>Number.isFinite(p.y));const last=pts.at(-1);const prev=pts.at(-2);
+        const pts=s.points.filter(p=>Number.isFinite(p.y)),last=pts.at(-1),prev=pts.at(-2);
         const delta=last&&prev&&prev.y!==0?(last.y/prev.y-1)*100:null;
-        return `<div class="metric"><b>${last?esc(displayValue(last.y,indexed?"index":s.unit)):"—"}</b><small>${esc(s.name)}${delta!==null?` · ${delta>=0?"+":""}${delta.toFixed(1)}%`:""}</small></div>`
+        return '<div class="metric"><b>'+(last?esc(displayValue(last.y,s.unit)):"—")+'</b><small>'+esc(s.name)+(delta!==null?' · '+(delta>=0?"+":"")+delta.toFixed(1)+"%":"")+'</small></div>';
       }).join("");
     }
-    function inspectPoint(series,point){
-      const unit=indexed?"index":series.unit;
-      $("#inspect").innerHTML=`<div><strong>${esc(series.name)} · ${esc(point.x)} · ${esc(displayValue(point.y,unit))}</strong><span>${esc(point.source||"Source not supplied")}${point.note?" · "+esc(point.note):""}</span></div>${point.sourceUrl?`<a href="${esc(point.sourceUrl)}" target="_blank" rel="noreferrer">OPEN SOURCE ↗</a>`:""}`;
+    function inspectPoint(series,point,total){
+      const inspect=$("#inspect");inspect.replaceChildren();
+      const info=document.createElement("div"),strong=document.createElement("strong"),detail=document.createElement("span");
+      strong.textContent=series.name+" · "+point.x+" · "+displayValue(point.y,series.unit);
+      const parts=[];
+      if(point.originalY!==undefined)parts.push("Reported "+displayValue(point.originalY,point.originalUnit));
+      if(point.meta?.concept)parts.push("XBRL "+point.meta.concept);
+      if(point.meta?.form)parts.push(point.meta.form);
+      if(point.meta?.filed)parts.push("Filed "+point.meta.filed);
+      if(point.meta?.accession)parts.push("Accession "+point.meta.accession);
+      if(point.meta?.derived)parts.push("Q4 derived: full year minus nine-month YTD");
+      if(total!==undefined)parts.push("Running total "+displayValue(total,series.unit));
+      if(point.source&&!point.meta?.accession)parts.push(point.source);
+      if(point.note&&!point.meta?.concept)parts.push(point.note);
+      detail.textContent=parts.join(" · ")||"No source metadata provided";
+      info.append(strong,detail);inspect.appendChild(info);
+      const links=document.createElement("div");links.className="links";
+      const addLink=(url,label)=>{
+        const href=safeUrl(url);if(!href)return;
+        const a=document.createElement("a");a.href=href;a.target="_blank";a.rel="noopener noreferrer";a.textContent=label;links.appendChild(a);
+      };
+      addLink(point.sourceUrl,"OPEN FILING ↗");
+      if(point.meta?.derived)addLink(point.meta.secondSourceUrl,"OPEN 9-MO FILING ↗");
+      if(links.children.length)inspect.appendChild(links);
     }
     function renderTable(){
       const series=normalizedSeries(), xs=allX(series);
@@ -210,8 +276,8 @@
     }
     function renderSources(){
       const sources=payload?.sources||[], notes=payload?.notes||[];
-      const a=sources.map(s=>`<div class="source"><strong>${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noreferrer">${esc(s.label)} ↗</a>`:esc(s.label)}</strong><p>${esc(s.detail||"")}</p></div>`).join("");
-      const b=notes.map(n=>`<div class="note"><strong>${n.url?`<a href="${esc(n.url)}" target="_blank" rel="noreferrer">${esc(n.title)} ↗</a>`:esc(n.title)}</strong><p>${esc(n.text||"")}</p></div>`).join("");
+      const a=sources.map(s=>`<div class="source"><strong>${safeUrl(s.url)?`<a href="${esc(safeUrl(s.url))}" target="_blank" rel="noreferrer">${esc(s.label)} ↗</a>`:esc(s.label)}</strong><p>${esc(s.detail||"")}</p></div>`).join("");
+      const b=notes.map(n=>`<div class="note"><strong>${safeUrl(n.url)?`<a href="${esc(safeUrl(n.url))}" target="_blank" rel="noreferrer">${esc(n.title)} ↗</a>`:esc(n.title)}</strong><p>${esc(n.text||"")}</p></div>`).join("");
       $("#sourcesList").innerHTML=(a+b)||'<div class="empty">No source metadata was supplied with this view.</div>';
     }
     function render(){
@@ -225,7 +291,12 @@
       document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b===btn));
       document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===btn.dataset.tab));
     }));
-    $("#indexBtn").addEventListener("click",()=>{indexed=!indexed;$("#indexBtn").classList.toggle("active",indexed);render()});
+    $("#indexBtn").addEventListener("click",()=>{
+      if(!indexed&&payload?.series?.some(s=>s.points.find(p=>Number.isFinite(p.y))?.y===0)){
+        $("#inspect").textContent="Index 100 is unavailable when a series begins at zero.";return;
+      }
+      indexed=!indexed;$("#indexBtn").classList.toggle("active",indexed);render();
+    });
 
     const app=new App({name:"Ledgerline Finance Canvas",version:"0.1.0"});
     app.ontoolresult=(result)=>{payload=result.structuredContent||null;render()};
