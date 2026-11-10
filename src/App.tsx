@@ -105,14 +105,10 @@ const PROJECTS = [
 ]
 
 const HERO_SUBHEADINGS = [
-  "i design interfaces that make complex information easier to think with",
-  "i study information systems and finance at florida state",
-  "i research how AI can support civic participation and public decision-making",
-  "i prototype human-centered AI tools for research, finance, and public systems",
-  "i turn messy systems into legible tools, visualizations, and interactions",
-  "i build at the intersection of design, data, and emerging technology",
-  "i care about how people understand, trust, and act on information",
-  "i'm planning large-scale campus events around building, design, and technology",
+  "i make complex systems feel simple",
+  "i turn data into better decisions",
+  "i design the way businesses work",
+  "i connect people, processes, and technology",
 ]
 
 const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL ?? "https://api.emitrice.com"
