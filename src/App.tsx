@@ -334,8 +334,6 @@ export default function App() {
 
   const blogTabs: { id: BlogTab; label: string }[] = [
     { id: "professional", label: "professional work & updates" },
-    { id: "reviews", label: "reviews & media" },
-    { id: "socials", label: "social posts" },
   ]
 
   return (
