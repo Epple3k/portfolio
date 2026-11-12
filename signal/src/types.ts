@@ -1,0 +1,9 @@
+export type Mode='Observe'|'Investigate'|'Experiment';
+export type View='3D'|'2D'|'Table';
+export type Config={case_id:string;day:number;window:7|14|30;threshold:number;detector:'combined'|'rules'|'model';injection:boolean};
+export type Account={id:number;account_id:string;account_type:string;community:number;x:number;y:number;z:number;incoming_minor:number;outgoing_minor:number;count:number;counterparties:number;in_degree:number;out_degree:number;percentile:number|null;rank:number|null;raw_score:number|null;flagged:boolean;features:Record<string,number>;baseline:Record<string,number>};
+export type Tx={id:string;s:number;t:number;amount:number;day:number;channel:string;scenario:string};
+export type Edge={s:number;t:number;amount_minor:number;count:number;last_day:number;transaction_ids:string[]};
+export type Alert={id:string;entity_id:number;account_id:string;percentile:number|null;rank:number;detector:string;rules:{rule:string;condition:string;evidence:string[]}[];evidence:string[];title:string;priority:string;first_observed_at:string;as_of:string};
+export type Result={run_id:string;config:Config;dataset_version:string;model_version:string;feature_version:string;seed:number;as_of:string;window_start:string;score_available:boolean;nodes:Account[];edges:Edge[];alerts:Alert[];transactions:Tx[];stats:{accounts:number;transactions:number;volume_minor:number;components:number;dataset_accounts:number;analysed_transactions:number};elapsed_ms:number;limitations:string};
+export type Case={id:string;title:string;subtitle:string;description:string;focus:number;day:number;group:number;seed:number};
